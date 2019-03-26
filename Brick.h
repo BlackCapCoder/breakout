@@ -21,7 +21,7 @@ public:
     return rect;
   }
   void logic
-    ( int            tick // Milliseconds since last tick
+    ( double         tick
     , InputManager * im
     )
   {

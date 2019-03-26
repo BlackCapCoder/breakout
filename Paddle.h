@@ -18,9 +18,9 @@ class Paddle : public GameObject {
       return Rect {x, 900, 100, 30};
     }
 
-    void logic (int tick, InputManager * im) {
-      if (im->isDown(MoveLeft )) x -= tick * 10;
-      if (im->isDown(MoveRight)) x += tick * 10;
+    void logic (double tick, InputManager * im) {
+      if (im->isDown(MoveLeft )) x -= tick * 1.5;
+      if (im->isDown(MoveRight)) x += tick * 1.5;
     }
 
     void render (SDL_Renderer * r) {

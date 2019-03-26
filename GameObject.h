@@ -16,7 +16,7 @@ class GameObject {
       ) = 0;
 
     virtual void logic
-      ( int            tick // Milliseconds since last tick
+      ( double         tick // Milliseconds since last tick
       , InputManager * im
       ) = 0;
 

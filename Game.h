@@ -28,7 +28,7 @@ class Game {
     bool shouldQuit = false;
 
 
-    void logic (int tick) {
+    void logic (double tick) {
       for (auto obj : objs) obj->logic (tick, im);
     }
 
