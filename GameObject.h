@@ -8,18 +8,26 @@
 #include "InputManager.h"
 
 
+enum LogicResult {
+  None          = 0,
+  BoundsChanged = 1,
+  Remove        = 2,
+};
+
 class GameObject : public Collidable {
   public:
 
-    virtual bool logic
+    virtual LogicResult logic
       ( double         tick // Milliseconds since last tick
       , InputManager * im
       , QuadTree     * qt
-      ) = 0;
+      ) { return None; }
 
     virtual void render
       ( SDL_Renderer * r
-      ) = 0;
+      ) {}
+
+    virtual void onHit () {}
 
 };
 

@@ -14,6 +14,7 @@
 #include "GameObject.h"
 
 
+
 class Game {
   private:
     int w, h;
@@ -29,9 +30,18 @@ class Game {
 
 
     void logic (double tick) {
-      for (auto obj : objs) {
-        bool b = obj->logic (tick, im, qt);
-        if (b) qt->update (obj);
+      for (int i = objs.size()-1; i >= 0; i--) {
+        auto obj = objs[i];
+        LogicResult r = obj->logic (tick, im, qt);
+
+        if (r & Remove) {
+          qt->remove(obj);
+          objs.erase(objs.begin() + i);
+          continue;
+        }
+
+        if (r & BoundsChanged)
+          qt->update (obj);
       }
     }
 

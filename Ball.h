@@ -11,24 +11,21 @@
 
 class Ball : public GameObject {
   double x = 500, y = 500;
-  double angle = 0.5;
+  double angle = -1;
   double velocity = 0.3;
   double radius   = 5;
   bool   wasHit   = false;
 
   public:
 
-    Rect * getBounds () {
-      return nullptr;
-    }
-
     bool hitTest (QuadTree * qt) {
       std::vector<Collidable*> os = qt->getObjectsInBound(Rect {x-radius, y-radius, radius*2, radius*2});
+      for (auto obj : os) static_cast<GameObject*>(obj)->onHit ();
       return !os.empty();
     }
 
-    bool logic
-      ( double         tick // Milliseconds since last tick
+    LogicResult logic
+      ( double         tick
       , InputManager * im
       , QuadTree     * qt
       ) {
@@ -41,8 +38,8 @@ class Ball : public GameObject {
            ) {
           if (!wasHit) {
             angle += M_PI * 0.5;
-            wasHit = true;
           }
+          wasHit = true;
         } else {
           wasHit = false;
         }
@@ -50,8 +47,7 @@ class Ball : public GameObject {
         x += velocity * tick * std::cos (angle);
         y += velocity * tick * std::sin (angle);
 
-        // return true;
-        return false;
+        return None;
       }
 
     void render

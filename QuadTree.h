@@ -16,7 +16,7 @@ struct Collidable {
   friend class QuadTree;
 
 public:
-  virtual Rect * getBounds () = 0;
+  virtual Rect * getBounds () { return nullptr; }
 
 private:
   QuadTree *qt = nullptr;

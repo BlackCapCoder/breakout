@@ -18,11 +18,14 @@ class Paddle : public GameObject {
       return &bounds;
     }
 
-    bool logic (double tick, InputManager * im, QuadTree *) {
-      bool ret = false;
-      if (im->isDown(MoveLeft )) { bounds.x -= tick * 1.5; ret = true; }
-      if (im->isDown(MoveRight)) { bounds.x += tick * 1.5; ret = true; }
-      return ret;
+    LogicResult logic (double tick, InputManager * im, QuadTree *) {
+      float o = bounds.x;
+      if (im->isDown(MoveLeft )) bounds.x -= tick * 1.5;
+      if (im->isDown(MoveRight)) bounds.x += tick * 1.5;
+      if (bounds.x < 0) bounds.x = 0;
+      if (bounds.x > 1000 - bounds.width) bounds.x = 1000 - bounds.width;
+
+      if (o != bounds.x) return BoundsChanged;
     }
 
     void render (SDL_Renderer * r) {

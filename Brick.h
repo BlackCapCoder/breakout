@@ -1,6 +1,7 @@
 #ifndef BRICK_H
 #define BRICK_H
 
+#include <iostream>
 #include <SDL2/SDL.h>
 
 #include "GameObject.h"
@@ -8,10 +9,11 @@
 
 class Brick : public GameObject {
   Rect rect;
-
   float r, g, b, a;
+  bool removed = false;
 
 public:
+  Brick();
   Brick(float width, float height, float x_coord, float y_coord);
   void setColor(float r, float g, float b, float a);
   void render(SDL_Renderer* r);
@@ -20,14 +22,19 @@ public:
   {
     return &rect;
   }
-  bool logic
+
+  LogicResult logic
     ( double         tick
     , InputManager * im
     , QuadTree     * qt
-    )
-  {
-    return false;
+    ) {
+    return removed? Remove : None;
   }
+
+  void onHit () {
+    removed = true;
+  }
+
 };
 
 #endif // BRICK_H

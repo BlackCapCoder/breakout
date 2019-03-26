@@ -10,6 +10,15 @@ Brick::Brick(float width, float height, float x_coord, float y_coord)
 {
 }
 
+Brick::Brick()
+  : rect{0, 0, 0, 0}
+  , r{0}
+  , g{0}
+  , b{0}
+  , a{0}
+{
+}
+
 
 void Brick::setColor(float r, float g, float b, float a)
 {
@@ -19,8 +28,8 @@ void Brick::setColor(float r, float g, float b, float a)
   this->a = a;
 }
 
-void Brick::render(SDL_Renderer* r)
+void Brick::render(SDL_Renderer* rend)
 {
-  SDL_RenderFillRect(r, rect.get());
-
+  SDL_SetRenderDrawColor (rend, r, g, b, a);
+  SDL_RenderFillRect(rend, rect.get());
 }
