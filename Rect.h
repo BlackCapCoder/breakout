@@ -1,3 +1,6 @@
+#ifndef RECT_H
+#define RECT_H
+
 #include <SDL2/SDL.h>
 
 struct Rect {
@@ -16,3 +19,5 @@ struct Rect {
   Rect(const Rect&);
   Rect(double _x = 0, double _y = 0, double _width = 0, double _height = 0);
 };
+
+#endif // RECT_H

@@ -2,11 +2,12 @@
 #define PADDLE_H
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 
 #include "QuadTree.h"
 #include "InputManager.h"
 #include "GameObject.h"
+#include "Rect.h"
+
 
 class Paddle : public GameObject {
   private:
@@ -18,8 +19,8 @@ class Paddle : public GameObject {
     }
 
     void logic (int tick, InputManager * im) {
-      if (im->isDown(MoveLeft )) x -= 1;
-      if (im->isDown(MoveRight)) x += 1;
+      if (im->isDown(MoveLeft )) x -= tick * 10;
+      if (im->isDown(MoveRight)) x += tick * 10;
     }
 
     void render (SDL_Renderer * r) {
