@@ -1,5 +1,5 @@
 #include "Game.h"
-#include "GameObject.h"
+#include "Paddle.h"
 #include "InputManager.h"
 
 #define NUM_KEYBINDS 3
