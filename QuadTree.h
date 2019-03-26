@@ -1,6 +1,8 @@
 // https://github.com/Megabyte918/QuadTree-Cpp
 
-#pragma once
+#ifndef QUADTREE_INCLUDED
+#define QUADTREE_INCLUDED
+
 #include <any>
 #include <vector>
 #include <algorithm>
@@ -64,3 +66,5 @@ private:
     void discardEmptyBuckets();
     inline QuadTree *getChild(const Rect &bound) const noexcept;
 };
+
+#endif
