@@ -19,7 +19,7 @@ Paddle p{};
 Ball   b{};
 
 
-int main (int argc, const char *argv[]) {
+int main ([[maybe_unused]]int argc, [[maybe_unused]]const char *argv[]) {
   InputManager im = InputManager (keybinds, NUM_KEYBINDS);
 
   Game g {1000, 1000, &im};
