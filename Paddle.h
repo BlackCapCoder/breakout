@@ -6,7 +6,7 @@
 
 #include "QuadTree.h"
 #include "InputManager.h"
-
+#include "GameObject.h"
 
 class Paddle : public GameObject {
   private:
