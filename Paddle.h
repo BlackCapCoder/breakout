@@ -26,6 +26,8 @@ class Paddle : public GameObject {
       if (bounds.x > 1000 - bounds.width) bounds.x = 1000 - bounds.width;
 
       if (o != bounds.x) return BoundsChanged;
+
+      return None;
     }
 
     void render (SDL_Renderer * r) {
