@@ -2,6 +2,7 @@
 #include "Paddle.h"
 #include "InputManager.h"
 #include "Brick.h"
+#include "Ball.h"
 
 #define NUM_KEYBINDS 3
 
@@ -12,6 +13,7 @@ int keybinds[2 * NUM_KEYBINDS] =
   };
 
 Paddle p{};
+Ball   b{};
 
 int main (int argc, const char *argv[]) {
   InputManager im = InputManager (keybinds, NUM_KEYBINDS);
@@ -22,6 +24,7 @@ int main (int argc, const char *argv[]) {
   brick.setColor(255.f, 255.f, 255.f, 255.f);
 
   g.addObject(&p);
+  g.addObject(&b);
   g.addObject(&brick);
 
   while (g.tick());
