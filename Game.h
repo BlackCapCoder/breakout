@@ -8,24 +8,28 @@
 #include <cstdlib>
 
 #include "QuadTree.h"
+#include "InputManager.h"
 
 
 class Game {
   private:
     int w, h;
-    SDL_Window   * wndw = nullptr;
-    SDL_Renderer * rend = nullptr;
-    QuadTree     * qt   = nullptr;
+    SDL_Window    * wndw = nullptr;
+    SDL_Renderer  * rend = nullptr;
+    QuadTree      * qt   = nullptr;
+    InputManager  * im   = nullptr;
+
     std::chrono::system_clock::time_point lastTick;
     const int fps = 60;
     bool shouldQuit = false;
 
   public:
-    Game (int w, int h) {
-      this->w = w;
-      this->h = h;
+    Game (int w, int h, InputManager * im) {
+      this->w  = w;
+      this->h  = h;
+      this->im = im;
+      this->qt = new QuadTree({0, 0, (double) w, (double) h}, 100, 4);
       this->lastTick = std::chrono::system_clock::now();
-      qt = new QuadTree({0, 0, (double) w, (double) h}, 100, 4);
 
       SDL_Init (SDL_INIT_VIDEO);
 
@@ -44,7 +48,6 @@ class Game {
 
 
     void logic (int tick) {
-
     }
 
     void render () {
@@ -56,6 +59,7 @@ class Game {
       auto tick = std::chrono::system_clock::now();
       auto delta = std::chrono::duration<double, std::milli>(tick - lastTick);
 
+      im->Tick();
       logic (delta.count());
 
       if (1000 / fps >= delta.count())
