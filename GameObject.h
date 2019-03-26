@@ -7,6 +7,7 @@
 #include "QuadTree.h"
 #include "InputManager.h"
 
+class Game;
 
 enum LogicResult {
   None          = 0,
@@ -18,9 +19,8 @@ class GameObject : public Collidable {
   public:
 
     virtual LogicResult logic
-      ( double         tick // Milliseconds since last tick
-      , InputManager * im
-      , QuadTree     * qt
+      ( double  tick // Milliseconds since last tick
+      , Game *  g
       ) { return None; }
 
     virtual void render

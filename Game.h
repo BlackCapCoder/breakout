@@ -17,11 +17,8 @@
 
 class Game {
   private:
-    int w, h;
     SDL_Window    * wndw = nullptr;
     SDL_Renderer  * rend = nullptr;
-    QuadTree      * qt   = nullptr;
-    InputManager  * im   = nullptr;
     std::vector<GameObject*> objs{};
 
     std::chrono::system_clock::time_point lastTick;
@@ -32,7 +29,7 @@ class Game {
     void logic (double tick) {
       for (int i = objs.size()-1; i >= 0; i--) {
         auto obj = objs[i];
-        LogicResult r = obj->logic (tick, im, qt);
+        LogicResult r = obj->logic (tick, this);
 
         if (r & Remove) {
           qt->remove(obj);
@@ -54,6 +51,10 @@ class Game {
 
 
   public:
+    int w, h;
+    QuadTree     * qt = nullptr;
+    InputManager * im = nullptr;
+
     Game (int w, int h, InputManager * im) {
       this->w  = w;
       this->h  = h;

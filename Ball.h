@@ -4,22 +4,30 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <cmath>
+#include <cstdlib>
 #include <vector>
 
 #include "GameObject.h"
 #include "QuadTree.h"
+#include "Particle.h"
 
 class Ball : public GameObject {
-  double x = 500, y = 800;
-  double radius   = 5;
+  double x = 500, y = 500;
+  double radius = 5;
   double vx = 0.3, vy = 0.3;
 
   public:
     LogicResult logic
-      ( double         dt
-      , InputManager * im
-      , QuadTree     * qt
+      ( double dt
+      , Game * g
       ) {
+
+        g->addObject(new Particle
+            ( x
+            , y
+            , std::atan2(vy,vx)+M_PI+((double)std::rand()/RAND_MAX-0.5)*M_PI*0.2
+            , ((double)std::rand()/RAND_MAX)*0.4+0.1
+            ));
 
         x += vx * dt;
         y += vy * dt;
@@ -40,7 +48,7 @@ class Ball : public GameObject {
           vy = -vy;
         }
 
-        std::vector<Collidable*> os = qt->getObjectsInBound(Rect {x-radius, y-radius, radius*2, radius*2});
+        std::vector<Collidable*> os = g->qt->getObjectsInBound(Rect {x-radius, y-radius, radius*2, radius*2});
         if (!os.empty()) {
           GameObject * obj = static_cast<GameObject*>(os[0]);
           obj->onHit();
@@ -74,22 +82,11 @@ class Ball : public GameObject {
             vx = -vx;
           }
 
-          std::cout << "HIT: " << a << std::endl;
-
+          // std::cout << "HIT: " << a << std::endl;
         }
 
         return None;
       }
-
-    /*
-
-  return Point.new( :x => A.x + a_to_b[0]*t,
-                    :y => A.y + a_to_b[1]*t )
-                                      # Add the distance to A, moving
-                                      #   towards B
-
-end
-    */
 
     void render
       ( SDL_Renderer * r
