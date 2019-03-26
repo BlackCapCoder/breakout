@@ -29,11 +29,14 @@ class Game {
 
 
     void logic (int tick) {
-      for (auto obj : objs) obj->logic (tick);
+      for (auto obj : objs) obj->logic (tick, im);
     }
 
     void render () {
-      for (auto obj : objs) obj->render ();
+      SDL_SetRenderDrawColor (rend, 0, 0, 0, 255);
+      SDL_RenderClear(rend);
+      for (auto obj : objs) obj->render (rend);
+      SDL_RenderPresent (rend);
     }
 
 
@@ -86,10 +89,9 @@ class Game {
 
 
     void addObject (GameObject * obj) {
-      // Collidable c = Collidable(obj->getBounds(), obj);
-      // this->qt->insert(&c);
-      Paddle * p =  new Paddle;
-      this->objs.push_back(p);
+      Collidable c = Collidable(obj->getBounds(), obj);
+      this->qt->insert(&c);
+      this->objs.push_back(obj);
     }
 
 };
