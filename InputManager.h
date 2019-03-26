@@ -1,4 +1,5 @@
-#pragma once
+#ifndef INPUTMANAGER_H
+#define INPUTMANAGER_H
 
 #include <SDL2/SDL.h>
 
@@ -57,3 +58,4 @@ class InputManager {
     }
 };
 
+#endif // INPUTMANAGER_H

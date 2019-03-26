@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GAMEOBJECT_H
+#define GAMEOBJECT_H
+
 #include "QuadTree.h"
 
 
@@ -25,3 +27,5 @@ class Paddle : public GameObject {
 
     }
 };
+
+#endif // GAMEOBJECT_H

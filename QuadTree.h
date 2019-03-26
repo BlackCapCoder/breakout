@@ -1,7 +1,7 @@
 // https://github.com/Megabyte918/QuadTree-Cpp
 
-#ifndef QUADTREE_INCLUDED
-#define QUADTREE_INCLUDED
+#ifndef QUADTREE_H
+#define QUADTREE_H
 
 #include <any>
 #include <vector>
@@ -67,4 +67,4 @@ private:
     inline QuadTree *getChild(const Rect &bound) const noexcept;
 };
 
-#endif
+#endif // QUADTREE_H

@@ -1,5 +1,5 @@
-#ifndef GAME_INCLUDED
-#define GAME_INCLUDED
+#ifndef GAME_H
+#define GAME_H
 
 #include <iostream>
 #include <thread>
@@ -94,4 +94,4 @@ class Game {
 
 };
 
-#endif
+#endif // GAME_H
