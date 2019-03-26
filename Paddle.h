@@ -18,10 +18,10 @@ class Paddle : public GameObject {
       return &bounds;
     }
 
-    LogicResult logic (double tick, InputManager * im, QuadTree *) {
+    LogicResult logic (double tick, Game * g) {
       float o = bounds.x;
-      if (im->isDown(MoveLeft )) bounds.x -= tick * 1.5;
-      if (im->isDown(MoveRight)) bounds.x += tick * 1.5;
+      if (g->im->isDown(MoveLeft )) bounds.x -= tick * 1.5;
+      if (g->im->isDown(MoveRight)) bounds.x += tick * 1.5;
       if (bounds.x < 0) bounds.x = 0;
       if (bounds.x > 1000 - bounds.width) bounds.x = 1000 - bounds.width;
 

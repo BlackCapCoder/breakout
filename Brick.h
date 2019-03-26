@@ -23,11 +23,7 @@ public:
     return &rect;
   }
 
-  LogicResult logic
-    ( double         tick
-    , InputManager * im
-    , QuadTree     * qt
-    ) {
+  LogicResult logic (double, Game *) {
     return removed? Remove : None;
   }
 
