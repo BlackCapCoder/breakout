@@ -6,6 +6,7 @@
 #include <any>
 #include <vector>
 #include <algorithm>
+#include <SDL2/SDL.h>
 
 struct Rect;
 struct Collidable;
@@ -13,6 +14,7 @@ class  QuadTree;
 
 struct Rect {
     double x, y, width, height;
+    SDL_Rect rect;
 
     bool contains(const Rect &other) const noexcept;
     bool intersects(const Rect &other) const noexcept;
@@ -20,6 +22,12 @@ struct Rect {
     double getTop() const noexcept;
     double getRight() const noexcept;
     double getBottom() const noexcept;
+
+    SDL_Rect * get ()
+    {
+      rect = SDL_Rect { (int) x, (int) y, (int) width, (int) height};
+      return &rect;
+    }
 
     Rect(const Rect&);
     Rect(double _x = 0, double _y = 0, double _width = 0, double _height = 0);

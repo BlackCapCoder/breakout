@@ -10,9 +10,20 @@
 
 class GameObject {
   public:
-    virtual Rect getBounds ()      = 0;
-    virtual void logic  (int tick, InputManager * im) = 0;
-    virtual void render (SDL_Renderer * r) = 0;
+
+    virtual Rect getBounds
+      (
+      ) = 0;
+
+    virtual void logic
+      ( int            tick // Milliseconds since last tick
+      , InputManager * im
+      ) = 0;
+
+    virtual void render
+      ( SDL_Renderer * r
+      ) = 0;
+
 };
 
 

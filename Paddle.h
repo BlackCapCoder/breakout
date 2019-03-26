@@ -26,7 +26,7 @@ class Paddle : public GameObject {
       Rect b = getBounds();
       auto rct = SDL_Rect { (int) b.x, (int) b.y, (int) b.width, (int) b.height};
       SDL_SetRenderDrawColor (r, 255, 255, 255, 255);
-      SDL_RenderFillRect (r, &rct);
+      SDL_RenderFillRect (r, b.get());
     }
 };
 
