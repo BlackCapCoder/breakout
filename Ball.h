@@ -4,6 +4,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <cmath>
+#include <vector>
 
 #include "GameObject.h"
 #include "QuadTree.h"
@@ -17,19 +18,26 @@ class Ball : public GameObject {
 
   public:
 
-    Rect getBounds () {
-      return Rect {x-radius, y-radius, radius*2, radius*2};
+    Rect * getBounds () {
+      return nullptr;
     }
 
-    void logic
+    bool hitTest (QuadTree * qt) {
+      std::vector<Collidable*> os = qt->getObjectsInBound(Rect {x-radius, y-radius, radius*2, radius*2});
+      return !os.empty();
+    }
+
+    bool logic
       ( double         tick // Milliseconds since last tick
       , InputManager * im
+      , QuadTree     * qt
       ) {
 
         if ( 1000 - x - radius <= 0
           || 1000 - y - radius <= 0
           || x < radius
           || y < radius
+          || hitTest(qt)
            ) {
           if (!wasHit) {
             angle += M_PI * 0.5;
@@ -42,12 +50,14 @@ class Ball : public GameObject {
         x += velocity * tick * std::cos (angle);
         y += velocity * tick * std::sin (angle);
 
+        // return true;
+        return false;
       }
 
     void render
       ( SDL_Renderer * r
       ) {
-        Rect b = getBounds();
+        Rect b{x-radius, y-radius, radius*2, radius*2};;
         SDL_SetRenderDrawColor (r, 255, 255, 255, 255);
         SDL_RenderFillRect (r, b.get());
       }

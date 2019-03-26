@@ -8,16 +8,13 @@
 #include "InputManager.h"
 
 
-class GameObject {
+class GameObject : public Collidable {
   public:
 
-    virtual Rect getBounds
-      (
-      ) = 0;
-
-    virtual void logic
+    virtual bool logic
       ( double         tick // Milliseconds since last tick
       , InputManager * im
+      , QuadTree     * qt
       ) = 0;
 
     virtual void render

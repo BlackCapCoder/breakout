@@ -11,22 +11,23 @@
 
 class Paddle : public GameObject {
   private:
-    double x = 0;
+    Rect bounds{0, 900, 100, 30};
 
   public:
-    Rect getBounds () {
-      return Rect {x, 900, 100, 30};
+    Rect * getBounds () {
+      return &bounds;
     }
 
-    void logic (double tick, InputManager * im) {
-      if (im->isDown(MoveLeft )) x -= tick * 1.5;
-      if (im->isDown(MoveRight)) x += tick * 1.5;
+    bool logic (double tick, InputManager * im, QuadTree *) {
+      bool ret = false;
+      if (im->isDown(MoveLeft )) { bounds.x -= tick * 1.5; ret = true; }
+      if (im->isDown(MoveRight)) { bounds.x += tick * 1.5; ret = true; }
+      return ret;
     }
 
     void render (SDL_Renderer * r) {
-      Rect b = getBounds();
       SDL_SetRenderDrawColor (r, 255, 255, 255, 255);
-      SDL_RenderFillRect (r, b.get());
+      SDL_RenderFillRect (r, bounds.get());
     }
 };
 

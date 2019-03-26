@@ -16,15 +16,17 @@ public:
   void setColor(float r, float g, float b, float a);
   void render(SDL_Renderer* r);
 
-  Rect getBounds()
+  Rect * getBounds()
   {
-    return rect;
+    return &rect;
   }
-  void logic
+  bool logic
     ( double         tick
     , InputManager * im
+    , QuadTree     * qt
     )
   {
+    return false;
   }
 };
 

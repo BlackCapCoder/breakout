@@ -9,49 +9,47 @@
 
 #include "Rect.h"
 
-struct Collidable;
 class  QuadTree;
+struct Collidable;
 
 struct Collidable {
-    friend class QuadTree;
-public:
-    Rect bound;
-    std::any data;
+  friend class QuadTree;
 
-    Collidable(const Rect &_bounds = {}, std::any _data = {});
+public:
+  virtual Rect * getBounds () = 0;
+
 private:
-    QuadTree *qt = nullptr;
-    Collidable(const Collidable&) = delete;
+  QuadTree *qt = nullptr;
 };
 
 class QuadTree {
 public:
-    QuadTree(const Rect &_bound, unsigned _capacity, unsigned _maxLevel);
-    QuadTree(const QuadTree&);
-    QuadTree();
+  QuadTree(const Rect &_bound, unsigned _capacity, unsigned _maxLevel);
+  QuadTree(const QuadTree&);
+  QuadTree();
 
-    bool insert(Collidable *obj);
-    bool remove(Collidable *obj);
-    bool update(Collidable *obj);
-    std::vector<Collidable*> &getObjectsInBound(const Rect &bound);
-    unsigned totalChildren() const noexcept;
-    unsigned totalObjects() const noexcept;
-    void clear() noexcept;
+  bool insert(Collidable *obj);
+  bool remove(Collidable *obj);
+  bool update(Collidable *obj);
+  std::vector<Collidable*> &getObjectsInBound(const Rect &bound);
+  unsigned totalChildren() const noexcept;
+  unsigned totalObjects() const noexcept;
+  void clear() noexcept;
 
-    ~QuadTree();
+  ~QuadTree();
 private:
-    bool      isLeaf = true;
-    unsigned  level  = 0;
-    unsigned  capacity;
-    unsigned  maxLevel;
-    Rect      bounds;
-    QuadTree* parent = nullptr;
-    QuadTree* children[4] = { nullptr, nullptr, nullptr, nullptr };
-    std::vector<Collidable*> objects, foundObjects;
+  bool      isLeaf = true;
+  unsigned  level  = 0;
+  unsigned  capacity;
+  unsigned  maxLevel;
+  Rect      bounds;
+  QuadTree* parent = nullptr;
+  QuadTree* children[4] = { nullptr, nullptr, nullptr, nullptr };
+  std::vector<Collidable*> objects, foundObjects;
 
-    void subdivide();
-    void discardEmptyBuckets();
-    inline QuadTree *getChild(const Rect &bound) const noexcept;
+  void subdivide();
+  void discardEmptyBuckets();
+  inline QuadTree *getChild(const Rect &bound) const noexcept;
 };
 
 #endif // QUADTREE_H

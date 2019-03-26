@@ -29,7 +29,10 @@ class Game {
 
 
     void logic (double tick) {
-      for (auto obj : objs) obj->logic (tick, im);
+      for (auto obj : objs) {
+        bool b = obj->logic (tick, im, qt);
+        if (b) qt->update (obj);
+      }
     }
 
     void render () {
@@ -89,8 +92,7 @@ class Game {
 
 
     void addObject (GameObject * obj) {
-      Collidable c = Collidable(obj->getBounds(), obj);
-      this->qt->insert(&c);
+      if (obj->getBounds() != nullptr) this->qt->insert(obj);
       this->objs.push_back(obj);
     }
 
