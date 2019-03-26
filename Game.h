@@ -86,10 +86,10 @@ class Game {
 
 
     void addObject (GameObject * obj) {
-      Collidable c = Collidable(obj->getBounds(), obj);
-      this->qt->insert(&c);
-
-      this->objs.push_back(obj);
+      // Collidable c = Collidable(obj->getBounds(), obj);
+      // this->qt->insert(&c);
+      Paddle * p =  new Paddle;
+      this->objs.push_back(p);
     }
 
 };
