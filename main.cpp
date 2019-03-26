@@ -1,11 +1,10 @@
+#include <vector>
+
 #include "Game.h"
 #include "Paddle.h"
 #include "InputManager.h"
 #include "Brick.h"
 #include "Ball.h"
-
-#include <vector>
-
 
 #define NUM_KEYBINDS 3
 
@@ -15,18 +14,15 @@ int keybinds[2 * NUM_KEYBINDS] =
   , SDLK_ESCAPE , Quit
   };
 
-Paddle p{};
-Ball   b{};
-
-
 int main ([[maybe_unused]]int argc, [[maybe_unused]]const char *argv[]) {
   InputManager im = InputManager (keybinds, NUM_KEYBINDS);
 
-  Game g {1000, 1000, &im};
+  Game   g{ 1000, 1000, &im };
+  Paddle p{};
+  Ball   b{};
 
   g.addObject(&p);
   g.addObject(&b);
-
 
   const int horMarg = 50;
   const int verMarg = 50;

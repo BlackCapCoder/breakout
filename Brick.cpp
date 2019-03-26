@@ -20,7 +20,6 @@ Brick::Brick()
 {
 }
 
-
 void Brick::setColor(float r, float g, float b, float a)
 {
   this->r = r;
