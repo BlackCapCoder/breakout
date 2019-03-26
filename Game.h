@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GAME_INCLUDED
+#define GAME_INCLUDED
 
 #include <iostream>
 #include <thread>
@@ -92,3 +93,5 @@ class Game {
     }
 
 };
+
+#endif
