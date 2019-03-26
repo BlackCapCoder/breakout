@@ -6,9 +6,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <cstdlib>
+#include <vector>
 
 #include "QuadTree.h"
 #include "InputManager.h"
+#include "GameObject.h"
 
 
 class Game {
@@ -18,12 +20,14 @@ class Game {
     SDL_Renderer  * rend = nullptr;
     QuadTree      * qt   = nullptr;
     InputManager  * im   = nullptr;
+    std::vector<GameObject*> objs{};
 
     std::chrono::system_clock::time_point lastTick;
     const int fps = 60;
     bool shouldQuit = false;
 
   public:
+
     Game (int w, int h, InputManager * im) {
       this->w  = w;
       this->h  = h;
@@ -46,21 +50,29 @@ class Game {
         exit(EXIT_FAILURE);
     }
 
+    void addObject (GameObject * obj) {
+      Collidable c = Collidable(obj->getBounds(), obj);
+      this->qt->insert(&c);
+
+      this->objs.push_back(obj);
+    }
+
 
     void logic (int tick) {
-
+      for (auto obj : objs) obj->logic (tick);
     }
 
     void render () {
-
+      for (auto obj : objs) obj->render ();
     }
 
 
     bool tick () {
-      auto tick = std::chrono::system_clock::now();
+      im->Tick();
+
+      auto tick  = std::chrono::system_clock::now();
       auto delta = std::chrono::duration<double, std::milli>(tick - lastTick);
 
-      im->Tick();
       logic (delta.count());
 
       if (1000 / fps >= delta.count())
