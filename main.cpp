@@ -34,19 +34,17 @@ int main ([[maybe_unused]]int argc, [[maybe_unused]]const char *argv[]) {
   const int w = (1000 - 2*horMarg - space*ncols) / ncols;
   const int h = 30;
 
-  std::vector<Brick> bs(nrows*ncols);
+  std::vector<Brick> bs{};
   // Brick bs[nrows*ncols];
 
-  std::generate(std::begin(bs), std::end(bs), [=, &g, i = 0] () mutable {
+  for (int i{}; i != nrows * ncols; ++i) {
     int x = i % ncols;
     int y = i / ncols;
-    Brick b{w, h, horMarg + (float)x * (w + space), verMarg + (float)y * (h + space)};
-    b.setColor(i * 80, 90 + i * 50, 255, 255);
-    ++i;
-    return b;
-  });
-
-  for (auto& b : bs) g.addObject(&b);
+    bs.emplace_back(Brick{ w, h, horMarg + (float)x * (w + space),
+                           verMarg + (float)y * (h + space) });
+    bs.at(i).setColor(i * 80, 90 + i * 50, 255, 255);
+    g.addObject(&bs.at(i));
+  }
 
   // for (int i = 0; i < nrows*ncols; i++) {
   //   int x = i % ncols, y = i / ncols;
