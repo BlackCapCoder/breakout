@@ -26,8 +26,17 @@ class Game {
     const int fps = 60;
     bool shouldQuit = false;
 
-  public:
 
+    void logic (int tick) {
+      for (auto obj : objs) obj->logic (tick);
+    }
+
+    void render () {
+      for (auto obj : objs) obj->render ();
+    }
+
+
+  public:
     Game (int w, int h, InputManager * im) {
       this->w  = w;
       this->h  = h;
@@ -50,23 +59,6 @@ class Game {
         exit(EXIT_FAILURE);
     }
 
-    void addObject (GameObject * obj) {
-      Collidable c = Collidable(obj->getBounds(), obj);
-      this->qt->insert(&c);
-
-      this->objs.push_back(obj);
-    }
-
-
-    void logic (int tick) {
-      for (auto obj : objs) obj->logic (tick);
-    }
-
-    void render () {
-      for (auto obj : objs) obj->render ();
-    }
-
-
     bool tick () {
       im->Tick();
 
@@ -85,6 +77,14 @@ class Game {
 
     void dispose () {
       SDL_DestroyWindow (wndw);
+    }
+
+
+    void addObject (GameObject * obj) {
+      Collidable c = Collidable(obj->getBounds(), obj);
+      this->qt->insert(&c);
+
+      this->objs.push_back(obj);
     }
 
 };

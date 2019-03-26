@@ -1,6 +1,7 @@
 #pragma once
 #include "QuadTree.h"
 
+
 class GameObject {
   public:
     Rect getBounds ();
