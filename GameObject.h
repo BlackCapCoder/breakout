@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GAMEOBJECT_H
+#define GAMEOBJECT_H
+
 #include "QuadTree.h"
 
 
@@ -8,3 +10,5 @@ class GameObject {
     void logic  (int tick) {}
     void render () {}
 };
+
+#endif // GAMEOBJECT_H
