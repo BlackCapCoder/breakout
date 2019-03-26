@@ -48,6 +48,7 @@ class Game {
 
 
     void logic (int tick) {
+
     }
 
     void render () {
