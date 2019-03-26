@@ -37,11 +37,12 @@ int main ([[maybe_unused]]int argc, [[maybe_unused]]const char *argv[]) {
   std::vector<Brick> bs(nrows*ncols);
   // Brick bs[nrows*ncols];
 
-  std::generate(std::begin(bs), std::end(bs), [=, &g, i = 0] () {
+  std::generate(std::begin(bs), std::end(bs), [=, &g, i = 0] () mutable {
     int x = i % ncols;
     int y = i / ncols;
     Brick b{w, h, horMarg + (float)x * (w + space), verMarg + (float)y * (h + space)};
     b.setColor(i * 80, 90 + i * 50, 255, 255);
+    ++i;
     return b;
   });
 
