@@ -11,7 +11,7 @@
 
 class Paddle : public GameObject {
   private:
-    Rect bounds{0, 900, 100, 30};
+    Rect bounds{(1000 - 200)/2, 930, 200, 30};
 
   public:
     Rect * getBounds () {
@@ -29,7 +29,7 @@ class Paddle : public GameObject {
     }
 
     void render (SDL_Renderer * r) {
-      SDL_SetRenderDrawColor (r, 255, 255, 255, 255);
+      SDL_SetRenderDrawColor (r, 255, 0, 0, 255);
       SDL_RenderFillRect (r, bounds.get());
     }
 };

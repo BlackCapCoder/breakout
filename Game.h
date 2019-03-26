@@ -80,17 +80,22 @@ class Game {
       im->Tick();
 
       auto tick  = std::chrono::system_clock::now();
-      auto delta = std::chrono::duration<double, std::milli>(tick - lastTick);
+      auto delta = std::chrono::duration<double, std::milli>(tick - lastTick).count();
 
-      logic (delta.count());
-
-      if (1000 / fps >= delta.count())
+      if (1000 / fps <= delta) {
+        logic  (delta);
         render ();
 
-      lastTick = tick;
+        lastTick = tick;
 
-      if (im->isDown(Quit))
-        this->shouldQuit = true;
+        if (im->isDown(Quit))
+          this->shouldQuit = true;
+    } else {
+      std::this_thread::sleep_for
+        ( std::chrono::duration<double, std::milli>
+          (1000 / fps - delta)
+        );
+    }
 
       return !this->shouldQuit;
     }

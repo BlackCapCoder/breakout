@@ -27,11 +27,21 @@ int main (int argc, const char *argv[]) {
   g.addObject(&p);
   g.addObject(&b);
 
-  Brick bs[9*5];
 
-  for (int i = 0; i < 9*5; i++) {
-    int x = i % 9, y = i / 9;
-    bs[i] = Brick{98, 30, 20 + (float)x*(98+10), 20 + (float)y*(30+10)};
+  const int horMarg = 50;
+  const int verMarg = 50;
+  const int space = 20;
+  const int ncols = 10;
+  const int nrows = 7;
+
+  const int w = (1000 - 2*horMarg - space*ncols) / ncols;
+  const int h = 30;
+
+  Brick bs[nrows*ncols];
+
+  for (int i = 0; i < nrows*ncols; i++) {
+    int x = i % ncols, y = i / ncols;
+    bs[i] = Brick{w, h, horMarg + (float)x*(w+space), verMarg + (float)y*(h+space)};
     bs[i].setColor(i * 80, 90 + i * 50, 255, 255);
     g.addObject(&bs[i]);
   }
