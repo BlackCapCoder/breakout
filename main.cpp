@@ -13,7 +13,7 @@ int main (int argc, const char *argv[]) {
   InputManager im = InputManager (keybinds, NUM_KEYBINDS);
 
   Game g {1000, 1000, &im};
-  // while (g.tick());
+  while (g.tick());
   g.dispose();
   return 0;
 }

@@ -72,10 +72,14 @@ class Game {
 
       lastTick = tick;
 
+      if (im->isDown(Quit))
+        this->shouldQuit = true;
+
       return !this->shouldQuit;
     }
 
     void dispose () {
+      this->im->dispose();
       SDL_DestroyWindow (wndw);
     }
 
