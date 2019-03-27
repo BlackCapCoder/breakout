@@ -14,6 +14,29 @@ int keybinds[2 * NUM_KEYBINDS] =
   , SDLK_ESCAPE , Quit
   };
 
+auto createBricks(Game& game)
+{
+  const int horMarg = 50;
+  const int verMarg = 50;
+  const int space   = 20;
+  const int ncols   = 10;
+  const int nrows   = 7;
+  const int w       = (1000 - 2*horMarg - space*ncols) / ncols;
+  const int h       = 30;
+
+  std::array<Brick, nrows * ncols> bs{};
+
+  for (int i{}; i < nrows*ncols; i++) {
+    int x = i % ncols;
+    int y = i / ncols;
+    bs[i] = Brick{w, h, horMarg + (float)x*(w+space), verMarg + (float)y*(h+space)};
+    bs[i].setColor(i * 80, 90 + i * 50, 255, 255);
+    game.addObject(&bs[i]);
+  }
+
+  return bs;
+}
+
 int main ([[maybe_unused]]int argc, [[maybe_unused]]const char *argv[]) {
   InputManager im = InputManager (keybinds, NUM_KEYBINDS);
 
@@ -24,24 +47,7 @@ int main ([[maybe_unused]]int argc, [[maybe_unused]]const char *argv[]) {
   g.addObject(&p);
   g.addObject(&b);
 
-  const int horMarg = 50;
-  const int verMarg = 50;
-  const int space = 20;
-  const int ncols = 10;
-  const int nrows = 7;
-
-  const int w = (1000 - 2*horMarg - space*ncols) / ncols;
-  const int h = 30;
-
-  std::array<Brick, nrows * ncols> bs{};
-
-  for (int i{}; i < nrows*ncols; i++) {
-    int x = i % ncols;
-    int y = i / ncols;
-    bs[i] = Brick{w, h, horMarg + (float)x*(w+space), verMarg + (float)y*(h+space)};
-    bs[i].setColor(i * 80, 90 + i * 50, 255, 255);
-    g.addObject(&bs[i]);
-  }
+  auto bricks = createBricks(g);
 
   while (g.tick());
   g.dispose();
