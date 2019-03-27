@@ -9,14 +9,24 @@
 
 
 class Particle : public GameObject {
-  int    ttl = 1000;
-  double radius = 2;
+  double    _ttl;
+  double    ttl;
+  double radius;
   double x=100, y=100;
   double angle, velocity;
   double r=255,g,b;
+  double spin;
 
 public:
-  Particle (double x, double y, double a, double v) : x{x}, y{y}, angle{a}, velocity{v} {};
+  Particle (double x, double y, double a, double v, double s, int ttl)
+    : x{x}
+    , y{y}
+    , angle{a}
+    , velocity{v}
+    , spin{s}
+    , ttl{ttl}
+    , _ttl{ttl}
+    {};
 
   LogicResult logic  (double dt, Game* g);
   void        render (SDL_Renderer* rnd);

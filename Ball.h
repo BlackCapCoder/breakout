@@ -14,7 +14,7 @@
 class Ball : public GameObject {
   double x = 500, y = 500;
   double radius = 5;
-  double vx = 0.3, vy = 0.3;
+  double vx = 0.6, vy = 0.6;
 
   public:
     LogicResult logic
@@ -22,15 +22,10 @@ class Ball : public GameObject {
       , Game * g
       ) {
 
-        g->addObject(new Particle
-            ( x
-            , y
-            , std::atan2(vy,vx)+M_PI+((double)std::rand()/RAND_MAX-0.5)*M_PI*0.2
-            , ((double)std::rand()/RAND_MAX)*0.4+0.1
-            ));
-
         x += vx * dt;
         y += vy * dt;
+        vx *= 1 + dt * 0.00001;
+        vy *= 1 + dt * 0.00001;
 
         if (x <= radius) {
           x = radius;
@@ -40,11 +35,15 @@ class Ball : public GameObject {
           vx = -vx;
         }
 
+        if (y + radius >= 1000) {
+          // y = 1000 - radius;
+          // vy = -vy;
+          std::cout << "LOOOSER!" << std::endl;
+          exit(0);
+        }
+
         if (y <= radius) {
           y = radius;
-          vy = -vy;
-        } else if (y + radius >= 1000) {
-          y = 1000 - radius;
           vy = -vy;
         }
 
@@ -82,7 +81,15 @@ class Ball : public GameObject {
             vx = -vx;
           }
 
-          // std::cout << "HIT: " << a << std::endl;
+          for (; (std::rand() % 3) > 0;)
+            g->addObject(new Particle
+                ( x
+                , y
+                , std::atan2(vy,vx)+M_PI+((double)std::rand()/RAND_MAX-0.5)*M_PI*0.8
+                , ((double)std::rand()/RAND_MAX)*0.2+0.3
+                , ((double)std::rand()/RAND_MAX-0.5)*0.01
+                , rand()%600+200
+                ));
         }
 
         return None;
