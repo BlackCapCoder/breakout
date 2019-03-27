@@ -6,11 +6,15 @@
 #include "Brick.h"
 #include "Ball.h"
 
-#define NUM_KEYBINDS 3
+#define NUM_KEYBINDS 5
 
 int keybinds[2 * NUM_KEYBINDS] =
   { SDLK_h      , MoveLeft
+  , SDLK_a      , MoveLeft
+
   , SDLK_l      , MoveRight
+  , SDLK_d      , MoveRight
+
   , SDLK_ESCAPE , Quit
   };
 

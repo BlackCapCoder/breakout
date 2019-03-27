@@ -9,7 +9,7 @@
 #include "Game.h"
 
 class Brick : public GameObject {
-  Rect  rect;
+  V4    rect;
   float r;
   float g;
   float b;
@@ -23,7 +23,7 @@ public:
 public:
   void        setColor(float r, float g, float b, float a);
   void        render(SDL_Renderer* r);
-  Rect*       getBounds();
+  V4 *        getBounds();
   LogicResult logic(double, Game*);
   void        onHit();
 };

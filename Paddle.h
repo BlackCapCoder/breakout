@@ -6,15 +6,15 @@
 #include "QuadTree.h"
 #include "InputManager.h"
 #include "GameObject.h"
-#include "Rect.h"
+#include "Math.h"
 
 
 class Paddle : public GameObject {
   private:
-    Rect bounds{(1000 - 200)/2, 930, 200, 30};
+    V4 bounds{(1000 - 200)/2, 930, 200, 30};
 
   public:
-    Rect * getBounds () {
+    V4 * getBounds () {
       return &bounds;
     }
 
@@ -23,7 +23,7 @@ class Paddle : public GameObject {
       if (g->im->isDown(MoveLeft )) bounds.x -= tick * 1.5;
       if (g->im->isDown(MoveRight)) bounds.x += tick * 1.5;
       if (bounds.x < 0) bounds.x = 0;
-      if (bounds.x > 1000 - bounds.width) bounds.x = 1000 - bounds.width;
+      if (bounds.x > 1000 - bounds.w) bounds.x = 1000 - bounds.w;
 
       if (o != bounds.x) return BoundsChanged;
 

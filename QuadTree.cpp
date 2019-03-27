@@ -4,7 +4,7 @@
 //** QuadTree **//
 QuadTree::QuadTree() : QuadTree({}, 0, 0) { }
 QuadTree::QuadTree(const QuadTree &other) : QuadTree(other.bounds, other.capacity, other.maxLevel) { }
-QuadTree::QuadTree(const Rect &_bound, unsigned _capacity, unsigned _maxLevel) :
+QuadTree::QuadTree(const V4 &_bound, unsigned _capacity, unsigned _maxLevel) :
   bounds(_bound),
   capacity(_capacity),
   maxLevel(_maxLevel) {
@@ -60,7 +60,7 @@ bool QuadTree::update(Collidable *obj) {
 }
 
 // Searches quadtree for objects within the provided boundary and returns them in vector
-std::vector<Collidable*> &QuadTree::getObjectsInBound(const Rect &bound) {
+std::vector<Collidable*> &QuadTree::getObjectsInBound(const V4 &bound) {
   foundObjects.clear();
   for (const auto &obj : objects) {
     // Only check for intersection with OTHER boundaries
@@ -117,8 +117,8 @@ void QuadTree::clear() noexcept {
 
 // Subdivides into four quadrants
 void QuadTree::subdivide() {
-  double width = bounds.width  * 0.5f;
-  double height = bounds.height * 0.5f;
+  double width  = bounds.w  * 0.5f;
+  double height = bounds.h * 0.5f;
   double x = 0, y = 0;
   for (unsigned i = 0; i < 4; ++i) {
     switch (i) {
@@ -147,11 +147,11 @@ void QuadTree::discardEmptyBuckets() {
 }
 
 // Returns child that contains the provided boundary
-QuadTree *QuadTree::getChild(const Rect &bound) const noexcept {
-  bool left  = bound.x + bound.width < bounds.getRight();
+QuadTree *QuadTree::getChild(const V4 &bound) const noexcept {
+  bool left  = bound.x + bound.w < bounds.getRight();
   bool right = bound.x > bounds.getRight();
 
-  if (bound.y + bound.height < bounds.getTop()) {
+  if (bound.y + bound.h < bounds.getTop()) {
     if (left)  return children[1]; // Top left
     if (right) return children[0]; // Top right
   } else if (bound.y > bounds.getTop()) {

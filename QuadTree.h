@@ -7,7 +7,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "Rect.h"
+#include "Math.h"
 
 class  QuadTree;
 struct Collidable;
@@ -16,7 +16,7 @@ struct Collidable {
   friend class QuadTree;
 
 public:
-  virtual Rect * getBounds () { return nullptr; }
+  virtual V4 * getBounds () { return nullptr; }
 
 private:
   QuadTree *qt = nullptr;
@@ -24,14 +24,14 @@ private:
 
 class QuadTree {
 public:
-  QuadTree(const Rect &_bound, unsigned _capacity, unsigned _maxLevel);
+  QuadTree(const V4 &_bound, unsigned _capacity, unsigned _maxLevel);
   QuadTree(const QuadTree&);
   QuadTree();
 
   bool insert(Collidable *obj);
   bool remove(Collidable *obj);
   bool update(Collidable *obj);
-  std::vector<Collidable*> &getObjectsInBound(const Rect &bound);
+  std::vector<Collidable*> &getObjectsInBound(const V4 &bound);
   unsigned totalChildren() const noexcept;
   unsigned totalObjects() const noexcept;
   void clear() noexcept;
@@ -42,14 +42,14 @@ private:
   unsigned  level  = 0;
   unsigned  capacity;
   unsigned  maxLevel;
-  Rect      bounds;
+  V4        bounds;
   QuadTree* parent = nullptr;
   QuadTree* children[4] = { nullptr, nullptr, nullptr, nullptr };
   std::vector<Collidable*> objects, foundObjects;
 
   void subdivide();
   void discardEmptyBuckets();
-  inline QuadTree *getChild(const Rect &bound) const noexcept;
+  inline QuadTree *getChild(const V4 &bound) const noexcept;
 };
 
 #endif // QUADTREE_H

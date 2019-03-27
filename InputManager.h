@@ -2,6 +2,7 @@
 #define INPUTMANAGER_H
 
 #include <SDL2/SDL.h>
+#include <bitset>
 
 enum Input
 { MoveLeft, MoveRight

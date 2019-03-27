@@ -34,7 +34,7 @@ void Brick::render(SDL_Renderer* rend)
   SDL_RenderFillRect(rend, rect.get());
 }
 
-Rect * Brick::getBounds()
+V4 * Brick::getBounds()
 {
   return &rect;
 }
