@@ -25,7 +25,7 @@ public:
   void        render(SDL_Renderer* r);
   V4 *        getBounds();
   LogicResult logic(double, Game*);
-  void        onHit();
+  void        onHit(Game*);
 };
 
 #endif // BRICK_H

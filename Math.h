@@ -56,6 +56,7 @@ struct V4
   double getTop() const noexcept;
   double getRight() const noexcept;
   double getBottom() const noexcept;
+  V2     getCenter() const noexcept;
 
   SDL_Rect * get();
 

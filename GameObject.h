@@ -27,7 +27,7 @@ class GameObject : public Collidable {
       ( SDL_Renderer * r
       ) {}
 
-    virtual void onHit () {}
+    virtual void onHit (Game *) {}
 
 };
 

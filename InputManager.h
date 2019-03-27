@@ -9,6 +9,7 @@ enum Input
 { MoveLeft, MoveRight
 , Quit
 , ReleaseBall
+, FireRocket
 
 , NUM_ITEMS
 };

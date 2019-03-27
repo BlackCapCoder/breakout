@@ -56,7 +56,7 @@ class Ball : public GameObject {
 
         std::vector<Collidable*> os = g->qt->getObjectsInBound(V4 {x-radius, y-radius, radius*2, radius*2});
         if (!os.empty()) {
-          for (auto obj : os) static_cast<GameObject*>(obj)->onHit();
+          for (auto obj : os) static_cast<GameObject*>(obj)->onHit(g);
           GameObject * obj = static_cast<GameObject*>(os[0]);
           V4 b = *(obj->getBounds());
 

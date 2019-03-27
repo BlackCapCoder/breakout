@@ -5,7 +5,7 @@
 // ------------------ Utils
 
 double randDouble () {
-  std::srand(std::time(nullptr));
+  // std::srand(std::time(nullptr));
   return (double) std::rand() / RAND_MAX;
 }
 
@@ -69,6 +69,10 @@ double V4::getLeft()   const noexcept { return x - (w * 0.5f); }
 double V4::getTop()    const noexcept { return y + (h * 0.5f); }
 double V4::getRight()  const noexcept { return x + (w * 0.5f); }
 double V4::getBottom() const noexcept { return y - (h * 0.5f); }
+
+V2 V4::getCenter() const noexcept {
+  return V2 { x + w/2, y + h/2 };
+}
 
 SDL_Rect * V4::get()
 {

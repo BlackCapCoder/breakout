@@ -39,6 +39,7 @@ int main ([[maybe_unused]]int argc, [[maybe_unused]]const char *argv[]) {
     , SDLK_d      , MoveRight
 
     , SDLK_SPACE  , ReleaseBall
+    , SDLK_f      , FireRocket
 
     , SDLK_ESCAPE , Quit
     );

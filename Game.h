@@ -126,6 +126,9 @@ class Game {
       return false;
     }
 
+    int getWidth  () { return w; }
+    int getHeight () { return h; }
+
 };
 
 #endif // GAME_H

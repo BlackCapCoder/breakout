@@ -1,4 +1,8 @@
+#include <cstdlib>
+
 #include "Brick.h"
+#include "Upgrade.h"
+
 
 Brick::Brick(float width, float height, float x_coord, float y_coord)
   : rect{x_coord, y_coord, width, height}
@@ -44,7 +48,11 @@ LogicResult Brick::logic (double, Game *)
   return removed? Remove : None;
 }
 
-void Brick::onHit ()
+void Brick::onHit (Game * g)
 {
+  if (std::rand() % 5 == 0) {
+    g->addObject(new Upgrade {rect.getCenter()});
+  }
+
   removed = true;
 }
