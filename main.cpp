@@ -1,5 +1,4 @@
 #include <vector>
-#include <algorithm>
 
 #include "Game.h"
 #include "Paddle.h"
@@ -34,24 +33,15 @@ int main ([[maybe_unused]]int argc, [[maybe_unused]]const char *argv[]) {
   const int w = (1000 - 2*horMarg - space*ncols) / ncols;
   const int h = 30;
 
-  std::vector<Brick> bs{};
-  // Brick bs[nrows*ncols];
+  std::array<Brick, nrows * ncols> bs{};
 
-  for (int i{}; i != nrows * ncols; ++i) {
+  for (int i{}; i < nrows*ncols; i++) {
     int x = i % ncols;
     int y = i / ncols;
-    bs.emplace_back(Brick{ w, h, horMarg + (float)x * (w + space),
-                           verMarg + (float)y * (h + space) });
-    bs.at(i).setColor(i * 80, 90 + i * 50, 255, 255);
-    g.addObject(&bs.at(i));
+    bs[i] = Brick{w, h, horMarg + (float)x*(w+space), verMarg + (float)y*(h+space)};
+    bs[i].setColor(i * 80, 90 + i * 50, 255, 255);
+    g.addObject(&bs[i]);
   }
-
-  // for (int i = 0; i < nrows*ncols; i++) {
-  //   int x = i % ncols, y = i / ncols;
-  //   bs[i] = Brick{w, h, horMarg + (float)x*(w+space), verMarg + (float)y*(h+space)};
-  //   bs[i].setColor(i * 80, 90 + i * 50, 255, 255);
-  //   g.addObject(&bs[i]);
-  // }
 
   while (g.tick());
   g.dispose();
