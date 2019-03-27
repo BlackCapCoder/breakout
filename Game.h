@@ -20,9 +20,9 @@ class Game {
     SDL_Window    * wndw = nullptr;
     SDL_Renderer  * rend = nullptr;
     std::vector<GameObject*> objs{};
+    int fps;
 
     std::chrono::system_clock::time_point lastTick;
-    const int fps = 60;
     bool shouldQuit = false;
 
 
@@ -55,12 +55,13 @@ class Game {
     QuadTree     * qt = nullptr;
     InputManager * im = nullptr;
 
-    Game (int w, int h, InputManager * im) {
+    Game (int w, int h, InputManager * im, int fps = 60) {
       this->w  = w;
       this->h  = h;
       this->im = im;
       this->qt = new QuadTree({0, 0, (double) w, (double) h}, 100, 4);
       this->lastTick = std::chrono::system_clock::now();
+      this->fps = fps;
 
       SDL_Init (SDL_INIT_VIDEO);
 
@@ -78,7 +79,7 @@ class Game {
     }
 
     bool tick () {
-      im->Tick();
+      im->tick();
 
       auto tick  = std::chrono::system_clock::now();
       auto delta = std::chrono::duration<double, std::milli>(tick - lastTick).count();

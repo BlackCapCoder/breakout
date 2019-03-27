@@ -6,17 +6,6 @@
 #include "Brick.h"
 #include "Ball.h"
 
-#define NUM_KEYBINDS 5
-
-int keybinds[2 * NUM_KEYBINDS] =
-  { SDLK_h      , MoveLeft
-  , SDLK_a      , MoveLeft
-
-  , SDLK_l      , MoveRight
-  , SDLK_d      , MoveRight
-
-  , SDLK_ESCAPE , Quit
-  };
 
 auto createBricks(Game& game)
 {
@@ -42,9 +31,19 @@ auto createBricks(Game& game)
 }
 
 int main ([[maybe_unused]]int argc, [[maybe_unused]]const char *argv[]) {
-  InputManager im = InputManager (keybinds, NUM_KEYBINDS);
+  InputManager im = InputManager
+    ( SDLK_h      , MoveLeft
+    , SDLK_a      , MoveLeft
 
-  Game   g{ 1000, 1000, &im };
+    , SDLK_l      , MoveRight
+    , SDLK_d      , MoveRight
+
+    , SDLK_SPACE  , ReleaseBall
+
+    , SDLK_ESCAPE , Quit
+    );
+
+  Game   g{ 1000, 1000, &im, 60 };
   Paddle p{};
   Ball   b{};
 

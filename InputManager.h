@@ -4,29 +4,36 @@
 #include <SDL2/SDL.h>
 #include <bitset>
 
+
 enum Input
 { MoveLeft, MoveRight
 , Quit
+, ReleaseBall
 
 , NUM_ITEMS
 };
 
 
 class InputManager {
+  using KeyT = unsigned char; // Should be int, but I'm stingy
+
   private:
-    int  * keybinds;
-    bool * keyDown;
-    int    numKeybinds;
-    char   active[NUM_ITEMS] = { 0 };
+    KeyT * keybinds;
+    unsigned int  numKeybinds;
+    unsigned char active[NUM_ITEMS] = { 0 };
+    std::bitset< 256 << (sizeof(KeyT) - 1) > keyDown;
 
   public:
-    InputManager (int * keybinds = {}, int numKeybinds = 0) {
-      this->keybinds    = keybinds;
-      this->numKeybinds = numKeybinds;
-      keyDown = (bool *) malloc (numKeybinds);
+    template <typename... Args>
+    InputManager (Args... args) {
+      numKeybinds = sizeof...(args);
+      KeyT kbs[numKeybinds]{ (KeyT) args... };
+      keybinds = (KeyT *) malloc (numKeybinds * sizeof (KeyT));
+      memcpy (keybinds, kbs, numKeybinds * sizeof (KeyT));
     }
 
-    bool Tick (void) {
+
+    bool tick (void) {
       auto ev  = SDL_Event{};
       bool ret = false;
 
@@ -36,8 +43,8 @@ class InputManager {
         for (int i = 0; i < numKeybinds*2; i+=2) {
           if (ev.key.keysym.sym != keybinds[i]) continue;
           bool down = ev.type == SDL_KEYDOWN;
-          if (keyDown[ev.key.keysym.sym] == down) continue;
-          keyDown[ev.key.keysym.sym] = down;
+          if (keyDown.test(ev.key.keysym.sym) == down) continue;
+          keyDown.set(ev.key.keysym.sym, down);
           active[keybinds[i+1]] += down? 1 : -1;
           ret = true;
           break;
@@ -48,7 +55,7 @@ class InputManager {
     }
 
     void dispose () {
-      free (this->keyDown);
+      free (keybinds);
     }
 
     inline bool isDown () { return false; }
