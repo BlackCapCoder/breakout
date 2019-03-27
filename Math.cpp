@@ -1,4 +1,13 @@
+#include <ctime>
 #include "Math.h"
+
+
+// ------------------ Utils
+
+double randDouble () {
+  std::srand(std::time(nullptr));
+  return (double) std::rand() / RAND_MAX;
+}
 
 
 // ------------------ V2
@@ -18,7 +27,11 @@ V2 operator/ (const V2 & p, const double & x) { return V2 { p.x / x, p.y / x }; 
 V2 operator^ (const V2 & p, const double & x) { return V2 { std::pow(p.x, x), std::pow(p.y, x) }; }
 
 
-double dot (const V2 & a, const V2 & b) { return a.x * b.x + a.y * b.y; }
+double dot  (const V2 & a, const V2 & b) { return a.x * b.x + a.y * b.y; }
+double dist (const V2 & a, const V2 & b)
+{
+  return std::sqrt (std::pow (b.x - a.x, 2) + std::pow (b.y - a.y, 2));
+}
 
 V2 closestPointPointLine (V2 p, V2 a, V2 b) {
   V2    k = b - p;

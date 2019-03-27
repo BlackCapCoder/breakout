@@ -14,11 +14,14 @@
 
 
 class Ball : public GameObject {
-  double x = 500, y = 500;
+  double x, y;
   double radius = 5;
   double vx = 0.4, vy = 0.4;
 
   public:
+    Ball (double x = 500, double y = 500, double vx = 0.4, double vy = 0.4)
+      : x{x}, y{y}, vx{vx}, vy{vy} {};
+
     LogicResult logic
       ( double dt
       , Game * g

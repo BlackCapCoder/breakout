@@ -45,10 +45,8 @@ int main ([[maybe_unused]]int argc, [[maybe_unused]]const char *argv[]) {
 
   Game   g{ 1000, 1000, &im, 60 };
   Paddle p{};
-  Ball   b{};
 
   g.addObject(&p);
-  g.addObject(&b);
 
   auto bricks = createBricks(g);
 

@@ -72,10 +72,10 @@ class Game {
           , &wndw
           , &rend
           )
-        ) exit(EXIT_FAILURE);
+        ) exit (EXIT_FAILURE);
 
       if (!IMG_Init(IMG_INIT_PNG))
-        exit(EXIT_FAILURE);
+        exit (EXIT_FAILURE);
     }
 
     bool tick () {
@@ -108,9 +108,22 @@ class Game {
     }
 
 
-    void addObject (GameObject * obj) {
+    void addObject (GameObject * obj)
+    {
       if (obj->getBounds() != nullptr) this->qt->insert(obj);
       this->objs.push_back(obj);
+    }
+
+    bool removeObject (GameObject * obj)
+    {
+      for (int i = objs.size()-1; i >= 0; i--) {
+        if (objs[i] != obj) continue;
+        objs.erase(objs.begin() + i);
+        qt->remove(obj);
+        return true;
+      }
+
+      return false;
     }
 
 };
