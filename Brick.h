@@ -1,11 +1,7 @@
 #ifndef BRICK_H
 #define BRICK_H
 
-#include <iostream>
 #include <SDL2/SDL.h>
-
-#include "GameObject.h"
-#include "QuadTree.h"
 #include "Breakout.h"
 
 class Brick : public ColObj<Breakout, ColResult> {

@@ -3,7 +3,6 @@
 #ifndef QUADTREE_H
 #define QUADTREE_H
 
-#include <any>
 #include <vector>
 #include <algorithm>
 

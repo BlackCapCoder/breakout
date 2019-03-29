@@ -10,8 +10,6 @@
 #include <vector>
 #include <ctime>
 
-#include "QuadTree.h"
-#include "InputManager.h"
 #include "GameObject.h"
 #include "CachedVector.h"
 

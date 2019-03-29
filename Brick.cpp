@@ -43,9 +43,14 @@ V4 * Brick::getBounds()
   return &rect;
 }
 
-ColResult Brick::logic (double, InputManager*, Breakout*)
+ColResult Brick::logic (double, InputManager*, Breakout * b)
 {
-  return removed? Remove : None;
+  if (removed) {
+    b->numBricks--;
+    return Remove;
+  }
+
+  return None;
 }
 
 void Brick::onHit (Breakout * g)

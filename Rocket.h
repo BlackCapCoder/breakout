@@ -2,21 +2,23 @@
 #define ROCKET_H
 
 #include "Math.h"
-#include "GameObject.h"
-#include "Breakout.h"
+#include "ColScene.h"
+#include "Particle.h"
 
 
-class Rocket : public GameObject<Breakout, bool> {
+template <class S>
+class Rocket : public GameObject<ColScene<S>, bool> {
   private:
     V2 p;
     const double w = 10;
     const double h = 25;
     const double speed = 1.5;
 
-    void explode (Breakout * g) {
+    void explode (ColScene<S> * g)
+    {
       int n = 10 + std::rand() % 100;
       for (int i = 0; i < n; i++)
-        g->addObject(new Particle<Breakout>
+        g->addObject(new Particle<S>
           ( p.x
           , p.y
           , randDouble() * 2 * M_PI
@@ -29,12 +31,12 @@ class Rocket : public GameObject<Breakout, bool> {
   public:
     Rocket (double x, double y) : p{V2{x, y}} {}
 
-    bool logic (double dt, InputManager * im, Breakout * g)
+    bool logic (double dt, InputManager * im, ColScene<S> * g)
     {
       p.y -= dt * speed;
 
       for (; rand() % 10 > 5;)
-        g->addObject(new Particle<Breakout>
+        g->addObject(new Particle<S>
           ( p.x
           , p.y
           , randDouble() * M_PI * 0.8 + 0.2 * M_PI
@@ -46,8 +48,8 @@ class Rocket : public GameObject<Breakout, bool> {
       V4 r {p.x-w/2, p.y-h/2, w, h};
       bool hit = false;
 
-      for (auto o : g->getObjectsInBound(r)) {
-        o->onHit(g);
+      for (ColObj<S, ColResult> * o : g->getObjectsInBound(r)) {
+        o->onHit((S *) g);
         hit = true;
       }
 

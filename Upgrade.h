@@ -3,8 +3,8 @@
 
 #include <cstdlib>
 #include <vector>
+
 #include "GameObject.h"
-#include "QuadTree.h"
 #include "Math.h"
 #include "Paddle.h"
 #include "Breakout.h"
@@ -17,7 +17,6 @@ enum UpgradeType {
 
   NUM_UPGRADES
 };
-
 
 class Upgrade : public GameObject<Breakout, bool> {
   private:
@@ -37,10 +36,9 @@ class Upgrade : public GameObject<Breakout, bool> {
       p.y += dt * 0.3;
 
       V4 r{p.x-size/2, p.y-size/2, size, size};
+      Paddle<Breakout> * pad = &g->paddle;
 
-      for (auto o: g->getObjectsInBound(r)) {
-        Paddle * pad = dynamic_cast<Paddle*>(o);
-        if (pad == nullptr) continue;
+      if (pad->bounds.intersects(r)) {
         switch (type) {
           case (SizeUp):
             pad->bounds.x -= sizeInc/2;

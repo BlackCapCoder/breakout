@@ -1,35 +1,8 @@
 #include <vector>
 
 #include "Game.h"
-#include "Paddle.h"
-#include "InputManager.h"
-#include "Brick.h"
-#include "Ball.h"
 #include "Breakout.h"
 
-
-auto createBricks(Breakout * game)
-{
-  const int horMarg = 50;
-  const int verMarg = 50;
-  const int space   = 20;
-  const int ncols   = 10;
-  const int nrows   = 7;
-  const int w       = (1000 - 2*horMarg - space*ncols) / ncols;
-  const int h       = 30;
-
-  std::array<Brick, nrows * ncols> bs{};
-
-  for (int i{}; i < nrows*ncols; i++) {
-    int x = i % ncols;
-    int y = i / ncols;
-    bs[i] = Brick{w, h, horMarg + (float)x*(w+space), verMarg + (float)y*(h+space)};
-    bs[i].setColor(i * 80, 90 + i * 50, 255, 255);
-    game->addObject(&bs[i], false);
-  }
-
-  return bs;
-}
 
 int main ([[maybe_unused]]int argc, [[maybe_unused]]const char *argv[]) {
   InputManager im = InputManager
@@ -45,11 +18,8 @@ int main ([[maybe_unused]]int argc, [[maybe_unused]]const char *argv[]) {
     , SDLK_ESCAPE , Quit
     );
 
-  Game g{ 1000, 1000, &im, 60 };
-  auto b = g.setScene<Breakout>();
-  b->addObject<Paddle>();
-
-  auto bricks = createBricks(b);
+  Game g { 1000, 1000, &im, 60 };
+  g.setScene<Breakout>();
 
   while (g.tick());
   g.dispose();
