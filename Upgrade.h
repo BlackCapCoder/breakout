@@ -7,6 +7,7 @@
 #include "QuadTree.h"
 #include "Math.h"
 #include "Paddle.h"
+#include "Breakout.h"
 
 
 enum UpgradeType {
@@ -18,7 +19,7 @@ enum UpgradeType {
 };
 
 
-class Upgrade : public GameObject {
+class Upgrade : public GameObject<Breakout, bool> {
   private:
     V2 p;
     UpgradeType type;
@@ -26,17 +27,18 @@ class Upgrade : public GameObject {
     const double sizeInc = 50;
 
   public:
-    Upgrade (V2 p) : p{p} {
+    Upgrade (V2 p) : p{p}
+    {
       type = (UpgradeType) (std::rand() % NUM_UPGRADES);
     }
 
-    LogicResult logic (double dt, Game * g)
+    bool logic (double dt, InputManager * im, Breakout * g)
     {
       p.y += dt * 0.3;
 
       V4 r{p.x-size/2, p.y-size/2, size, size};
 
-      for (auto o: g->qt->getObjectsInBound(r)) {
+      for (auto o: g->getObjectsInBound(r)) {
         Paddle * pad = dynamic_cast<Paddle*>(o);
         if (pad == nullptr) continue;
         switch (type) {
@@ -52,14 +54,14 @@ class Upgrade : public GameObject {
             pad->nrockets += 5;
             break;
         }
-        return Remove;
+        return true;
       }
 
       if (!V4 {0, 0, (double) g->getWidth(), (double) g->getHeight()}.contains(r)) {
-        return Remove;
+        return true;
       }
 
-      return None;
+      return false;
     }
 
     void render (SDL_Renderer * rend)

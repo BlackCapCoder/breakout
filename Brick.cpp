@@ -43,16 +43,17 @@ V4 * Brick::getBounds()
   return &rect;
 }
 
-LogicResult Brick::logic (double, Game *)
+ColResult Brick::logic (double, InputManager*, Breakout*)
 {
   return removed? Remove : None;
 }
 
-void Brick::onHit (Game * g)
+void Brick::onHit (Breakout * g)
 {
   if (std::rand() % 5 == 0) {
-    g->addObject(new Upgrade {rect.getCenter()});
+    g->addObject(new Upgrade {rect.getCenter()}, true);
   }
 
   removed = true;
 }
+

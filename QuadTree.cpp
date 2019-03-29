@@ -14,7 +14,7 @@ QuadTree::QuadTree(const V4 &_bound, unsigned _capacity, unsigned _maxLevel) :
 
 // Inserts an object into this quadtree
 bool QuadTree::insert(Collidable *obj) {
-  if (obj->qt != nullptr) return false;
+  if (obj == nullptr || obj->qt != nullptr) return false;
 
   if (!isLeaf) {
     // insert object into leaf
@@ -34,7 +34,7 @@ bool QuadTree::insert(Collidable *obj) {
 
 // Removes an object from this quadtree
 bool QuadTree::remove(Collidable *obj) {
-  if (obj->qt == nullptr) return false; // Cannot exist in vector
+  if (obj == nullptr || obj->qt == nullptr) return false; // Cannot exist in vector
   if (obj->qt != this) return obj->qt->remove(obj);
 
   objects.erase(std::find(objects.begin(), objects.end(), obj));

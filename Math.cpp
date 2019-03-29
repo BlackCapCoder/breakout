@@ -1,11 +1,9 @@
-#include <ctime>
 #include "Math.h"
 
 
 // ------------------ Utils
 
 double randDouble () {
-  // std::srand(std::time(nullptr));
   return (double) std::rand() / RAND_MAX;
 }
 

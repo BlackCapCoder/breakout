@@ -9,39 +9,40 @@
 #include "Math.h"
 #include "Ball.h"
 #include "Rocket.h"
+#include "Breakout.h"
 
 
-class Paddle : public GameObject {
+class Paddle : public ColObj<Breakout, ColResult> {
   private:
     bool didReleaseBall = false;
     bool didFire        = false;
 
   public:
     unsigned char nballs   = 1;
-    unsigned int  nrockets = 0;
+    unsigned int  nrockets = 5;
     V4 bounds{(1000 - 200)/2, 930, 200, 30};
 
     V4 * getBounds () { return &bounds; }
 
-    LogicResult logic (double tick, Game * g)
+    ColResult logic (double tick, InputManager * im, Breakout * g)
     {
       float o = bounds.x;
-      if (g->im->isDown(MoveLeft )) bounds.x -= tick * 1.5;
-      if (g->im->isDown(MoveRight)) bounds.x += tick * 1.5;
+      if (im->isDown(MoveLeft )) bounds.x -= tick * 1.5;
+      if (im->isDown(MoveRight)) bounds.x += tick * 1.5;
       if (bounds.x < 0) bounds.x = 0;
       if (bounds.x > 1000 - bounds.w) bounds.x = 1000 - bounds.w;
 
-      if (g->im->isDown(ReleaseBall) != didReleaseBall) {
+      if (im->isDown(ReleaseBall) != didReleaseBall) {
         didReleaseBall = !didReleaseBall;
-        if (g->im->isDown(ReleaseBall) && nballs > 0) {
+        if (im->isDown(ReleaseBall) && nballs > 0) {
           g->addObject(new Ball(bounds.x+bounds.w/2, bounds.y-5, (randDouble()-0.5), (randDouble()/2+0.5) * -0.5));
           nballs--;
         }
       }
 
-      if (g->im->isDown(FireRocket) != didFire) {
+      if (im->isDown(FireRocket) != didFire) {
         didFire = !didFire;
-        if (g->im->isDown(FireRocket) && nrockets > 0) {
+        if (im->isDown(FireRocket) && nrockets > 0) {
           g->addObject(new Rocket(bounds.x+bounds.w/2, bounds.y-5));
           nrockets--;
         }
