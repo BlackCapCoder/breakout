@@ -30,7 +30,7 @@ class Paddle : public ColObj<Breakout, ColResult> {
       if (im->isDown(MoveLeft )) bounds.x -= tick * 1.5;
       if (im->isDown(MoveRight)) bounds.x += tick * 1.5;
       if (bounds.x < 0) bounds.x = 0;
-      if (bounds.x > 1000 - bounds.w) bounds.x = 1000 - bounds.w;
+      if (bounds.x > g->getWidth() - bounds.w) bounds.x = g->getWidth() - bounds.w;
 
       if (im->isDown(ReleaseBall) != didReleaseBall) {
         didReleaseBall = !didReleaseBall;

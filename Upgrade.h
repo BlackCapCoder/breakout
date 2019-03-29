@@ -57,11 +57,7 @@ class Upgrade : public GameObject<Breakout, bool> {
         return true;
       }
 
-      if (!V4 {0, 0, (double) g->getWidth(), (double) g->getHeight()}.contains(r)) {
-        return true;
-      }
-
-      return false;
+      return !g->getBounds()->contains(r);
     }
 
     void render (SDL_Renderer * rend)
@@ -80,7 +76,6 @@ class Upgrade : public GameObject<Breakout, bool> {
 
       SDL_RenderFillRect (rend, V4 { p.x-size/2, p.y-size/2, size, size }.get());
     }
-
 };
 
 

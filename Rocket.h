@@ -31,8 +31,6 @@ class Rocket : public GameObject<Breakout, bool> {
 
     bool logic (double dt, InputManager * im, Breakout * g)
     {
-      bool hit = false;
-
       p.y -= dt * speed;
 
       for (; rand() % 10 > 5;)
@@ -45,8 +43,10 @@ class Rocket : public GameObject<Breakout, bool> {
           , rand()%600+200
           ), true);
 
+      V4 r {p.x-w/2, p.y-h/2, w, h};
+      bool hit = false;
 
-      for (auto o : g->getObjectsInBound(V4 { p.x-w/2, p.y-h/2, w, h })) {
+      for (auto o : g->getObjectsInBound(r)) {
         o->onHit(g);
         hit = true;
       }
@@ -56,11 +56,7 @@ class Rocket : public GameObject<Breakout, bool> {
         return true;
       }
 
-      if (!V4 {0, 0, (double) g->getWidth(), (double) g->getHeight()}.contains(V4 { p.x-w/2, p.y-h/2, w, h })) {
-        return true;
-      }
-
-      return false;
+      return !g->getBounds()->contains(r);
     }
 
     void render (SDL_Renderer * rend)
@@ -68,7 +64,6 @@ class Rocket : public GameObject<Breakout, bool> {
       SDL_SetRenderDrawColor (rend, 255, 255, 255, 1);
       SDL_RenderFillRect (rend, V4 { p.x-w/2, p.y-h/2, w, h }.get());
     }
-
 };
 
 #endif // ifndef ROCKET_H

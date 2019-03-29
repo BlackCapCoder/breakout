@@ -14,7 +14,6 @@
 #include "InputManager.h"
 #include "GameObject.h"
 #include "CachedVector.h"
-#include "Scene.h"
 
 
 class Game {
@@ -49,16 +48,19 @@ class Game {
     }
 
   public:
-    Game (int w, int h, InputManager * im, int fps = 60) {
+    Game (int w, int h, InputManager * im, int fps = 60)
+    {
       this->w  = w;
       this->h  = h;
       this->im = im;
       this->lastTick = std::chrono::system_clock::now();
       this->fps = fps;
+
       init ();
     }
 
-    bool tick () {
+    bool tick ()
+    {
       auto tick  = std::chrono::system_clock::now();
       auto delta = std::chrono::duration<double, std::milli>(tick - lastTick).count();
 
@@ -67,7 +69,7 @@ class Game {
 
         SDL_SetRenderDrawColor (rend, 0, 0, 0, 255);
         SDL_RenderClear(rend);
-        s->tick(delta, rend, im);
+        (void) s->tick(delta, rend, im, nullptr);
         SDL_RenderPresent (rend);
 
         lastTick = tick;
@@ -88,13 +90,18 @@ class Game {
       SDL_DestroyWindow   (wndw);
     }
 
-    inline int getWidth  () { return w; }
-    inline int getHeight () { return h; }
+    inline int getWidth  ()   { return w; }
+    inline int getHeight ()   { return h; }
+    void setScene (Scene * s) { this->s = s; }
 
-    void setScene (Scene * s) {
-      s->init(w,h);
-      this->s = s;
+    template <class S>
+    S * setScene ()
+    {
+      S * s = new S (w, h);
+      setScene(s);
+      return s;
     }
+
 };
 
 #endif // GAME_H

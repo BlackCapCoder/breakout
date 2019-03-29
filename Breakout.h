@@ -5,18 +5,11 @@
 #include <vector>
 #include <iostream>
 
-#include "Scene.h"
 #include "GameObject.h"
 #include "QuadTree.h"
 #include "CachedVector.h"
 #include "Either.h"
 
-
-enum ColResult {
-  None          = 0,
-  BoundsChanged = 1,
-  Remove        = 2,
-};
 
 template <class S, class R>
 struct ColObj : public GameObject<S,R>, public Collidable
@@ -25,8 +18,14 @@ struct ColObj : public GameObject<S,R>, public Collidable
     virtual void onHit (S *) {}
 };
 
+enum ColResult {
+  None          = 0,
+  BoundsChanged = 1,
+  Remove        = 2,
+};
 
-class Breakout : public Scene
+
+class Breakout : public ColObj<void, void>
 {
   private:
     using St   = Breakout;
@@ -38,23 +37,23 @@ class Breakout : public Scene
     DualCachedVector<Box> objs;
     std::vector<CObj*> qtbuf;
 
-    int w, h;
+    V4 bounds;
 
   public:
-    void init (int w, int h)
+    Breakout (int w, int h) : bounds{V4{0, 0, (double) w, (double) h}}
     {
-      this->qt = new QuadTree({0, 0, (double) w, (double) h}, 100, 4);
-      this->w = w;
-      this->h = h;
+      this->qt = new QuadTree (bounds, 100, 4);
     }
 
-    int getWidth  () { return w; }
-    int getHeight () { return h; }
+    V4 * getBounds () { return &bounds; }
+    int  getWidth  () { return bounds.w; }
+    int  getHeight () { return bounds.h; }
 
     void tick
       ( double dt
       , SDL_Renderer * rend
       , InputManager * im
+      , void *
       )
     {
       objs.flush ();
@@ -101,6 +100,7 @@ class Breakout : public Scene
     }
     void addObject (Obj  * obj, bool front = true) { addObject (Box{obj}, front); }
     void addObject (CObj * obj, bool front = true) { addObject (Box{obj}, front); }
+    template <class O> void addObject (bool front = true) { addObject(new O(), front); }
 
     void clear ()
     {
