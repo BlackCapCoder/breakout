@@ -11,17 +11,34 @@
 class  QuadTree;
 struct Collidable;
 
-struct Collidable {
+struct Collidable
+{
   friend class QuadTree;
-
-public:
-  virtual V4 * getBounds () { return nullptr; }
 
 private:
   QuadTree *qt = nullptr;
+
+public:
+  virtual V4 * getBounds () { return nullptr; }
 };
 
-class QuadTree {
+class QuadTree
+{
+private:
+  bool      isLeaf = true;
+  unsigned  level  = 0;
+  unsigned  capacity;
+  unsigned  maxLevel;
+  V4        bounds;
+  QuadTree* parent = nullptr;
+  QuadTree* children[4] = { nullptr, nullptr, nullptr, nullptr };
+  std::vector<Collidable*> objects, foundObjects;
+
+private:
+  void subdivide();
+  void discardEmptyBuckets();
+  inline QuadTree *getChild(const V4 &bound) const noexcept;
+
 public:
   QuadTree(const V4 &_bound, unsigned _capacity, unsigned _maxLevel);
   QuadTree(const QuadTree&);
@@ -36,19 +53,6 @@ public:
   void clear() noexcept;
 
   ~QuadTree();
-private:
-  bool      isLeaf = true;
-  unsigned  level  = 0;
-  unsigned  capacity;
-  unsigned  maxLevel;
-  V4        bounds;
-  QuadTree* parent = nullptr;
-  QuadTree* children[4] = { nullptr, nullptr, nullptr, nullptr };
-  std::vector<Collidable*> objects, foundObjects;
-
-  void subdivide();
-  void discardEmptyBuckets();
-  inline QuadTree *getChild(const V4 &bound) const noexcept;
 };
 
 #endif // QUADTREE_H

@@ -1,16 +1,14 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
 
-#include <SDL2/SDL.h>
-#include <cmath>
-#include <vector>
-
 #include "GameObject.h"
 #include "Math.h"
 
 
 template <class S>
-class Particle : public GameObject<S, bool> {
+class Particle : public GameObject<S, bool>
+{
+private:
   double angle, velocity;
   double r=255,g,b;
   double radius;
@@ -49,7 +47,6 @@ public:
     SDL_SetRenderDrawColor (rnd, r-64*k, k*64, k*255, 0);
     SDL_RenderFillRect     (rnd, bounds.get());
   }
-
 };
 
 #endif // PARTICLE_H

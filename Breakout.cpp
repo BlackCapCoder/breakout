@@ -37,3 +37,28 @@ void Breakout::createBricks()
   numBricks = nrows*ncols;
 }
 
+void Breakout::tick
+  ( double dt
+  , SDL_Renderer * rend
+  , InputManager * im
+  , void         * ptr
+  )
+{
+  if (numBricks <= 0) {
+    std::cout << "You Win!" << std::endl;
+    exit (0);
+  } else {
+    ColScene<Breakout>::tick(dt, rend, im, ptr);
+  }
+}
+
+
+void Breakout::onBallLost ()
+{
+  numBalls--;
+
+  if (numBalls == 0 && spareBalls == 0) {
+    std::cout << "Game over!" << std::endl;
+    exit (0);
+  }
+}

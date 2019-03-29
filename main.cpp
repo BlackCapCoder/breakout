@@ -4,7 +4,8 @@
 #include "Breakout.h"
 
 
-int main ([[maybe_unused]]int argc, [[maybe_unused]]const char *argv[]) {
+int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
+{
   InputManager im = InputManager
     ( SDLK_h      , MoveLeft
     , SDLK_a      , MoveLeft
@@ -23,5 +24,6 @@ int main ([[maybe_unused]]int argc, [[maybe_unused]]const char *argv[]) {
 
   while (g.tick());
   g.dispose();
+
   return 0;
 }

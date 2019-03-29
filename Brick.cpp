@@ -11,8 +11,7 @@ Brick::Brick(float width, float height, float x_coord, float y_coord)
   , b{0}
   , a{0}
   , removed{false}
-{
-}
+{}
 
 Brick::Brick()
   : rect{0, 0, 0, 0}
@@ -21,8 +20,7 @@ Brick::Brick()
   , b{0}
   , a{0}
   , removed{false}
-{
-}
+{}
 
 void Brick::setColor(float r, float g, float b, float a)
 {

@@ -11,60 +11,62 @@ enum Input
 , ReleaseBall
 , FireRocket
 
-, NUM_ITEMS
+, NUM_INPUTS
 };
 
 
-class InputManager {
-  using KeyT = unsigned char; // Should be int, but I'm stingy
+class InputManager
+{
+private:
+  using KeyT = unsigned char; // sizeof(KeyT) should be 4, but I'm stingy
 
-  private:
-    KeyT * keybinds;
-    unsigned int  numKeybinds;
-    unsigned char active[NUM_ITEMS] = { 0 };
-    std::bitset< 256 << (sizeof(KeyT) - 1) > keyDown;
+  KeyT * keybinds;
+  unsigned int  numKeybinds;
+  unsigned char active[NUM_INPUTS] = { 0 };
+  std::bitset< 256 << (sizeof(KeyT) - 1) > keyDown;
 
-  public:
-    template <typename... Args>
-    InputManager (Args... args) {
-      numKeybinds = sizeof...(args);
-      KeyT kbs[numKeybinds]{ (KeyT) args... };
-      keybinds = (KeyT *) malloc (numKeybinds * sizeof (KeyT));
-      memcpy (keybinds, kbs, numKeybinds * sizeof (KeyT));
-    }
+public:
+  template <typename... Args>
+  InputManager (Args... args)
+  {
+    numKeybinds = sizeof...(args);
+    KeyT kbs[numKeybinds]{ (KeyT) args... };
+    keybinds = (KeyT *) malloc (numKeybinds * sizeof (KeyT));
+    memcpy (keybinds, kbs, numKeybinds * sizeof (KeyT));
+  }
 
 
-    bool tick (void) {
-      auto ev  = SDL_Event{};
-      bool ret = false;
+  bool tick (void)
+  {
+    auto ev  = SDL_Event{};
+    bool ret = false;
 
-      while (SDL_PollEvent(&ev)) {
-        if (!(ev.type == SDL_KEYDOWN || ev.type == SDL_KEYUP)) continue;
+    while (SDL_PollEvent(&ev)) {
+      if (!(ev.type == SDL_KEYDOWN || ev.type == SDL_KEYUP)) continue;
 
-        for (int i = 0; i < numKeybinds*2; i+=2) {
-          if (ev.key.keysym.sym != keybinds[i]) continue;
-          bool down = ev.type == SDL_KEYDOWN;
-          if (keyDown.test(ev.key.keysym.sym) == down) continue;
-          keyDown.set(ev.key.keysym.sym, down);
-          active[keybinds[i+1]] += down? 1 : -1;
-          ret = true;
-          break;
-        }
+      for (int i = 0; i < numKeybinds*2; i+=2) {
+        if (ev.key.keysym.sym != keybinds[i]) continue;
+        bool down = ev.type == SDL_KEYDOWN;
+        if (keyDown.test(ev.key.keysym.sym) == down) continue;
+        keyDown.set(ev.key.keysym.sym, down);
+        active[keybinds[i+1]] += down? 1 : -1;
+        ret = true;
+        break;
       }
-
-      return ret;
     }
 
-    void dispose () {
-      free (keybinds);
-    }
+    return ret;
+  }
 
-    inline bool isDown () { return false; }
+  void dispose () { free (keybinds); }
 
-    template <typename... Args>
-    inline bool isDown (Input i, Args... args) {
-      return active[i] > 0 || isDown (args...);
-    }
+  inline bool isDown () { return false; }
+
+  template <typename... Args>
+  inline bool isDown (Input i, Args... args)
+  {
+    return active[i] > 0 || isDown (args...);
+  }
 };
 
 #endif // INPUTMANAGER_H

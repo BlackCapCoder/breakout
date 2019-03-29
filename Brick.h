@@ -1,10 +1,12 @@
 #ifndef BRICK_H
 #define BRICK_H
 
-#include <SDL2/SDL.h>
 #include "Breakout.h"
 
-class Brick : public ColObj<Breakout, ColResult> {
+
+class Brick : public ColObj<Breakout, ColResult>
+{
+private:
   V4    rect;
   float r;
   float g;
@@ -16,7 +18,6 @@ public:
   Brick();
   Brick(float width, float height, float x_coord, float y_coord);
 
-public:
   void      setColor(float r, float g, float b, float a);
   void      render(SDL_Renderer* r);
   V4 *      getBounds();

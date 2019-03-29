@@ -6,7 +6,8 @@ template <class L, class R>
 struct Either
 {
   bool isR;
-  union {
+  union
+  {
     L * l;
     R * r;
   };
