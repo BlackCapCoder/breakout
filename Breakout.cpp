@@ -1,5 +1,3 @@
-#include <array>
-
 #include "Breakout.h"
 #include "Paddle.h"
 #include "Brick.h"
