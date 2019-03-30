@@ -30,20 +30,8 @@ int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
     , SDLK_ESCAPE , Quit
     );
 
-  Game   g{ 1000, 1000, &im, 60 };
-  Paddle p{};
-  Ball   b{};
-
-  Text text{g.getRender(), "Hello", SDL_Color{255,255,255,0}, 24, 100, 400};
-
-  g.addObject(&p);
-  g.addObject(&b);
-
-  auto bricks = createBricks(g);
   Game g { 1000, 1000, &im, 60 };
   g.setScene<MainMenu>();
-
-  g.addObject(&text);
 
   while (g.tick());
   g.dispose();
