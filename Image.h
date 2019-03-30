@@ -12,12 +12,12 @@ private:
   SDL_Rect     rect;
 
 public:
-  explicit Image(SDL_Renderer* r, std::string const& file, int w, int h);
-  ~Image();
+  explicit Image(SDL_Renderer* r, std::string const& file, int w, int h) noexcept;
+  ~Image() noexcept;
 
 public:
-  void render(SDL_Renderer* r);
-  void setSize(int w, int h);
+  void render(SDL_Renderer* r) noexcept;
+  void setSize(int w, int h) noexcept;
 };
 
 #endif // IMAGE_H
