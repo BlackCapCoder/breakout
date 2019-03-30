@@ -53,6 +53,10 @@ void Breakout::tick
   } else {
     ColScene<Breakout>::tick(dt, rend, im, ptr);
   }
+
+  if (im->isDown(PowerMagnet) && magnetCharge > 0) {
+    magnetCharge -= dt;
+  }
 }
 
 
@@ -82,4 +86,14 @@ void Breakout::meteorUpgrade ()
 bool Breakout::meteorActive ()
 {
   return meteorTime > levelTime;
+}
+
+void Breakout::magnetUpgrade ()
+{
+  magnetCharge += magnetUpgrCharge;
+}
+
+bool Breakout::hasMagnet ()
+{
+  return magnetCharge > 0;
 }

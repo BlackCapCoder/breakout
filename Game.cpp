@@ -1,10 +1,9 @@
 #include "Game.h"
+#include <SDL2/SDL_ttf.h>
 
 
 void Game::init ()
 {
-  SDL_Init (SDL_INIT_VIDEO);
-
   if ( SDL_CreateWindowAndRenderer
         ( w
         , h
@@ -12,6 +11,8 @@ void Game::init ()
         , &wndw
         , &rend )
       ) exit (EXIT_FAILURE);
+
+  TTF_Init ();
 
   if (!IMG_Init(IMG_INIT_PNG))
     exit (EXIT_FAILURE);

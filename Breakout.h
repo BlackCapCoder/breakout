@@ -30,13 +30,15 @@ private:
   double             levelTime    = 0;
   char               speedUprades = 0;
   double             meteorTime   = 0;
+  double             magnetCharge = 0;
 
   // Time in seconds for the level speed to double
-  const double speedDoubleRate = 60;
-  const double speedMaxDoubles = 3;
-  const double speedMult       = 0.5;
-  const double speedUpgradePwr = 1.5;
-  const double meteorTimeout   = 30 * 1000;
+  const double speedDoubleRate  = 60;
+  const double speedMaxDoubles  = 3;
+  const double speedMult        = 0.5;
+  const double speedUpgradePwr  = 1.5;
+  const double meteorTimeout    = 30 * 1000;
+  const double magnetUpgrCharge = 10 * 1000;
 
 private:
   void createBricks ();
@@ -52,7 +54,9 @@ public:
   void   onBallLost    ();
   double getLevelSpeed (); // Determines the speed of the balls
   void   meteorUpgrade ();
+  void   magnetUpgrade ();
   bool   meteorActive ();
+  bool   hasMagnet ();
 };
 
 

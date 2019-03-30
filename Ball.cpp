@@ -32,7 +32,7 @@ void Ball::render (SDL_Renderer * r)
 
 bool Ball::logic
   ( double         dt
-  , InputManager *
+  , InputManager * im
   , Breakout     * g  )
 {
   double _x = x, _y = y;
@@ -40,24 +40,33 @@ bool Ball::logic
   x += vx * g->getLevelSpeed() * dt;
   y += vy * g->getLevelSpeed() * dt;
 
-  if (y + radius >= 1000) {
+  if (y + radius >= g->getHeight()) {
     g->onBallLost ();
     return true;
   }
 
-  if (x <= radius) {
-    x = radius;
+  bool magnet = g->hasMagnet() && im->isDown(PowerMagnet);
+  V4 b = *g->getBounds();
+
+  if (magnet) {
+    V4 p = *g->paddle.getBounds();
+    double q = p.x + p.w/2;
+    if (x < q) vx += 0.005 * dt;
+    if (x > q) vx -= 0.005 * dt;
+  }
+
+  if (x <= radius + b.x) {
+    x = radius + b.x;
     vx = -vx;
-  } else if (x + radius >= 1000) {
-    x = 1000 - radius;
+  } else if (x + radius >= b.w + b.x) {
+    x = b.w + b.x - radius;
     vx = -vx;
   }
 
-  if (y <= radius) {
-    y = radius;
+  if (y <= radius + b.y) {
+    y = radius + b.y;
     vy = -vy;
   }
-
 
   if (g->meteorActive()) {
     double a = std::atan2 (vy, vx) / (2 * M_PI) + 0.5;

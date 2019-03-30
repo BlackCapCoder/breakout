@@ -13,19 +13,13 @@ int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
 {
   InputManager im = InputManager
     ( SDLK_h      , MoveLeft
-    , SDLK_a      , MoveLeft
-
     , SDLK_l      , MoveRight
-    , SDLK_d      , MoveRight
-
     , SDLK_j      , MoveDown
-    , SDLK_s      , MoveDown
-
     , SDLK_k      , MoveUp
-    , SDLK_w      , MoveUp
 
     , SDLK_SPACE  , ReleaseBall
     , SDLK_f      , FireRocket
+    , SDLK_d      , PowerMagnet
 
     , SDLK_ESCAPE , Quit
     );
