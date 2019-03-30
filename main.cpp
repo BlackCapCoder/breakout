@@ -5,6 +5,7 @@
 #include "InputManager.h"
 #include "Brick.h"
 #include "Ball.h"
+#include "Text.h"
 
 
 auto createBricks(Game& game)
@@ -47,10 +48,14 @@ int main ([[maybe_unused]]int argc, [[maybe_unused]]const char *argv[]) {
   Paddle p{};
   Ball   b{};
 
+  Text text{g.getRender(), "Hello", SDL_Color{255,255,255,0}, 24, 100, 400};
+
   g.addObject(&p);
   g.addObject(&b);
 
   auto bricks = createBricks(g);
+
+  g.addObject(&text);
 
   while (g.tick());
   g.dispose();
