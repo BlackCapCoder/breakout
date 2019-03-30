@@ -15,6 +15,9 @@ double randDouble (double low, double high);
 double randDouble (V2 range);
 int rand (int low, int high);
 
+double delta (double a, double b);
+int signum(const double x);
+
 // ------------------ V2
 
 struct V2

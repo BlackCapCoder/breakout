@@ -23,6 +23,15 @@ int rand (int low, int high)
   return low + (std::rand() % (high - low));
 }
 
+double delta (double a, double b) {
+  return std::abs(a-b);
+}
+
+int signum(const double x) {
+  return (x != 0) *
+    (1 - (static_cast<int>((*reinterpret_cast<const uint64_t*>(&x)) >> 63) << 1));
+}
+
 
 // ------------------ V2
 

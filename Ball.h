@@ -14,7 +14,6 @@ private:
 
 private:
   V4 getBounds ();
-  void bounce (V4, double _x, double _y, double mult);
 
 public:
   Ball (double x = 500, double y = 500, double vx = 0.4, double vy = 0.4)

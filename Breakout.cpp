@@ -17,11 +17,11 @@ void Breakout::createBricks()
 {
   const int horMarg = 50;
   const int verMarg = 50;
-  const int space   = 20;
+  const int space   = 15;
   const int ncols   = 10;
   const int nrows   = 7;
   const int w       = (getWidth() - 2*horMarg - space*ncols) / ncols;
-  const int h       = 30;
+  const int h       = 40;
 
   bricks.clear();
 
@@ -102,10 +102,10 @@ bool Breakout::hasMagnet ()
   return magnetCharge > 0;
 }
 
-
 void Breakout::shiftDown ()
 {
   for (int i = 0; i < bricks.size(); i++) {
+    if (bricks[i].removed) continue;
     bricks[i].rect.y += 100;
     qt.update(&bricks[i]);
   }
