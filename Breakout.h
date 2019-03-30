@@ -8,7 +8,6 @@
 
 class Brick;
 
-
 class Breakout : public ColScene<Breakout>
 {
   friend class Upgrade;
