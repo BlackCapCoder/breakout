@@ -4,6 +4,8 @@
 
 void Game::init ()
 {
+  SDL_Init (SDL_INIT_VIDEO);
+
   if ( SDL_CreateWindowAndRenderer
         ( w
         , h

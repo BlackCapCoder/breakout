@@ -6,9 +6,11 @@
 
 Breakout::Breakout (int w, int h, Game*)
   : ColScene<Breakout>(w, h)
+  , hud {42}
 {
   addObject(&paddle);
   createBricks();
+  addObject(&hud);
 }
 
 void Breakout::createBricks()
@@ -53,8 +55,8 @@ void Breakout::tick
     ColScene<Breakout>::tick(dt, rend, im, ptr);
   }
 
-  Text t{rend, "hello", SDL_Color{255,255,255,255}, 24, 150, 150};
-  t.render(rend);
+  // Text t{rend, "hello", SDL_Color{255,255,255,255}, 24, 150, 150};
+  // t.render(rend);
 
   if (im->isDown(PowerMagnet) && magnetCharge > 0) {
     magnetCharge -= dt;

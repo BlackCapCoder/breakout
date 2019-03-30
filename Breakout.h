@@ -5,6 +5,7 @@
 #include "ColScene.h"
 #include "Paddle.h"
 #include "Game.h"
+#include "HUD.h"
 
 class Brick;
 
@@ -14,12 +15,14 @@ class Breakout : public ColScene<Breakout>
   friend class Brick;
   friend class Paddle;
   friend class Ball;
+  friend class HUD;
   friend class GameObject <Breakout, bool>;
   friend class ColObj     <Breakout, ColResult>;
 
 
 private:
   Paddle             paddle;
+  HUD                hud;
   std::vector<Brick> bricks;
 
   unsigned short     numBricks;
@@ -37,7 +40,7 @@ private:
   const double speedMult        = 0.5;
   const double speedUpgradePwr  = 1.5;
   const double meteorTimeout    = 10 * 1000;
-  const double magnetUpgrCharge = 10 * 1000;
+  const double magnetUpgrCharge = 5  * 1000;
 
 private:
   void createBricks ();
