@@ -5,10 +5,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "GameObject.h"
-#include "Breakout.h"
-
-class Text : public GameObject<Breakout, bool> {
+class Text {
   SDL_Renderer* r;
   TTF_Font*     font;
   SDL_Surface*  surface;
@@ -18,6 +15,7 @@ class Text : public GameObject<Breakout, bool> {
 public:
   explicit Text(SDL_Renderer* r, std::string const& text,
                 SDL_Color color, int fontSize, int x, int y);
+  ~Text();
 
   void render(SDL_Renderer* r);
 };

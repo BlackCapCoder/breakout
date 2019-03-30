@@ -43,6 +43,8 @@ public:
   inline int getHeight ()   { return h; }
   void setScene (Scene * s) { this->s = s; }
 
+  SDL_Renderer* getRenderer() const;
+
   template <class S>
   S * setScene ()
   {

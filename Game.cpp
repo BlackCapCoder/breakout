@@ -51,3 +51,7 @@ void Game::dispose ()
   SDL_DestroyWindow   (wndw);
 }
 
+SDL_Renderer* Game::getRenderer() const
+{
+  return rend;
+}

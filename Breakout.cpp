@@ -2,9 +2,10 @@
 #include "Paddle.h"
 #include "Brick.h"
 #include "Math.h"
+#include "Text.h"
 
-
-Breakout::Breakout (int w, int h, Game*) : ColScene<Breakout>(w, h)
+Breakout::Breakout (int w, int h, Game*)
+  : ColScene<Breakout>(w, h)
 {
   addObject(&paddle);
   createBricks();
@@ -51,6 +52,9 @@ void Breakout::tick
   } else {
     ColScene<Breakout>::tick(dt, rend, im, ptr);
   }
+
+  Text t{rend, "hello", SDL_Color{255,255,255,255}, 24, 150, 150};
+  t.render(rend);
 }
 
 
