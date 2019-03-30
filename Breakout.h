@@ -29,7 +29,7 @@ private:
   unsigned char      numBalls     = 0;
   double             levelTime    = 0;
   char               speedUprades = 0;
-  double             meteorTime   = 1000000000000000;
+  double             meteorTime   = 0;
 
   // Time in seconds for the level speed to double
   const double speedDoubleRate = 60;

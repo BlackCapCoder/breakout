@@ -12,7 +12,6 @@
 
 #include "GameObject.h"
 
-
 class Game
 {
 private:

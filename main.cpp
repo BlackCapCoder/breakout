@@ -1,9 +1,13 @@
 #include <vector>
 
 #include "Game.h"
+#include "Paddle.h"
+#include "InputManager.h"
+#include "Brick.h"
+#include "Ball.h"
+#include "Text.h"
 #include "Breakout.h"
 #include "MainMenu.h"
-
 
 int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
 {
