@@ -14,6 +14,7 @@ void Game::init ()
         , &rend )
       ) exit (EXIT_FAILURE);
 
+  SDL_Init(SDL_INIT_VIDEO);
   TTF_Init ();
 
   if (!IMG_Init(IMG_INIT_PNG))
