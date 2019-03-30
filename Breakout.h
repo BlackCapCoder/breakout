@@ -37,7 +37,7 @@ private:
   const double speedMaxDoubles  = 3;
   const double speedMult        = 0.5;
   const double speedUpgradePwr  = 1.5;
-  const double meteorTimeout    = 30 * 1000;
+  const double meteorTimeout    = 10 * 1000;
   const double magnetUpgrCharge = 10 * 1000;
 
 private:
