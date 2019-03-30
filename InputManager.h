@@ -10,6 +10,7 @@ enum Input
 , Quit
 , ReleaseBall
 , FireRocket
+, PowerMagnet
 
 , NUM_INPUTS
 };

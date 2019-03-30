@@ -55,6 +55,10 @@ void Breakout::tick
 
   Text t{rend, "hello", SDL_Color{255,255,255,255}, 24, 150, 150};
   t.render(rend);
+
+  if (im->isDown(PowerMagnet) && magnetCharge > 0) {
+    magnetCharge -= dt;
+  }
 }
 
 
@@ -84,4 +88,14 @@ void Breakout::meteorUpgrade ()
 bool Breakout::meteorActive ()
 {
   return meteorTime > levelTime;
+}
+
+void Breakout::magnetUpgrade ()
+{
+  magnetCharge += magnetUpgrCharge;
+}
+
+bool Breakout::hasMagnet ()
+{
+  return magnetCharge > 0;
 }

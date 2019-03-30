@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "Breakout.h"
+#include "Text.h"
 
 
 class MainMenu : public Scene
