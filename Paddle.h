@@ -10,9 +10,7 @@ class Paddle : public ColObj<Breakout, ColResult>
   friend class Upgrade;
 
 private:
-  bool didReleaseBall = false;
-  bool didFire        = false;
-  bool canSpawnBall   = false;
+  bool canSpawnBall = false;
   V4 bounds{(1000 - 200)/2, 930, 200, 30};
 
 public:

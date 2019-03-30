@@ -47,7 +47,7 @@ public:
   template <class S>
   S * setScene ()
   {
-    S * s = new S (w, h);
+    S * s = new S (w, h, this);
     setScene(s);
     return s;
   }

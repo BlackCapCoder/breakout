@@ -4,6 +4,7 @@
 #include <vector>
 #include "ColScene.h"
 #include "Paddle.h"
+#include "Game.h"
 
 class Brick;
 
@@ -27,7 +28,7 @@ private:
   void createBricks ();
 
 public:
-  Breakout (int w, int h);
+  Breakout (int w, int h, Game *);
 
   void tick ( double       dt
             , SDL_Renderer *

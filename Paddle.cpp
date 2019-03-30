@@ -25,21 +25,15 @@ ColResult Paddle::logic (double dt, InputManager * im, Breakout * g)
   if (bounds.x < 0) bounds.x = 0;
   if (bounds.x > g->getWidth() - bounds.w) bounds.x = g->getWidth() - bounds.w;
 
-  if (im->isDown(ReleaseBall) != didReleaseBall) {
-    didReleaseBall = !didReleaseBall;
-    if (im->isDown(ReleaseBall) && canSpawnBall) {
-      g->addObject(new Ball(bounds.x+bounds.w/2, bounds.y-5, (randDouble()-0.5), (randDouble()/2+0.5) * -0.5));
-      g->spareBalls--;
-      g->numBalls++;
-    }
+  if (canSpawnBall && im->isDownFirst(ReleaseBall)) {
+    g->addObject(new Ball(bounds.x+bounds.w/2, bounds.y-5, (randDouble()-0.5), (randDouble()/2+0.5) * -0.5));
+    g->spareBalls--;
+    g->numBalls++;
   }
 
-  if (im->isDown(FireRocket) != didFire) {
-    didFire = !didFire;
-    if (im->isDown(FireRocket) && g->numRockets > 0) {
-      g->addObject(new Rocket<Breakout>(bounds.x+bounds.w/2, bounds.y-5));
-      g->numRockets--;
-    }
+  if (g->numRockets > 0 && im->isDownFirst(FireRocket)) {
+    g->addObject(new Rocket<Breakout>(bounds.x+bounds.w/2, bounds.y-5));
+    g->numRockets--;
   }
 
   if (o != bounds.x) return BoundsChanged;

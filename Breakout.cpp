@@ -5,7 +5,7 @@
 #include "Brick.h"
 
 
-Breakout::Breakout (int w, int h) : ColScene<Breakout>(w, h)
+Breakout::Breakout (int w, int h, Game*) : ColScene<Breakout>(w, h)
 {
   addObject(&paddle);
   createBricks();

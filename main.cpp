@@ -2,6 +2,7 @@
 
 #include "Game.h"
 #include "Breakout.h"
+#include "MainMenu.h"
 
 
 int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
@@ -13,6 +14,12 @@ int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
     , SDLK_l      , MoveRight
     , SDLK_d      , MoveRight
 
+    , SDLK_j      , MoveDown
+    , SDLK_s      , MoveDown
+
+    , SDLK_k      , MoveUp
+    , SDLK_w      , MoveUp
+
     , SDLK_SPACE  , ReleaseBall
     , SDLK_f      , FireRocket
 
@@ -20,7 +27,7 @@ int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
     );
 
   Game g { 1000, 1000, &im, 60 };
-  g.setScene<Breakout>();
+  g.setScene<MainMenu>();
 
   while (g.tick());
   g.dispose();
