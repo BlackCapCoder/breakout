@@ -113,6 +113,10 @@ class Game {
       this->objs.push_back(obj);
     }
 
+    SDL_Renderer* getRender()
+    {
+      return rend;
+    }
 };
 
 #endif // GAME_H
