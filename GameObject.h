@@ -3,7 +3,6 @@
 
 #include <SDL2/SDL.h>
 
-#include "QuadTree.h"
 #include "InputManager.h"
 
 
@@ -21,7 +20,7 @@ public:
     , S            * st )
   { return tick (dt, nullptr, im, st); }
 
-  // Combined logic/game tick
+  // Combined logic/render tick
   virtual R tick
     ( double         dt
     , SDL_Renderer * r
@@ -34,7 +33,7 @@ public:
   }
 };
 
-// We have to specialize for void, because c++
+// We have to specialize for R=void, because c++
 template <class S>
 struct GameObject<S, void>
 {
@@ -60,7 +59,8 @@ public:
   }
 };
 
-
+// A scene is like the catrige you stick in your gameboy
 typedef GameObject<void, void> Scene;
+
 
 #endif // GAMEOBJECT_H

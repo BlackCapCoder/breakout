@@ -8,6 +8,7 @@
 
 #include "GameObject.h"
 #include "CachedVector.h"
+#include "QuadTree.h"
 #include "Either.h"
 
 
