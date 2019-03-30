@@ -8,8 +8,12 @@
 
 // ------------------ Utils
 
-double randDouble ();
+struct V2;
 
+double randDouble ();
+double randDouble (double low, double high);
+double randDouble (V2 range);
+int rand (int low, int high);
 
 // ------------------ V2
 

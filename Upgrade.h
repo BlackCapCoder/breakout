@@ -10,7 +10,10 @@
 enum UpgradeType
 { SizeUp,
   SizeDown,
+  SpeedUp,
+  SpeedDown,
   Rocket5,
+  Meteor,
 
   NUM_UPGRADES
 };
@@ -22,6 +25,7 @@ private:
   UpgradeType type;
   const double size    = 50;
   const double sizeInc = 50;
+  const double speed   = 0.3;
 
 public:
   Upgrade (V2 p) : p{p}
@@ -31,7 +35,7 @@ public:
 
   bool logic (double dt, InputManager * im, Breakout * g)
   {
-    p.y += dt * 0.3;
+    p.y += dt * speed;
 
     V4 r{p.x-size/2, p.y-size/2, size, size};
     Paddle * pad = &g->paddle;
@@ -46,8 +50,17 @@ public:
           pad->bounds.x += sizeInc/2;
           pad->bounds.w -= sizeInc;
           break;
+        case (SpeedDown):
+          g->speedUprades++;
+          break;
+        case (SpeedUp):
+          g->speedUprades--;
+          break;
         case (Rocket5):
           g->numRockets += 5;
+          break;
+        case (Meteor):
+          g->meteorUpgrade();
           break;
       }
       return true;
@@ -65,8 +78,17 @@ public:
       case(SizeDown):
         SDL_SetRenderDrawColor (rend, 255, 0, 0, 1);
         break;
+      case(SpeedUp):
+        SDL_SetRenderDrawColor (rend, 128, 0, 0, 1);
+        break;
+      case(SpeedDown):
+        SDL_SetRenderDrawColor (rend, 0, 128, 0, 1);
+        break;
       case(Rocket5):
         SDL_SetRenderDrawColor (rend, 0, 0, 255, 1);
+        break;
+      case(Meteor):
+        SDL_SetRenderDrawColor (rend, 255, 0, 255, 1);
         break;
     }
 

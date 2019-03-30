@@ -16,57 +16,55 @@ private:
   const double speed = 1.5;
 
 private:
-  void explode (ColScene<S> * g)
+  V4 getBounds ()
   {
-    int n = 10 + std::rand() % 100;
-    for (int i = 0; i < n; i++)
-      g->addObject(new Particle<S>
-        ( p.x
-        , p.y
-        , randDouble() * 2 * M_PI
-        , randDouble()*0.5+0.3
-        , (randDouble()-0.5)*0.01
-        , rand()%600+200
-        ), true);
+    return V4 { p.x, p.y, w, h };
   }
 
 public:
-  Rocket (double x, double y) : p{V2{x, y}} {}
+  Rocket (double x, double y) : p{ V2{x, y}} {}
 
   bool logic (double dt, InputManager * im, ColScene<S> * g)
   {
-    p.y -= dt * speed;
-
-    for (; rand() % 10 > 5;)
-      g->addObject(new Particle<S>
-        ( p.x
-        , p.y
-        , randDouble() * M_PI * 0.8 + 0.2 * M_PI
-        , randDouble() * 0.5 + 0.3
-        , (randDouble()-0.5) * 0.01
-        , rand()%600+200
-        ), true);
-
-    V4 r {p.x-w/2, p.y-h/2, w, h};
     bool hit = false;
 
-    for (ColObj<S, ColResult> * o : g->getObjectsInBound(r)) {
+    p.y -= dt * speed;
+
+    for (ColObj<S, ColResult> * o : g->getObjectsInBound(getBounds())) {
       o->onHit((S *) g);
       hit = true;
     }
 
     if (hit) {
-      explode(g);
+      Particle<S>::explosion
+        ( getBounds () . getCenter ()
+        , V2 { 0.0, 1.0 }
+        , V2 { 0.5, 0.9 }
+        , V2 { -0.001, 0.001 }
+        , V2 { 200, 800 }
+        , 40, 100
+        , [ &g ] (auto p) { g->addObject (p); }
+        );
       return true;
+    } else {
+      Particle<S>::explosion
+        ( getBounds () . getCenter ()
+        , V2 { 0.2, 0.3 }
+        , V2 { 0.2, 0.4 }
+        , V2 { -0.0003, 0.0003 }
+        , V2 { 200, 800 }
+        , 1, 3
+        , [ &g ] (auto p) { g->addObject (p); }
+        );
     }
 
-    return !g->getBounds()->contains(r);
+    return !g->getBounds()->contains(getBounds());
   }
 
   void render (SDL_Renderer * rend)
   {
     SDL_SetRenderDrawColor (rend, 255, 255, 255, 1);
-    SDL_RenderFillRect (rend, V4 { p.x-w/2, p.y-h/2, w, h }.get());
+    SDL_RenderFillRect (rend, getBounds() . get ());
   }
 };
 

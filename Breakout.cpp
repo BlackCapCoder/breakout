@@ -1,6 +1,7 @@
 #include "Breakout.h"
 #include "Paddle.h"
 #include "Brick.h"
+#include "Math.h"
 
 
 Breakout::Breakout (int w, int h, Game*) : ColScene<Breakout>(w, h)
@@ -42,6 +43,8 @@ void Breakout::tick
   , void         * ptr
   )
 {
+  levelTime += dt;
+
   if (numBricks <= 0) {
     std::cout << "You Win!" << std::endl;
     exit (0);
@@ -59,4 +62,22 @@ void Breakout::onBallLost ()
     std::cout << "Game over!" << std::endl;
     exit (0);
   }
+}
+
+
+double Breakout::getLevelSpeed ()
+{
+  double ds = levelTime / (1000 * speedDoubleRate);
+  if (ds > speedMaxDoubles) ds = speedMaxDoubles;
+  return std::pow (2.0, ds) * speedMult * std::pow(speedUpgradePwr, -speedUprades);
+}
+
+void Breakout::meteorUpgrade ()
+{
+  meteorTime = levelTime + meteorTimeout;
+}
+
+bool Breakout::meteorActive ()
+{
+  return meteorTime > levelTime;
 }

@@ -1,5 +1,27 @@
 #include "Ball.h"
+#include "Particle.h"
 
+
+V4 Ball::getBounds ()
+{
+  return V4 {x-radius, y-radius, radius*2, radius*2};
+}
+
+void Ball::bounce (V4 b, double _x, double _y, double mult)
+{
+  V2 c = closestPointPointLine(V2{x,y}, V2{b.x, b.y+b.h/2}, V2{b.x+b.w, b.y+b.h/2});
+  int a = ((int) (std::atan2(c.x-x, c.y-y) * (180/M_PI)) + 90) % 360;
+  if (a < 0) a += 360;
+
+  if ((a >= 90-45 && a <= 90+45) || (a >= 270-45 && a <= 270+45)) {
+    vy = -vy;
+  } else {
+    vx = -vx;
+  }
+
+  x = _x + vx * mult;
+  y = _y + vy * mult;
+}
 
 void Ball::render (SDL_Renderer * r)
 {
@@ -15,10 +37,8 @@ bool Ball::logic
 {
   double _x = x, _y = y;
 
-  x += vx * dt;
-  y += vy * dt;
-  vx *= 1 + dt * 0.00001;
-  vy *= 1 + dt * 0.00001;
+  x += vx * g->getLevelSpeed() * dt;
+  y += vy * g->getLevelSpeed() * dt;
 
   if (y + radius >= 1000) {
     g->onBallLost ();
@@ -38,23 +58,30 @@ bool Ball::logic
     vy = -vy;
   }
 
-  auto os = g->getObjectsInBound (V4 {x-radius, y-radius, radius*2, radius*2});
-  if (!os.empty()) {
-    for (auto obj : os) obj->onHit (g);
-    V4 b = *(os[0]->getBounds());
 
-    V2 c = closestPointPointLine(V2{x,y}, V2{b.x, b.y+b.h/2}, V2{b.x+b.w, b.y+b.h/2});
-    int a = ((int) (std::atan2(c.x-x, c.y-y) * (180/M_PI)) + 90) % 360;
-    if (a < 0) a += 360;
+  if (g->meteorActive()) {
+    double a = std::atan2 (vy, vx) / (2 * M_PI) + 0.5;
+    double s = g->getLevelSpeed();
+    Particle<Breakout>::explosion
+      ( V2 { x, y }
+      , V2 { a, a }
+      , V2 { s, s }
+      , V2 { -0.0007, 0.0007 }
+      , V2 { 50, 500 }
+      , 1, 3
+      , [ &g ] (auto p) { g->addObject (p); }
+      );
 
-    if ( (a >= 90-45 && a <= 90+45) || (a >= 270-45 && a <= 270+45)) {
-      vy = -vy;
-    } else {
-      vx = -vx;
-    }
-
-    x = _x + vx; y = _y + vy;
+    V4 b{x-radius, y-radius, radius*2, radius*2};
+    if (b.intersects(*g->paddle.getBounds()))
+      bounce(*g->paddle.getBounds(), _x, _y, g->getLevelSpeed() * dt);
   }
+
+  auto os = g->getObjectsInBound (V4 {x-radius, y-radius, radius*2, radius*2});
+  for (auto obj : os) obj->onHit (g);
+
+  if (!os.empty() && !g->meteorActive())
+    bounce (*os[0]->getBounds(), _x, _y, g->getLevelSpeed() * dt);
 
   return false;
 }
