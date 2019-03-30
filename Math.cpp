@@ -8,6 +8,21 @@ double randDouble ()
   return (double) std::rand() / RAND_MAX;
 }
 
+double randDouble (double low, double high)
+{
+  return randDouble () * (high - low) + low;
+}
+
+double randDouble (V2 range)
+{
+  return randDouble (range.x, range.y);
+}
+
+int rand (int low, int high)
+{
+  return low + (std::rand() % (high - low));
+}
+
 
 // ------------------ V2
 
