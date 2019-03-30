@@ -34,13 +34,14 @@ private:
   using CObj = ColObj     <St, ColResult>;
   using Box  = Either     <Obj, CObj>;
 
-  QuadTree qt;
   DualCachedVector<Box> objs;
   std::vector<CObj*> qtbuf;
 
   V4 bounds;
 
 public:
+  QuadTree qt;
+
   ColScene (int w, int h)
     : bounds{V4{0, 0, (double) w, (double) h}}
     , qt{QuadTree{bounds, 100, 4}}

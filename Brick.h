@@ -6,6 +6,8 @@
 
 class Brick : public ColObj<Breakout, ColResult>
 {
+  friend class Breakout;
+
 private:
   V4    rect;
   float r;

@@ -101,3 +101,13 @@ bool Breakout::hasMagnet ()
 {
   return magnetCharge > 0;
 }
+
+
+void Breakout::shiftDown ()
+{
+  for (int i = 0; i < bricks.size(); i++) {
+    bricks[i].rect.y += 100;
+    qt.update(&bricks[i]);
+  }
+}
+

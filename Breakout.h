@@ -59,6 +59,8 @@ public:
   void   magnetUpgrade ();
   bool   meteorActive ();
   bool   hasMagnet ();
+
+  void   shiftDown ();
 };
 
 

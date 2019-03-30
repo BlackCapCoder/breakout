@@ -15,6 +15,7 @@ enum UpgradeType
   Rocket5,
   Meteor,
   Magnet,
+  ShiftDown,
 
   NUM_UPGRADES
 };
@@ -66,6 +67,9 @@ public:
         case (Magnet):
           g->magnetUpgrade();
           break;
+        case (ShiftDown):
+          g->shiftDown();
+          break;
       }
       return true;
     }
@@ -96,6 +100,9 @@ public:
         break;
       case(Magnet):
         SDL_SetRenderDrawColor (rend, 128, 128, 128, 1);
+        break;
+      case(ShiftDown):
+        SDL_SetRenderDrawColor (rend, 64, 64, 64, 1);
         break;
     }
 

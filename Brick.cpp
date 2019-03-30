@@ -53,7 +53,7 @@ ColResult Brick::logic (double, InputManager*, Breakout * b)
 
 void Brick::onHit (Breakout * g)
 {
-  if (std::rand() % 5 == 0) {
+  if (std::rand() % 10 == 0) {
     g->addObject(new Upgrade {rect.getCenter()}, true);
   }
 
