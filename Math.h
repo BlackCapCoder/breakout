@@ -3,7 +3,12 @@
 
 
 #include <cmath>
+#include <cstdlib>
 
+
+// ------------------ Utils
+
+double randDouble ();
 
 
 // ------------------ V2
@@ -28,9 +33,11 @@ V2 operator/ (const V2 & p, const double & x);
 V2 operator^ (const V2 & p, const double & x);
 
 
-double dot   (const V2 & a, const V2 & b);
+double dot  (const V2 & a, const V2 & b);
+double dist (const V2 & a, const V2 & b);
 
 V2 closestPointPointLine (V2 p, V2 a, V2 b);
+
 
 
 
@@ -49,6 +56,7 @@ struct V4
   double getTop() const noexcept;
   double getRight() const noexcept;
   double getBottom() const noexcept;
+  V2     getCenter() const noexcept;
 
   SDL_Rect * get();
 

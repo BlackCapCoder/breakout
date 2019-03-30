@@ -1,4 +1,8 @@
+#include <cstdlib>
+
 #include "Brick.h"
+#include "Upgrade.h"
+
 
 Brick::Brick(float width, float height, float x_coord, float y_coord)
   : rect{x_coord, y_coord, width, height}
@@ -7,8 +11,7 @@ Brick::Brick(float width, float height, float x_coord, float y_coord)
   , b{0}
   , a{0}
   , removed{false}
-{
-}
+{}
 
 Brick::Brick()
   : rect{0, 0, 0, 0}
@@ -17,8 +20,7 @@ Brick::Brick()
   , b{0}
   , a{0}
   , removed{false}
-{
-}
+{}
 
 void Brick::setColor(float r, float g, float b, float a)
 {
@@ -39,12 +41,22 @@ V4 * Brick::getBounds()
   return &rect;
 }
 
-LogicResult Brick::logic (double, Game *)
+ColResult Brick::logic (double, InputManager*, Breakout * b)
 {
-  return removed? Remove : None;
+  if (removed) {
+    b->numBricks--;
+    return Remove;
+  }
+
+  return None;
 }
 
-void Brick::onHit ()
+void Brick::onHit (Breakout * g)
 {
+  if (std::rand() % 5 == 0) {
+    g->addObject(new Upgrade {rect.getCenter()}, true);
+  }
+
   removed = true;
 }
+

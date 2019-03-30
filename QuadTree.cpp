@@ -2,19 +2,22 @@
 
 
 //** QuadTree **//
-QuadTree::QuadTree() : QuadTree({}, 0, 0) { }
-QuadTree::QuadTree(const QuadTree &other) : QuadTree(other.bounds, other.capacity, other.maxLevel) { }
-QuadTree::QuadTree(const V4 &_bound, unsigned _capacity, unsigned _maxLevel) :
-  bounds(_bound),
-  capacity(_capacity),
-  maxLevel(_maxLevel) {
+QuadTree::QuadTree() : QuadTree({}, 0, 0) {}
+QuadTree::QuadTree(const QuadTree &other) : QuadTree(other.bounds, other.capacity, other.maxLevel) {}
+
+QuadTree::QuadTree(const V4 &_bound, unsigned _capacity, unsigned _maxLevel)
+  : bounds   (_bound)
+  , capacity (_capacity)
+  , maxLevel (_maxLevel)
+{
   objects.reserve(_capacity);
   foundObjects.reserve(_capacity);
 }
 
 // Inserts an object into this quadtree
-bool QuadTree::insert(Collidable *obj) {
-  if (obj->qt != nullptr) return false;
+bool QuadTree::insert(Collidable *obj)
+{
+  if (obj == nullptr || obj->qt != nullptr) return false;
 
   if (!isLeaf) {
     // insert object into leaf
@@ -33,8 +36,9 @@ bool QuadTree::insert(Collidable *obj) {
 }
 
 // Removes an object from this quadtree
-bool QuadTree::remove(Collidable *obj) {
-  if (obj->qt == nullptr) return false; // Cannot exist in vector
+bool QuadTree::remove(Collidable *obj)
+{
+  if (obj == nullptr || obj->qt == nullptr) return false; // Cannot exist in vector
   if (obj->qt != this) return obj->qt->remove(obj);
 
   objects.erase(std::find(objects.begin(), objects.end(), obj));
@@ -44,7 +48,8 @@ bool QuadTree::remove(Collidable *obj) {
 }
 
 // Removes and re-inserts object into quadtree (for objects that move)
-bool QuadTree::update(Collidable *obj) {
+bool QuadTree::update(Collidable *obj)
+{
   if (!remove(obj)) return false;
 
   // Not contained in this node -- insert into parent
@@ -60,7 +65,8 @@ bool QuadTree::update(Collidable *obj) {
 }
 
 // Searches quadtree for objects within the provided boundary and returns them in vector
-std::vector<Collidable*> &QuadTree::getObjectsInBound(const V4 &bound) {
+std::vector<Collidable*> &QuadTree::getObjectsInBound(const V4 &bound)
+{
   foundObjects.clear();
   for (const auto &obj : objects) {
     // Only check for intersection with OTHER boundaries
@@ -83,7 +89,8 @@ std::vector<Collidable*> &QuadTree::getObjectsInBound(const V4 &bound) {
 }
 
 // Returns total children count for this quadtree
-unsigned QuadTree::totalChildren() const noexcept {
+unsigned QuadTree::totalChildren() const noexcept
+{
   unsigned total = 0;
   if (isLeaf) return total;
   for (QuadTree *child : children)
@@ -92,7 +99,8 @@ unsigned QuadTree::totalChildren() const noexcept {
 }
 
 // Returns total object count for this quadtree
-unsigned QuadTree::totalObjects() const noexcept {
+unsigned QuadTree::totalObjects() const noexcept
+{
   unsigned total = (unsigned)objects.size();
   if (!isLeaf) {
     for (QuadTree *child : children)
@@ -102,7 +110,8 @@ unsigned QuadTree::totalObjects() const noexcept {
 }
 
 // Removes all objects and children from this quadtree
-void QuadTree::clear() noexcept {
+void QuadTree::clear() noexcept
+{
   if (!objects.empty()) {
     for (auto&& obj : objects)
       obj->qt = nullptr;
@@ -116,7 +125,8 @@ void QuadTree::clear() noexcept {
 }
 
 // Subdivides into four quadrants
-void QuadTree::subdivide() {
+void QuadTree::subdivide()
+{
   double width  = bounds.w  * 0.5f;
   double height = bounds.h * 0.5f;
   double x = 0, y = 0;
@@ -135,7 +145,8 @@ void QuadTree::subdivide() {
 }
 
 // Discards buckets if all children are leaves and contain no objects
-void QuadTree::discardEmptyBuckets() {
+void QuadTree::discardEmptyBuckets()
+{
   if (!objects.empty()) return;
   if (!isLeaf) {
     for (QuadTree *child : children)
@@ -147,7 +158,8 @@ void QuadTree::discardEmptyBuckets() {
 }
 
 // Returns child that contains the provided boundary
-QuadTree *QuadTree::getChild(const V4 &bound) const noexcept {
+QuadTree *QuadTree::getChild(const V4 &bound) const noexcept
+{
   bool left  = bound.x + bound.w < bounds.getRight();
   bool right = bound.x > bounds.getRight();
 
@@ -161,7 +173,8 @@ QuadTree *QuadTree::getChild(const V4 &bound) const noexcept {
   return nullptr; // Cannot contain boundary -- too large
 }
 
-QuadTree::~QuadTree() {
+QuadTree::~QuadTree()
+{
   clear();
   if (children[0]) delete children[0];
   if (children[1]) delete children[1];

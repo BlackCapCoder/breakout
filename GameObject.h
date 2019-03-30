@@ -2,34 +2,65 @@
 #define GAMEOBJECT_H
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 
-#include "QuadTree.h"
 #include "InputManager.h"
 
-class Game;
 
-enum LogicResult {
-  None          = 0,
-  BoundsChanged = 1,
-  Remove        = 2,
+template <class S, class R>
+struct GameObject
+{
+public:
+  virtual void render
+    ( SDL_Renderer * r
+    ) {}
+
+  virtual R logic
+    ( double         dt // Milliseconds since last tick
+    , InputManager * im
+    , S            * st )
+  { return tick (dt, nullptr, im, st); }
+
+  // Combined logic/render tick
+  virtual R tick
+    ( double         dt
+    , SDL_Renderer * r
+    , InputManager * im
+    , S            * st )
+  {
+    R ret = logic (dt, im, st);
+    if (r != nullptr) render (r);
+    return ret;
+  }
 };
 
-class GameObject : public Collidable {
-  public:
+// We have to specialize for R=void, because c++
+template <class S>
+struct GameObject<S, void>
+{
+public:
+  virtual void render
+    ( SDL_Renderer * r
+    ) {}
 
-    virtual LogicResult logic
-      ( double  tick // Milliseconds since last tick
-      , Game *  g
-      ) { return None; }
+  virtual void logic
+    ( double         dt // Milliseconds since last tick
+    , InputManager * im
+    , S            * st )
+  { tick (dt, nullptr, im, st); }
 
-    virtual void render
-      ( SDL_Renderer * r
-      ) {}
-
-    virtual void onHit () {}
-
+  virtual void tick
+    ( double         dt
+    , SDL_Renderer * r
+    , InputManager * im
+    , S            * st )
+  {
+    logic (dt, im, st);
+    if (r != nullptr) render (r);
+  }
 };
+
+// A scene is like the catrige you stick in your gameboy
+typedef GameObject<void, void> Scene;
 
 
 #endif // GAMEOBJECT_H

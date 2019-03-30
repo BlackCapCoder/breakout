@@ -1,39 +1,24 @@
 #ifndef PADDLE_H
 #define PADDLE_H
 
-#include <SDL2/SDL.h>
+#include "ColScene.h"
 
-#include "QuadTree.h"
-#include "InputManager.h"
-#include "GameObject.h"
-#include "Math.h"
+class Breakout;
 
+class Paddle : public ColObj<Breakout, ColResult>
+{
+  friend class Upgrade;
 
-class Paddle : public GameObject {
-  private:
-    V4 bounds{(1000 - 200)/2, 930, 200, 30};
+private:
+  bool canSpawnBall = false;
+  V4 bounds{(1000 - 200)/2, 930, 200, 30};
 
-  public:
-    V4 * getBounds () {
-      return &bounds;
-    }
+public:
+  V4 * getBounds () { return &bounds; }
 
-    LogicResult logic (double tick, Game * g) {
-      float o = bounds.x;
-      if (g->im->isDown(MoveLeft )) bounds.x -= tick * 1.5;
-      if (g->im->isDown(MoveRight)) bounds.x += tick * 1.5;
-      if (bounds.x < 0) bounds.x = 0;
-      if (bounds.x > 1000 - bounds.w) bounds.x = 1000 - bounds.w;
-
-      if (o != bounds.x) return BoundsChanged;
-
-      return None;
-    }
-
-    void render (SDL_Renderer * r) {
-      SDL_SetRenderDrawColor (r, 255, 0, 0, 255);
-      SDL_RenderFillRect (r, bounds.get());
-    }
+  void render (SDL_Renderer *);
+  ColResult logic (double dt, InputManager *, Breakout *);
 };
+
 
 #endif // PADDLE_H
