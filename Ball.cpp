@@ -34,39 +34,49 @@ bool Ball::logic
 
 
   // We need to loop through all the collisions that
-  // have taken place since last tick
-  do {
-    double mx = vx * g->getLevelSpeed()
-         , my = vy * g->getLevelSpeed();
+  // have taken place since last tick. See (1) below.
+  double q, mx, my, consumed;
+  bool hor;
 
-    double _x  = x + mx * dt
-         , _y  = y + my * dt
-         , _vx = vx
-         , _vy = vy;
+  do {
+    mx       = vx * g->getLevelSpeed();
+    my       = vy * g->getLevelSpeed();
+    consumed = dt;
+
+    V4 b = V4 { x + mx * dt - radius
+              , y + my * dt - radius
+              , radius*2
+              , radius*2
+              };
 
 
     // ---- Screen edges
-    if (_y + radius >= g->getHeight()) {
+
+    // bottom
+    q = (screen.y + screen.h - radius - y)/my;
+    if (q > 0 && q < consumed) {
       g->onBallLost (this);
       return true;
     }
 
-    if (_x <= radius + screen.x) {
-      _x = radius + screen.x;
-      _vx = -vx;
-    } else if (_x + radius >= screen.w + screen.x) {
-      _x = screen.w + screen.x - radius;
-      _vx = -vx;
-    }
-    if (_y <= radius + screen.y) {
-      _y = radius + screen.y;
-      _vy = -vy;
-    }
+    // top
+    q = (screen.y + radius - y)/my;
+    if (q > 0 && q < consumed) { consumed = q; hor = false; }
 
-    // ---- Hit testing
-    V4 b = V4 {_x - radius, _y - radius, radius*2, radius*2};
+    // left
+    q = (screen.x + radius - x)/mx;
+    if (q > 0 && q < consumed) { consumed = q; hor = true; }
+
+    // right
+    q = (screen.x + screen.w - radius - x)/mx;
+    if (q > 0 && q < consumed) { consumed = q; hor = true; }
+
+
+    // ---- Object collision
+
     auto os = g->getObjectsInBound(b);
 
+    // Ignore everything but the paddle if meteor
     if (g->meteorActive()) {
       double a = std::atan2 (my, mx) / (2 * M_PI) + 0.5;
       double s = g->getLevelSpeed();
@@ -87,50 +97,99 @@ bool Ball::logic
         os.push_back(&g->paddle);
     }
 
-    // ---- Bouncing
-    bool didBounce = false;
-
+    // Check for collisions
     if (!os.empty()) {
-      bool hor;
-      double low = DBL_MAX;
       ColObj<Breakout, ColResult> * c = nullptr;
 
-      double rx = std::abs(radius / mx);
-      double ry = std::abs(radius / my);
-
       for (auto obj : os) {
-        if (hit.find (obj) != hit.end ()) continue;
-
+        if (hit.find (obj) != hit.end()) continue;
         b = *obj->getBounds();
-        double h = std::abs(((mx > 0 ? b.x : b.x + b.w) - x) / mx) - rx
-             , v = std::abs(((my > 0 ? b.y : b.y + b.h) - y) / my) - ry;
 
-        if (h < low && h > 0) { hor = true;  low = h; c = obj; }
-        if (v < low && v > 0) { hor = false; low = v; c = obj; }
+        q = ((mx > 0 ? b.x : b.x + b.w) - x - radius) / mx;
+        if (q < consumed && q > 0) { hor = true;  consumed = q; c = obj; }
+
+        q = ((my > 0 ? b.y : b.y + b.h) - y - radius) / my;
+        if (q < consumed && q > 0) { hor = false; consumed = q; c = obj; }
       }
 
       if (c != nullptr) {
-        if (hor) {
-          _vx = -vx;
-          _x  = x + low * mx;
-          dt -= low * mx;
-        } else {
-          _vy = -vy;
-          _y  = y + low * my;
-          dt -= low * my;
-        }
-
         c->onHit   (g);
         hit.insert (c);
-        didBounce = true;
       }
     }
 
-    x = _x; y = _y; vx = _vx; vy = _vy;
 
-    if (!didBounce) break;
+    // ---- Update variables
+
+    if (consumed < dt) {
+      if (hor) vx = -vx; else vy = -vy;
+    }
+
+    x  += consumed * mx;
+    y  += consumed * my;
+    dt -= consumed;
   } while (dt > 0);
 
   return false;
 }
 
+
+/* (1) Math
+
+  Let `r`        be the radius of our ball
+  Let `(x, y)`   be the position of the center of our ball
+  Let `(vx, vy)` be the movement vector
+
+  Our new position after `dt` time has passed is given by:
+
+      (x, y) + (vx, vy) * dt = (x', y')
+
+
+  For every object that intersects the square `(x' - r, y' - r, r*2, r*2)`,
+  let `(ox, oy, ow, oh)` its bounds.
+
+  Assuming that an object is rectangular, it has 4 sides:
+
+      Top:    (ox     , oy     , ox + ow, oy     )
+      Bottom: (ox     , oy + oh, ox + ow, oy + oh)
+      Left:   (ox     , oy     , ox     , oy + oh)
+      Right:  (ox + ow, oy     , ox + ow, oy + oh)
+
+  Instead of thinking of these as line segments, we can think
+  of them as rays, and describe them as vectors with a stepper `t`,
+  in the same way that we did with our ball:
+
+      Top:    (ox, oy     ) + (1, 0)*t
+      Bottom: (ox, oy + oh) + (1, 0)*t
+      Left:   (ox, oy     ) + (0, 1)*t
+      Right:  (ox + ow, oy) + (0, 1)*t
+
+  We want to find out how long it took for our ball to hit one of the sides.
+  To find this we set them equal and solve for the side with the 0 stepper:
+
+      (x, y) + (vx, vy) * X = (ox, oy) + (1, 0)*t
+      y + vy * X = oy + 0 * t
+      vy * X = oy - y
+      X = (oy - y) / vy
+
+  We can only collide with 2 of the 4 sides: if we are traveling
+  towards the left side, we cannot collide with the right side first.
+  The same goes for the vertical sides:
+
+      hor  = iff vx > 0 then ox else ox + ow
+      vert = iff vy > 0 then oy else oy + oh
+
+      Xh = (hor  - x) / vx;
+      Xv = (vert - y) / vy;
+
+
+  `Xh` and `Xy` is how long it took for the center point of
+  our ball to reach some side, so we need to subtract the radius:
+
+      X = min (Xh - r / vx, Xv - r / vy)
+
+
+  To find what we collided with first, we find the smallest `X`
+  for all objects.
+
+*/
