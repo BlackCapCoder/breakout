@@ -11,6 +11,8 @@
 - [ ] Add a score
 - [ ] Highscore list
 - [ ] Don't exit the game when the player loses
+- [ ] Rebindable keys
+- [ ] Sound effects / BGM
 
 
 # Upgrade/Downgrade ideas
