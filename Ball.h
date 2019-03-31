@@ -1,9 +1,10 @@
 #ifndef BALL_H
 #define BALL_H
 
-#include "Breakout.h"
+#include "ColScene.h"
 #include "Math.h"
 
+class Breakout;
 
 class Ball : public GameObject<Breakout, bool>
 {

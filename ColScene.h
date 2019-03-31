@@ -112,6 +112,21 @@ public:
   void addObject (bool front = true) { addObject<O<St>>(front); }
 
 
+  void removeObject (Box needle)
+  {
+    objs.filter([&needle] (Box x) { return x.l == needle.l; });
+  }
+  void removeObject (Obj * needle)
+  {
+    removeObject(Box(needle));
+  }
+  void removeObject (CObj * needle)
+  {
+    removeObject(Box(needle));
+    qt.remove(needle);
+  }
+
+
   void clear ()
   {
     objs.clear ();

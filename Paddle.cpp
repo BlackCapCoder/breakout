@@ -26,14 +26,7 @@ ColResult Paddle::logic (double dt, InputManager * im, Breakout * g)
   if (bounds.x > g->getWidth() - bounds.w) bounds.x = g->getWidth() - bounds.w;
 
   if (canSpawnBall && im->isDownFirst(ReleaseBall)) {
-    g->spareBalls--;
-    g->numBalls++;
-    g->addObject(new Ball
-        ( bounds.x+bounds.w/2
-        , bounds.y-5
-        , (randDouble() - 0.5) * 2
-        , -1.0
-        ));
+    g->spawnBall ();
   }
 
   if (g->numRockets > 0 && im->isDownFirst(FireRocket)) {

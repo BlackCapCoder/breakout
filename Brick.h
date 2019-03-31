@@ -18,9 +18,16 @@ private:
 
 public:
   Brick();
-  Brick(float width, float height, float x_coord, float y_coord);
+  Brick ( float x_coord
+        , float y_coord
+        , float width
+        , float height
+        , float r
+        , float g
+        , float b
+        , float a
+        );
 
-  void      setColor(float r, float g, float b, float a);
   void      render(SDL_Renderer* r);
   V4 *      getBounds();
   ColResult logic(double, InputManager*, Breakout*);

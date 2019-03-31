@@ -3,40 +3,42 @@
 #include "Brick.h"
 #include "Math.h"
 #include "Text.h"
+#include "Levels.h"
 
 Breakout::Breakout (int w, int h, Game*)
   : ColScene<Breakout>(w, h)
   , hud {42}
 {
-  addObject(&paddle);
-  createBricks();
-  addObject(&hud);
+  loadLevel (currentLevel);
 }
 
-void Breakout::createBricks()
+void Breakout::loadLevel (int level) {
+  bricks.clear ();
+  clear        ();
+  addObject    (&paddle);
+  addObject    (&hud);
+
+  numBricks = Levels::construct (level, bricks, getWidth(), getHeight());
+  for (int i=0; i < numBricks; i++) addObject (&bricks[i], false);
+}
+
+void Breakout::onWin ()
 {
-  const int horMarg = 50;
-  const int verMarg = 50;
-  const int space   = 15;
-  const int ncols   = 10;
-  const int nrows   = 7;
-  const int w       = (getWidth() - 2*horMarg - space*ncols) / ncols;
-  const int h       = 40;
+  spareBalls   += numBalls;
+  ballCounter   = 0;
+  numBalls      = 0;
+  levelTime     = 0;
+  speedUprades  = 0;
+  meteorTime    = 0;
+  magnetCharge  = 0;
+  currentLevel += 1;
 
-  bricks.clear();
+  loadLevel (currentLevel);
 
-  for (int i{}; i < nrows*ncols; i++) {
-    int x = i % ncols;
-    int y = i / ncols;
-    bricks.push_back(Brick{(float) w, h, horMarg + (float)x*(w+space), verMarg + (float)y*(h+space)});
-    bricks[i].setColor(i * 80, 90 + i * 50, 255, 255);
-  }
+  if (numBricks > 0) return;
 
-  for (int i{}; i < nrows*ncols; i++) {
-    addObject(&bricks[i], false);
-  }
-
-  numBricks = nrows*ncols;
+  std::cout << "You Win!" << std::endl;
+  exit (0);
 }
 
 void Breakout::tick
@@ -49,28 +51,39 @@ void Breakout::tick
   levelTime += dt;
 
   if (numBricks <= 0) {
-    std::cout << "You Win!" << std::endl;
-    exit (0);
+    onWin ();
   } else {
     ColScene<Breakout>::tick(dt, rend, im, ptr);
   }
-
-  // Text t{rend, "hello", SDL_Color{255,255,255,255}, 24, 150, 150};
-  // t.render(rend);
 
   if (im->isDown(PowerMagnet) && magnetCharge > 0) {
     magnetCharge -= dt;
   }
 }
 
-
-void Breakout::onBallLost ()
+void Breakout::spawnBall ()
 {
+  V4 bounds = *paddle.getBounds();
+
+  balls [ballCounter] =
+    Ball { bounds.x + bounds.w/2
+         , bounds.y - 10
+         , (randDouble() - 0.5) * 2
+         , -1.0 };
+
+  addObject (balls + ballCounter, true);
+  ballCounter++;
+  numBalls++;
+  spareBalls--;
+}
+
+void Breakout::onBallLost (Ball * b)
+{
+  if (b < balls || b >= balls + ballCounter) return;
   numBalls--;
 
   if (numBalls == 0 && spareBalls == 0) {
-    std::cout << "Game over!" << std::endl;
-    exit (0);
+    onLose ();
   }
 }
 
@@ -111,3 +124,8 @@ void Breakout::shiftDown ()
   }
 }
 
+void Breakout::onLose ()
+{
+  std::cout << "Game over!" << std::endl;
+  exit (0);
+}

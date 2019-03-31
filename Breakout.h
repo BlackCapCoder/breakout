@@ -6,6 +6,7 @@
 #include "Paddle.h"
 #include "Game.h"
 #include "HUD.h"
+#include "Ball.h"
 
 class Brick;
 
@@ -24,8 +25,11 @@ private:
   Paddle             paddle;
   HUD                hud;
   std::vector<Brick> bricks;
+  Ball               balls[16];
 
+  unsigned char      ballCounter  = 0;
   unsigned short     numBricks;
+  unsigned char      currentLevel = 1;
   unsigned short     numRockets   = 5;
   unsigned char      spareBalls   = 3;
   unsigned char      numBalls     = 0;
@@ -43,7 +47,9 @@ private:
   const double magnetUpgrCharge = 5  * 1000;
 
 private:
-  void createBricks ();
+  void loadLevel (int lvl);
+  void onWin     ();
+  void onLose    ();
 
 public:
   Breakout (int w, int h, Game *);
@@ -53,15 +59,14 @@ public:
             , InputManager *
             , void         * );
 
-  void   onBallLost    ();
+  void   spawnBall     ();
+  void   onBallLost    (Ball*);
   double getLevelSpeed (); // Determines the speed of the balls
   void   meteorUpgrade ();
   void   magnetUpgrade ();
-  bool   meteorActive ();
-  bool   hasMagnet ();
-
-  void   shiftDown ();
+  bool   meteorActive  ();
+  bool   hasMagnet     ();
+  void   shiftDown     ();
 };
-
 
 #endif // ifndef BREAKOUT_H

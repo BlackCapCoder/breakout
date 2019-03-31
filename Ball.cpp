@@ -1,5 +1,6 @@
 #include <set>
 #include "Ball.h"
+#include "Breakout.h"
 #include "Particle.h"
 
 
@@ -46,7 +47,7 @@ bool Ball::logic
 
     // ---- Screen edges
     if (_y + radius >= g->getHeight()) {
-      g->onBallLost ();
+      g->onBallLost (this);
       return true;
     }
 
