@@ -130,6 +130,13 @@ bool Ball::logic
     dt -= consumed;
   } while (dt > 0);
 
+
+  // Just to be safe..
+  if (y < screen.y + radius)            y = screen.y + radius + 1;
+  if (y > screen.y + screen.h - radius) y = screen.y + screen.h - radius - 1;
+  if (x < screen.x + radius)            x = screen.x + radius + 1;
+  if (x > screen.x + screen.w - radius) x = screen.x + screen.w - radius - 1;
+
   return false;
 }
 
