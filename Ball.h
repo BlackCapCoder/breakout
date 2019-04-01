@@ -3,6 +3,7 @@
 
 #include "ColScene.h"
 #include "Math.h"
+#include <vector>
 
 class Breakout;
 
@@ -12,6 +13,8 @@ private:
   double x, y;
   double vx = 0.4, vy = 0.4;
   double radius = 5;
+  std::vector<SDL_Point> pts;
+  bool isMeteor;
 
 private:
   V4 getBounds ();

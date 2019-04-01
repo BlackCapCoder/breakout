@@ -31,12 +31,12 @@ public:
 
   bool logic (double dt, InputManager*, S*)
   {
-    x        += std::cos(angle) * velocity * dt;
-    y        += std::sin(angle) * velocity * dt;
     ttl      -= dt;
     angle    += spin*dt;
     radius    = 5 * ttl/ttlOrig;
-    velocity *= (1/dt)*15;
+    double v = velocity * std::pow(ttl/ttlOrig, 1.3);
+    x        += std::cos(angle) * v * dt;
+    y        += std::sin(angle) * v * dt;
 
     return ttl <= 0;
   }
@@ -50,7 +50,7 @@ public:
   }
 
   static void explosion
-    ( V2 pos
+    ( V4 pos
     , V2 angle
     , V2 vel
     , V2 spin
@@ -62,7 +62,8 @@ public:
     int cnt = rand (min, max);
     for (int i = 0; i < cnt; i++)
       f ( new Particle<S>
-            { pos.x, pos.y
+            { randDouble (pos.x, pos.w)
+            , randDouble (pos.y, pos.h)
             , randDouble (angle) * 2.0 * M_PI
             , randDouble (vel)
             , randDouble (spin)  * 2.0 * M_PI

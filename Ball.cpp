@@ -2,6 +2,7 @@
 #include "Ball.h"
 #include "Breakout.h"
 #include "Particle.h"
+#include <SDL2/SDL2_gfxPrimitives.h>
 
 
 V4 Ball::getBounds ()
@@ -11,9 +12,15 @@ V4 Ball::getBounds ()
 
 void Ball::render (SDL_Renderer * r)
 {
-  V4 b{x-radius, y-radius, radius*2, radius*2};;
+  for (int i = 1; i < pts.size(); i++) {
+    if (isMeteor)
+      thickLineRGBA(r, pts[i-1].x, pts[i-1].y, pts[i].x, pts[i].y, radius*2, 255,   0,   0, 255);
+    else
+      thickLineRGBA(r, pts[i-1].x, pts[i-1].y, pts[i].x, pts[i].y, radius*2, 255, 255, 255, 255);
+  }
+
   SDL_SetRenderDrawColor (r, 255, 255, 255, 255);
-  SDL_RenderFillRect (r, b.get());
+  SDL_RenderFillRect (r, getBounds().get());
 }
 
 
@@ -29,24 +36,36 @@ bool Ball::logic
     if (x > q) vx -= 0.005 * dt;
   }
 
-  V4 screen = *g->getBounds();
-  std::set<ColObj<Breakout, ColResult>*> hit;
+  isMeteor = g->meteorActive();
 
+  pts.clear ();
+  pts.push_back({(int) x, (int) y});
 
   // We need to loop through all the collisions that
   // have taken place since last tick. See (1) below.
   double q, mx, my, consumed;
   bool hor;
 
+  V4 screen = *g->getBounds();
+  std::set<ColObj<Breakout, ColResult>*> hit;
+
   do {
     mx       = vx * g->getLevelSpeed();
     my       = vy * g->getLevelSpeed();
     consumed = dt;
 
-    V4 b = V4 { x + mx * dt - radius
-              , y + my * dt - radius
-              , radius*2
-              , radius*2
+    // V4 b = V4 { x + mx * dt - radius
+    //           , y + my * dt - radius
+    //           , radius*2
+    //           , radius*2
+    //           };
+
+    double _x = x + mx * dt;
+    double _y = y + my * dt;
+    V4 b = V4 { min   (x, _x) - radius
+              , min   (y, _y) - radius
+              , delta (x, _x) + radius * 2
+              , delta (y, _y) + radius * 2
               };
 
 
@@ -74,19 +93,19 @@ bool Ball::logic
 
     // ---- Object collision
 
-    auto os = g->getObjectsInBound(b);
+    auto os = g->getObjectsInBound (b);
 
     // Ignore everything but the paddle if meteor
-    if (g->meteorActive()) {
+    if (isMeteor) {
       double a = std::atan2 (my, mx) / (2 * M_PI) + 0.5;
-      double s = g->getLevelSpeed();
+      double s = g->getLevelSpeed()*0.4;
       Particle<Breakout>::explosion
-        ( V2 { x, y }
+        ( V4 { min(x, _x), min(y, _y), max(x, _x), max(y, _y) }
         , V2 { a, a }
         , V2 { s, s }
         , V2 { -0.0007, 0.0007 }
-        , V2 { 50, 500 }
-        , 1, 3
+        , V2 { 50, 300 }
+        , 0, (int) max (dt/2, 2)
         , [ &g ] (auto p) { g->addObject (p); }
         );
 
@@ -121,13 +140,36 @@ bool Ball::logic
 
     // ---- Update variables
 
-    if (consumed < dt) {
-      if (hor) vx = -vx; else vy = -vy;
-    }
-
     x  += consumed * mx;
     y  += consumed * my;
+
+    if (consumed < dt) {
+      if (hor) vx = -vx; else vy = -vy;
+
+      if (isMeteor) {
+        V2 dir;
+
+        if (!hor && vy > 0) dir = {0.0, 0.5};
+        if (!hor && vy < 0) dir = {0.5, 1.0};
+        if ( hor && vx < 0) dir = {0.25, 0.75};
+        if ( hor && vx > 0) dir = {0.75, 1.25};
+
+        double s = g->getLevelSpeed();
+
+        Particle<Breakout>::explosion
+          ( V4 { x, y, x, y }
+          , dir
+          , V2 { 0.5*s, 1.2*s }
+          , V2 { -0.0007, 0.0007 }
+          , V2 { 100, 600 }
+          , 8*s, 20*s
+          , [ &g ] (auto p) { g->addObject (p); }
+          );
+      }
+    }
+
     dt -= consumed;
+    pts.push_back({(int) x, (int) y});
   } while (dt > 0);
 
 

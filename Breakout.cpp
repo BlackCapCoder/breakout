@@ -36,6 +36,9 @@ void Breakout::onWin ()
   loadLevel (currentLevel);
 
   if (numBricks > 0) return;
+  currentLevel = 1;
+  loadLevel(currentLevel);
+  return;
 
   std::cout << "You Win!" << std::endl;
   exit (0);

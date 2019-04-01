@@ -24,7 +24,7 @@ int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
     , SDLK_ESCAPE , Quit
     );
 
-  Game g { 1000, 1000, &im, 60 };
+  Game g { 1000, 1000, &im, 60};
   g.setScene<MainMenu>();
 
   while (g.tick());

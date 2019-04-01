@@ -18,6 +18,9 @@ int rand (int low, int high);
 double delta (double a, double b);
 int signum(const double x);
 
+double min(const double x, const double y);
+double max(const double x, const double y);
+
 // ------------------ V2
 
 struct V2

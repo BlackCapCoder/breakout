@@ -26,18 +26,31 @@ public:
 
   bool logic (double dt, InputManager * im, ColScene<S> * g)
   {
-    bool hit = false;
+    double _y = p.y - dt * speed;
+    V4 b { p.x, _y, w, h + p.y - _y };
 
-    p.y -= dt * speed;
-
-    for (ColObj<S, ColResult> * o : g->getObjectsInBound(getBounds())) {
-      o->onHit((S *) g);
-      hit = true;
+    ColObj<S, ColResult> * c = nullptr;
+    for (ColObj<S, ColResult> * o : g->getObjectsInBound(b)) {
+      b = *o->getBounds();
+      if (b.y + b.h < _y) continue;
+      _y = b.y + b.h;
+      c = o;
     }
 
-    if (hit) {
+    Particle<S>::explosion
+      ( V4 { p.x + w/2, _y+h, p.x + w/2, p.y+h }
+      , V2 { 0.2, 0.3 }
+      , V2 { 0.2, 0.4 }
+      , V2 { -0.0003, 0.0003 }
+      , V2 { 200, 800 }
+      , 0, (int) max(dt/2, 3)
+      , [ &g ] (auto p) { g->addObject (p); }
+      );
+
+    if (c != nullptr) {
+      c->onHit((S *) g);
       Particle<S>::explosion
-        ( getBounds () . getCenter ()
+        ( V4 { p.x + w / 2, _y, p.x + w / 2, _y }
         , V2 { 0.0, 1.0 }
         , V2 { 0.5, 0.9 }
         , V2 { -0.001, 0.001 }
@@ -46,17 +59,9 @@ public:
         , [ &g ] (auto p) { g->addObject (p); }
         );
       return true;
-    } else {
-      Particle<S>::explosion
-        ( getBounds () . getCenter ()
-        , V2 { 0.2, 0.3 }
-        , V2 { 0.2, 0.4 }
-        , V2 { -0.0003, 0.0003 }
-        , V2 { 200, 800 }
-        , 1, 3
-        , [ &g ] (auto p) { g->addObject (p); }
-        );
     }
+
+    p.y = _y;
 
     return !g->getBounds()->contains(getBounds());
   }

@@ -32,6 +32,13 @@ int signum(const double x) {
     (1 - (static_cast<int>((*reinterpret_cast<const uint64_t*>(&x)) >> 63) << 1));
 }
 
+double min(const double x, const double y) {
+  return x > y? y : x;
+}
+double max(const double x, const double y) {
+  return x > y? x : y;
+}
+
 
 // ------------------ V2
 
