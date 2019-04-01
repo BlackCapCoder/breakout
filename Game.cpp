@@ -20,6 +20,9 @@ void Game::init ()
     exit (EXIT_FAILURE);
 
   std::srand(std::time(nullptr));
+
+  SDL_SetRenderDrawColor (rend, 0, 0, 0, 255);
+  SDL_RenderClear(rend);
 }
 
 bool Game::tick ()
@@ -30,8 +33,6 @@ bool Game::tick ()
   if (1000 / fps <= delta) {
     im->tick();
 
-    SDL_SetRenderDrawColor (rend, 0, 0, 0, 255);
-    SDL_RenderClear(rend);
     (void) s->tick(delta, rend, im, nullptr);
     SDL_RenderPresent (rend);
 

@@ -1,7 +1,7 @@
 # TODO/Ideas
 
 - [ ] Clean the code. Replace pointers with references and add const
-- [ ] Better menu
+- [x] Better menu
 - [ ] Better HUD
 - [ ] GFX for upgrades
 - [ ] More levels

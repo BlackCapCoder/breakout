@@ -7,7 +7,7 @@
 
 Breakout::Breakout (int w, int h, Game*)
   : ColScene<Breakout>(w, h)
-  , hud {42}
+  , hud {32}
 {
   loadLevel (currentLevel);
 }
@@ -56,6 +56,8 @@ void Breakout::tick
   if (numBricks <= 0) {
     onWin ();
   } else {
+    SDL_SetRenderDrawColor (rend, 0, 0, 0, 255);
+    SDL_RenderClear(rend);
     ColScene<Breakout>::tick(dt, rend, im, ptr);
   }
 
