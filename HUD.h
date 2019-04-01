@@ -27,7 +27,7 @@ private:
 public:
   HUD (int fontSize)
     : fontSize{fontSize}
-    , font { TTF_OpenFont("DroidSans.ttf", fontSize) }
+    , font { TTF_OpenFont("resources/DroidSans.ttf", fontSize) }
     , rect { 0, 0, 1000, 1000 }
   {}
 

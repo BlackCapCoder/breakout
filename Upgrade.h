@@ -25,24 +25,51 @@ class Upgrade : public GameObject<Breakout, bool>
 private:
   V2 p;
   UpgradeType type;
-  const double size    = 50;
-  const double sizeInc = 50;
+  const double size    = 100;
+  const double sizeInc = 100;
   const double speed   = 0.3;
+  SDL_Surface * img = nullptr;
+  SDL_Texture * txt = nullptr;
 
 public:
   Upgrade (V2 p) : p{p}
   {
     type = (UpgradeType) (std::rand() % NUM_UPGRADES);
+
+    switch (type) {
+      case (SizeUp):
+        img = IMG_Load("resources/sizeup.png");
+        break;
+      case (SizeDown):
+        img = IMG_Load("resources/sizedown.png");
+        break;
+      case (SpeedDown):
+        img = IMG_Load("resources/speeddown.png");
+        break;
+      case (SpeedUp):
+        img = IMG_Load("resources/speedup.png");
+        break;
+      case (Rocket5):
+        img = IMG_Load("resources/rocket5.png");
+        break;
+      case (Meteor):
+        img = IMG_Load("resources/meteor.png");
+        break;
+      case (Magnet):
+        img = IMG_Load("resources/magnet.png");
+        break;
+      case (ShiftDown):
+        img = IMG_Load("resources/shiftdown.png");
+        break;
+    }
   }
 
   bool logic (double dt, InputManager * im, Breakout * g)
   {
     p.y += dt * speed;
-
-    V4 r{p.x-size/2, p.y-size/2, size, size};
     Paddle * pad = &g->paddle;
 
-    if (pad->bounds.intersects(r)) {
+    if (pad->bounds.intersects(getBounds())) {
       switch (type) {
         case (SizeUp):
           pad->bounds.x -= sizeInc/2;
@@ -71,42 +98,31 @@ public:
           g->shiftDown();
           break;
       }
+      onRemove();
       return true;
     }
 
-    return !g->getBounds()->contains(r);
+    return !g->getBounds()->contains(getBounds());
+  }
+
+  V4 getBounds ()
+  {
+    return V4 { p.x-size/2, p.y-size/2, size, size };
+  }
+
+  void onRemove ()
+  {
+    SDL_FreeSurface(img);
+    SDL_DestroyTexture(txt);
   }
 
   void render (SDL_Renderer * rend)
   {
-    switch (type) {
-      case(SizeUp):
-        SDL_SetRenderDrawColor (rend, 0, 255, 0, 1);
-        break;
-      case(SizeDown):
-        SDL_SetRenderDrawColor (rend, 255, 0, 0, 1);
-        break;
-      case(SpeedUp):
-        SDL_SetRenderDrawColor (rend, 128, 0, 0, 1);
-        break;
-      case(SpeedDown):
-        SDL_SetRenderDrawColor (rend, 0, 128, 0, 1);
-        break;
-      case(Rocket5):
-        SDL_SetRenderDrawColor (rend, 0, 0, 255, 1);
-        break;
-      case(Meteor):
-        SDL_SetRenderDrawColor (rend, 255, 0, 255, 1);
-        break;
-      case(Magnet):
-        SDL_SetRenderDrawColor (rend, 128, 128, 128, 1);
-        break;
-      case(ShiftDown):
-        SDL_SetRenderDrawColor (rend, 64, 64, 64, 1);
-        break;
+    if (txt == nullptr) {
+      txt = SDL_CreateTextureFromSurface(rend, img);
     }
 
-    SDL_RenderFillRect (rend, V4 { p.x-size/2, p.y-size/2, size, size }.get());
+    SDL_RenderCopy (rend, txt, nullptr, getBounds().get());
   }
 };
 

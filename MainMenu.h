@@ -40,7 +40,7 @@ public:
     : w{w}
     , h{h}
     , game{g}
-    , font { TTF_OpenFont("DroidSans.ttf", 100) }
+    , font { TTF_OpenFont("resources/DroidSans.ttf", 100) }
   {
     init (g->getRenderer());
   }
