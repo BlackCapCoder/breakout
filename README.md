@@ -3,7 +3,7 @@
 - [ ] Clean the code. Replace pointers with references and add const
 - [x] Better menu
 - [ ] Better HUD
-- [ ] GFX for upgrades
+- [x] GFX for upgrades
 - [ ] More levels
 - [ ] Randomly generated levels
 - [ ] Bricks with more hp
