@@ -17,9 +17,7 @@ private:
   SDL_Texture * texture = nullptr;
   V4            rect;
 
-  std::string strBalls;
-  std::string strRockets;
-  std::string strMagnet;
+  std::string str;
 
 private:
   void renderString (SDL_Renderer *, std::string &, double x, double y);
@@ -27,10 +25,10 @@ private:
 public:
   HUD (int fontSize)
     : fontSize{fontSize}
-    , font { TTF_OpenFont("resources/DroidSans.ttf", fontSize) }
     , rect { 0, 0, 1000, 1000 }
   {}
 
+  void init   (ResourceManager *, SDL_Renderer *);
   void render (SDL_Renderer *);
   bool logic  (double dt, InputManager *, Breakout *);
 };

@@ -21,6 +21,8 @@ void Game::init ()
 
   std::srand(std::time(nullptr));
 
+  rm = new ResourceManager (rend);
+
   SDL_SetRenderDrawColor (rend, 0, 0, 0, 255);
   SDL_RenderClear(rend);
 }
@@ -33,7 +35,7 @@ bool Game::tick ()
   if (1000 / fps <= delta) {
     im->tick();
 
-    (void) s->tick(delta, rend, im, nullptr);
+    (void) s->tick (delta, rend, im, nullptr);
     SDL_RenderPresent (rend);
 
     lastTick = tick;

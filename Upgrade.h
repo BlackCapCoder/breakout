@@ -28,38 +28,40 @@ private:
   const double size    = 100;
   const double sizeInc = 100;
   const double speed   = 0.3;
-  SDL_Surface * img = nullptr;
-  SDL_Texture * txt = nullptr;
+  SDL_Texture * img = nullptr;
 
 public:
   Upgrade (V2 p) : p{p}
   {
     type = (UpgradeType) (std::rand() % NUM_UPGRADES);
+  }
 
+  void init (ResourceManager * rm, SDL_Renderer *)
+  {
     switch (type) {
       case (SizeUp):
-        img = IMG_Load("resources/sizeup.png");
+        img = rm->getImage("resources/sizeup.png");
         break;
       case (SizeDown):
-        img = IMG_Load("resources/sizedown.png");
+        img = rm->getImage("resources/sizedown.png");
         break;
       case (SpeedDown):
-        img = IMG_Load("resources/speeddown.png");
+        img = rm->getImage("resources/speeddown.png");
         break;
       case (SpeedUp):
-        img = IMG_Load("resources/speedup.png");
+        img = rm->getImage("resources/speedup.png");
         break;
       case (Rocket5):
-        img = IMG_Load("resources/rocket5.png");
+        img = rm->getImage("resources/rocket5.png");
         break;
       case (Meteor):
-        img = IMG_Load("resources/meteor.png");
+        img = rm->getImage("resources/meteor.png");
         break;
       case (Magnet):
-        img = IMG_Load("resources/magnet.png");
+        img = rm->getImage("resources/magnet.png");
         break;
       case (ShiftDown):
-        img = IMG_Load("resources/shiftdown.png");
+        img = rm->getImage("resources/shiftdown.png");
         break;
     }
   }
@@ -98,7 +100,6 @@ public:
           g->shiftDown();
           break;
       }
-      onRemove();
       return true;
     }
 
@@ -110,19 +111,9 @@ public:
     return V4 { p.x-size/2, p.y-size/2, size, size };
   }
 
-  void onRemove ()
-  {
-    SDL_FreeSurface(img);
-    SDL_DestroyTexture(txt);
-  }
-
   void render (SDL_Renderer * rend)
   {
-    if (txt == nullptr) {
-      txt = SDL_CreateTextureFromSurface(rend, img);
-    }
-
-    SDL_RenderCopy (rend, txt, nullptr, getBounds().get());
+    SDL_RenderCopy (rend, img, nullptr, getBounds().get());
   }
 };
 

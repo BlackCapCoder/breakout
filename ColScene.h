@@ -37,6 +37,9 @@ private:
   DualCachedVector<Box> objs;
   std::vector<CObj*> qtbuf;
 
+  ResourceManager * rm;
+  SDL_Renderer    * rend;
+
   V4 bounds;
 
 public:
@@ -50,6 +53,12 @@ public:
   V4 * getBounds () { return &bounds; }
   int  getWidth  () { return bounds.w; }
   int  getHeight () { return bounds.h; }
+
+  void init (ResourceManager * rm, SDL_Renderer * rend)
+  {
+    this->rm   = rm;
+    this->rend = rend;
+  }
 
   void tick
     ( double dt
@@ -97,6 +106,8 @@ public:
 
     if (b.isR)
       qt.insert(b.r);
+
+    b.l->init (rm, rend);
   }
   void addObject (Obj  * obj, bool front = true) { addObject (Box{obj}, front); }
   void addObject (CObj * obj, bool front = true) { addObject (Box{obj}, front); }

@@ -9,6 +9,11 @@ Breakout::Breakout (int w, int h, Game*)
   : ColScene<Breakout>(w, h)
   , hud {32}
 {
+}
+
+void Breakout::init (ResourceManager * rm, SDL_Renderer * r)
+{
+  ColScene<Breakout>::init(rm, r);
   loadLevel (currentLevel);
 }
 
@@ -30,7 +35,7 @@ void Breakout::onWin ()
   levelTime     = 0;
   speedUprades  = 0;
   meteorTime    = 0;
-  magnetCharge  = 0;
+  // magnetCharge  = 0;
   currentLevel += 1;
 
   loadLevel (currentLevel);

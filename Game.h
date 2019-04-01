@@ -11,6 +11,8 @@
 #include <ctime>
 
 #include "GameObject.h"
+#include "ResourceManager.h"
+
 
 class Game
 {
@@ -21,6 +23,7 @@ private:
   SDL_Window    * wndw = nullptr;
   SDL_Renderer  * rend = nullptr;
   Scene         * s    = nullptr;
+  ResourceManager * rm = nullptr;
 
   std::chrono::system_clock::time_point lastTick;
   bool shouldQuit = false;
@@ -42,6 +45,7 @@ public:
   inline int getWidth  ()   { return w; }
   inline int getHeight ()   { return h; }
   void setScene (Scene * s) { this->s = s; }
+  inline ResourceManager * getResourceManager () { return rm; }
 
   SDL_Renderer* getRenderer() const;
 
@@ -49,6 +53,7 @@ public:
   S * setScene ()
   {
     S * s = new S (w, h, this);
+    s->init(rm, rend);
     setScene(s);
     return s;
   }

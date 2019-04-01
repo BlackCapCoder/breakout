@@ -11,7 +11,7 @@ void Paddle::render (SDL_Renderer * r)
   SDL_RenderFillRect (r, bounds.get());
   if (canSpawnBall) {
     SDL_SetRenderDrawColor (r, 255, 255, 255, 255);
-    SDL_RenderFillRect (r, V4{bounds.x+bounds.w/2, bounds.y-5, 10, 10}.get());
+    SDL_RenderFillRect (r, V4{bounds.x+bounds.w/2-5, bounds.y-5, 10, 10}.get());
   }
 }
 

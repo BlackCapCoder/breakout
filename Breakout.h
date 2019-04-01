@@ -54,6 +54,7 @@ private:
 public:
   Breakout (int w, int h, Game *);
 
+  void init (ResourceManager *, SDL_Renderer *);
   void tick ( double       dt
             , SDL_Renderer *
             , InputManager *

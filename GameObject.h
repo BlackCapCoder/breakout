@@ -4,12 +4,15 @@
 #include <SDL2/SDL.h>
 
 #include "InputManager.h"
+#include "ResourceManager.h"
 
 
 template <class S, class R>
 struct GameObject
 {
 public:
+  virtual void init (ResourceManager *, SDL_Renderer *) {}
+
   virtual void render
     ( SDL_Renderer * r
     ) {}
@@ -38,6 +41,8 @@ template <class S>
 struct GameObject<S, void>
 {
 public:
+  virtual void init (ResourceManager *, SDL_Renderer *) {}
+
   virtual void render
     ( SDL_Renderer * r
     ) {}
