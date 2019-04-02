@@ -25,9 +25,9 @@ public:
 
   void render (SDL_Renderer *);
 
-  bool logic ( double         dt
+  bool logic ( double             dt
              , const InputManager &
-             , Breakout     * g  );
+             , Breakout           * );
 };
 
 #endif // BALL_H

@@ -18,20 +18,22 @@ public:
     ) {}
 
   virtual R logic
-    ( double         dt // Milliseconds since last tick
+    ( double               dt // Milliseconds since last tick
     , const InputManager & im
-    , S            * st )
-  { return tick (dt, nullptr, im, st); }
+    , S                  * st )
+  {
+    return tick (dt, nullptr, im, st);
+  }
 
   // Combined logic/render tick
   virtual R tick
-    ( double         dt
-    , SDL_Renderer * r
+    ( double               dt
+    , SDL_Renderer       * r
     , const InputManager & im
-    , S            * st )
+    , S                  * st )
   {
     R ret = logic (dt, im, st);
-    if (r != nullptr) render (r);
+    render (r);
     return ret;
   }
 };

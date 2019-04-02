@@ -112,15 +112,15 @@ public:
 
     b.l->init (rm, rend);
   }
-  void addObject (Obj  * obj, bool front = true) { addObject (Box{obj}, front); }
-  void addObject (CObj * obj, bool front = true) { addObject (Box{obj}, front); }
-  template <class O> void addObject (bool front = true) { addObject(new O(), front); }
+  void addObject (Obj  & obj, bool front = true) { addObject (Box{&obj}, front); }
+  void addObject (CObj & obj, bool front = true) { addObject (Box{&obj}, front); }
+  template <class O> void addObject (bool front = true) { addObject(*new O(), front); }
 
-  void addObject (GameObject<ColScene<St>, bool> * obj, bool front = true)
-  { addObject((Obj*) obj, front); }
+  void addObject (GameObject<ColScene<St>, bool> & obj, bool front = true)
+  { addObject((Obj&) obj, front); }
 
-  void addObject (ColObj<ColScene<St>, ColResult> * obj, bool front = true)
-  { addObject((CObj*) obj, front); }
+  void addObject (ColObj<ColScene<St>, ColResult> & obj, bool front = true)
+  { addObject((CObj&) obj, front); }
 
   template <template <class ...> class O>
   void addObject (bool front = true) { addObject<O<St>>(front); }

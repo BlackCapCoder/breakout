@@ -127,8 +127,8 @@ void QuadTree::clear() noexcept
 // Subdivides into four quadrants
 void QuadTree::subdivide()
 {
-  double width  = bounds.w  * 0.5f;
-  double height = bounds.h * 0.5f;
+  const double width  = bounds.w  * 0.5f;
+  const double height = bounds.h * 0.5f;
   double x = 0, y = 0;
   for (unsigned i = 0; i < 4; ++i) {
     switch (i) {

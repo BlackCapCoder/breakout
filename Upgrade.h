@@ -24,17 +24,17 @@ class Upgrade : public GameObject<Breakout, bool>
 {
 private:
   V2 p;
-  UpgradeType type;
+  const UpgradeType type;
   const double size    = 100;
   const double sizeInc = 100;
   const double speed   = 0.3;
   SDL_Texture * img = nullptr;
 
 public:
-  Upgrade (V2 p) : p{p}
-  {
-    type = (UpgradeType) (std::rand() % NUM_UPGRADES);
-  }
+  Upgrade (V2 p)
+    : p{p}
+    , type{(UpgradeType) (std::rand() % NUM_UPGRADES)}
+  {}
 
   void init (ResourceManager & rm, SDL_Renderer *)
   {

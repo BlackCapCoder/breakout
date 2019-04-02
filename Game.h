@@ -1,14 +1,12 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <iostream>
-#include <thread>
-#include <chrono>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <cstdlib>
-#include <vector>
 #include <ctime>
+#include <chrono>
 
 #include "GameObject.h"
 #include "ResourceManager.h"
@@ -25,42 +23,20 @@ private:
   ResourceManager rm;
 
   mutable std::chrono::system_clock::time_point lastTick;
-  mutable bool shouldQuit = false;
   mutable Scene * s = nullptr;
 
 public:
-  Game ( const int w
+  Game ( const std::string title
+       , const int w
        , const int h
        , InputManager & im
-       )
-    : w  { w  }
-    , h  { h  }
-    , im { im }
-    , wndw { SDL_CreateWindow
-        ( "Breakout"
-        , SDL_WINDOWPOS_CENTERED
-        , SDL_WINDOWPOS_CENTERED
-        , w
-        , h
-        , SDL_WINDOW_SHOWN
-        | SDL_WINDOW_OPENGL
-        ) }
-    , rend { SDL_CreateRenderer
-        ( wndw
-        , -1
-        , SDL_RENDERER_ACCELERATED
-        | SDL_RENDERER_PRESENTVSYNC
-        ) }
-    , rm { ResourceManager{rend} }
-    , lastTick { std::chrono::system_clock::now() }
-  {
-  }
+       );
 
   ~Game();
+
   bool tick ();
   void loop ();
 
-  inline void quit () { shouldQuit = true; }
 
   template <class S>
   void setScene ()
@@ -68,6 +44,15 @@ public:
     if (s != nullptr) delete s;
     s = new S {w, h, rm};
     s->init (rm, rend);
+  }
+
+  static void init ()
+  {
+    SDL_Init (SDL_INIT_VIDEO);
+    IMG_Init (IMG_INIT_PNG);
+    TTF_Init ();
+
+    std::srand (std::time(nullptr));
   }
 };
 

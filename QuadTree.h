@@ -27,8 +27,8 @@ class QuadTree
 private:
   bool      isLeaf = true;
   unsigned  level  = 0;
-  unsigned  capacity;
-  unsigned  maxLevel;
+  const unsigned  capacity;
+  const unsigned  maxLevel;
   V4        bounds;
   QuadTree* parent = nullptr;
   QuadTree* children[4] = { nullptr, nullptr, nullptr, nullptr };

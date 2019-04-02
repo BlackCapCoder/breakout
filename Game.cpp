@@ -1,6 +1,35 @@
 #include "Game.h"
 
 
+Game::Game
+  ( const std::string title
+  , const int w
+  , const int h
+  , InputManager & im
+  )
+  : w  { w  }
+  , h  { h  }
+  , im { im }
+  , wndw { SDL_CreateWindow
+      ( title.c_str()
+      , SDL_WINDOWPOS_CENTERED
+      , SDL_WINDOWPOS_CENTERED
+      , w
+      , h
+      , SDL_WINDOW_SHOWN
+      | SDL_WINDOW_OPENGL
+      ) }
+  , rend { SDL_CreateRenderer
+      ( wndw
+      , -1
+      , SDL_RENDERER_ACCELERATED
+      | SDL_RENDERER_PRESENTVSYNC
+      ) }
+  , rm { ResourceManager{rend} }
+  , lastTick { std::chrono::system_clock::now() }
+{
+}
+
 Game::~Game()
 {
   delete s;
@@ -24,12 +53,8 @@ bool Game::tick ()
   }
 
   lastTick = tick;
-  if (im.isDown(Quit)) shouldQuit = true;
 
-  return !this->shouldQuit;
+  return !im.isDown(Quit);
 }
 
-void Game::loop ()
-{
-  while (tick ());
-}
+void Game::loop () { while (tick ()); }

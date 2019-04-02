@@ -49,10 +49,10 @@ void Breakout::onWin ()
 }
 
 Scene* Breakout::tick
-  ( double dt
-  , SDL_Renderer * rend
+  ( double               dt
+  , SDL_Renderer       * rend
   , const InputManager & im
-  , void         * ptr
+  , void               * ptr
   )
 {
   levelTime += dt;

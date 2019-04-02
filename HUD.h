@@ -11,19 +11,20 @@ class Breakout;
 class HUD : public GameObject<Breakout, bool>
 {
 private:
-  int           fontSize;
+  const int     fontSize;
+  const V4      rect;
+
   TTF_Font    * font;
   SDL_Surface * surface = nullptr;
   SDL_Texture * texture = nullptr;
-  V4            rect;
 
-  std::string str;
+  mutable std::string str;
 
 private:
   void renderString (SDL_Renderer *, std::string &, double x, double y);
 
 public:
-  HUD (int fontSize)
+  HUD (const int fontSize)
     : fontSize{fontSize}
     , rect { 0, 0, 1000, 1000 }
   {}
