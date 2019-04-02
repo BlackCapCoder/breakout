@@ -20,7 +20,7 @@ ColResult Paddle::logic (double dt, const InputManager & im, Breakout * g)
   float o = bounds.x;
   canSpawnBall = g->spareBalls > 0;
 
-  const double speed = 2.0;
+  const double speed = 1.7;
 
   if (im.isDown(MoveLeft )) bounds.x -= dt * speed;
   if (im.isDown(MoveRight)) bounds.x += dt * speed;

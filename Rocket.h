@@ -63,7 +63,7 @@ public:
 
     p.y = _y;
 
-    return !g->getBounds().contains(getBounds());
+    return !g->getBounds().intersects(getBounds());
   }
 
   void render (SDL_Renderer * rend)

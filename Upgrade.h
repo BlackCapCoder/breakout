@@ -103,7 +103,7 @@ public:
       return true;
     }
 
-    return !g->getBounds().contains(getBounds());
+    return !g->getBounds().intersects(getBounds());
   }
 
   V4 getBounds ()
