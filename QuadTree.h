@@ -27,7 +27,6 @@ using ColT = Collidable;
 class QuadTree
 {
 private:
-
   bool      isLeaf = true;
   unsigned  level  = 0;
   const unsigned  capacity;

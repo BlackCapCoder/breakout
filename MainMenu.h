@@ -11,6 +11,7 @@ private:
   enum Option
   { StartGame
   , Settings
+  , Highscore
   , Quit
 
   , NUM_OPTIONS
@@ -113,6 +114,7 @@ public:
     switch (o) {
       case (StartGame): return "Start Game";
       case (Settings):  return "Settings";
+      case (Highscore): return "Highscore";
       case (Quit):      return "Quit";
     }
     return "ERROR";
