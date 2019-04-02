@@ -49,9 +49,13 @@ private:
   void onLose    ();
 
 public:
-  Breakout (int w, int h, ResourceManager &);
+  Breakout
+    ( const int w
+    , const int h
+    , ResourceManager &
+    , SDL_Renderer    *
+    );
 
-  void init (ResourceManager &, SDL_Renderer *);
   SceneR tick ( double       dt
               , SDL_Renderer *
               , const InputManager &

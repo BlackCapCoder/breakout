@@ -19,33 +19,16 @@ private:
   }
 
 public:
-  // template <typename... Args>
-  // DualScene<A,B> (Args... args)
-  //   : a { A{args...} }
-  //   , b { B{args...} }
-  //   , active { false }
-  //   {}
   DualScene<A,B>
-    ( int w
-    , int h
+    ( const int w
+    , const int h
     , ResourceManager & rm
+    , SDL_Renderer    * rend
     )
-    : a { A(w, h, rm) }
-    , b { B(w, h, rm) }
+    : a { A (w, h, rm, rend) }
+    , b { B (w, h, rm, rend) }
     , active { false }
   {
-  }
-
-  ~DualScene<A,B>()
-  {
-    // delete a;
-    // delete b;
-  }
-
-  void init (ResourceManager & rm, SDL_Renderer * r)
-  {
-    a.init (rm, r);
-    b.init (rm, r);
   }
 
   void render (SDL_Renderer * r)
@@ -60,7 +43,6 @@ public:
   {
     if (getActive() . logic (dt, im, st)) toggle ();
     return false;
-    // return getActive () . logic (dt, im, st);
   }
 
   SceneR tick
@@ -71,14 +53,12 @@ public:
   {
     if (getActive() . tick (dt, r, im, st)) toggle ();
     return false;
-    // return getActive () . tick (dt, r, im, st);
   }
 
   void toggle ()
   {
     active = !active;
   }
-
 };
 
 #endif // ifndef DUALSCENE_H

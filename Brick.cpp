@@ -5,14 +5,14 @@
 
 
 Brick::Brick
-  ( float x_coord
-  , float y_coord
-  , float width
-  , float height
-  , float r
-  , float g
-  , float b
-  , float a
+  ( const float x_coord
+  , const float y_coord
+  , const float width
+  , const float height
+  , const float r
+  , const float g
+  , const float b
+  , const float a
   ) : rect{x_coord, y_coord, width, height}
     , r{r}
     , g{g}
@@ -30,10 +30,10 @@ Brick::Brick()
   , removed{false}
 {}
 
-void Brick::render(SDL_Renderer* rend)
+void Brick::render (SDL_Renderer * rend)
 {
   SDL_SetRenderDrawColor (rend, r, g, b, a);
-  SDL_RenderFillRect(rend, rect.get());
+  SDL_RenderFillRect     (rend, rect.get());
 }
 
 V4 & Brick::getBounds()
@@ -53,8 +53,11 @@ ColResult Brick::logic (double, const InputManager&, Breakout * b)
 
 void Brick::onHit (Breakout * g)
 {
-  if (std::rand() % 10 == 0) {
-    g->addObject(new Upgrade {rect.getCenter()}, true);
+  if (std::rand() % upgradeChance == 0) {
+    g->addObject<Upgrade>
+      ( true
+      , rect.getCenter ()
+      );
   }
 
   removed = true;

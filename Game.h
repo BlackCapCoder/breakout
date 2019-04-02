@@ -51,9 +51,8 @@ public:
         | SDL_RENDERER_PRESENTVSYNC
         ) }
     , rm { ResourceManager{rend} }
-    , s  { S{w,h,rm} }
+    , s  { S{w,h,rm,rend} }
   {
-    s.init (rm, rend);
   }
 
   ~Game<S> ()
@@ -86,7 +85,7 @@ void initGame ()
   IMG_Init (IMG_INIT_PNG);
   TTF_Init ();
 
-  std::srand (std::time(nullptr));
+  std::srand (std::time (nullptr));
 }
 
 

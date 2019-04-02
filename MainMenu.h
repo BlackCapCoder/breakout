@@ -25,7 +25,8 @@ private:
   bool dir;
   bool inAnim = false;
 
-  int w, h;
+  const int w;
+  const int h;
   ResourceManager & rm;
 
   TTF_Font    * font;
@@ -34,16 +35,18 @@ private:
 
 
 public:
-  MainMenu (int w, int h, ResourceManager & rm)
+  MainMenu
+    ( const int w
+    , const int h
+    , ResourceManager & rm
+    , SDL_Renderer    * rend
+    )
     : w{w}
     , h{h}
     , rm{rm}
-  {}
-
-  void init (ResourceManager & rm, SDL_Renderer * r)
+    , font{rm.getFont ("resources/DroidSans.ttf", 100)}
   {
-    font = rm.getFont ("resources/DroidSans.ttf", 100);
-    init (r);
+    init (rend);
   }
 
   void init (SDL_Renderer * r) {

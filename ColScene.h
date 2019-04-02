@@ -45,21 +45,21 @@ private:
 public:
   QuadTree qt;
 
-  ColScene (int w, int h, ResourceManager & rm)
+  ColScene
+    ( const int w
+    , const int h
+    , ResourceManager & rm
+    , SDL_Renderer    * rend
+    )
     : bounds{V4{0, 0, (double) w, (double) h}}
     , qt{QuadTree{bounds, 100, 4}}
     , rm{rm}
+    , rend{rend}
   {}
 
   V4 & getBounds () { return bounds; }
   int  getWidth  () { return bounds.w; }
   int  getHeight () { return bounds.h; }
-
-  void init (ResourceManager & rm, SDL_Renderer * rend)
-  {
-    this->rm   = rm;
-    this->rend = rend;
-  }
 
   SceneR tick
     ( double dt
@@ -114,7 +114,14 @@ public:
   }
   void addObject (Obj  & obj, bool front = true) { addObject (Box{&obj}, front); }
   void addObject (CObj & obj, bool front = true) { addObject (Box{&obj}, front); }
-  template <class O> void addObject (bool front = true) { addObject(*new O(), front); }
+
+  template <class O, typename... Args>
+  O & addObject (bool front = true, Args... args)
+  {
+    O & o = *new O (args...);
+    addObject (o, front);
+    return o;
+  }
 
   void addObject (GameObject<ColScene<St>, bool> & obj, bool front = true)
   { addObject((Obj&) obj, front); }

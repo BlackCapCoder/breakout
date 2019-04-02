@@ -4,19 +4,20 @@
 #include "Math.h"
 #include "Levels.h"
 
-Breakout::Breakout (int w, int h, ResourceManager & rm)
-  : ColScene<Breakout>(w, h, rm)
+Breakout::Breakout
+  ( const int w
+  , const int h
+  , ResourceManager & rm
+  , SDL_Renderer    * rend
+  )
+  : ColScene<Breakout>(w, h, rm, rend)
   , hud {32}
 {
-}
-
-void Breakout::init (ResourceManager & rm, SDL_Renderer * r)
-{
-  ColScene<Breakout>::init(rm, r);
   loadLevel (currentLevel);
 }
 
-void Breakout::loadLevel (int level) {
+void Breakout::loadLevel (int level)
+{
   bricks.clear ();
   clear        ();
   addObject    (&paddle);

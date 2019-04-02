@@ -10,28 +10,29 @@ class Brick : public ColObj<Breakout, ColResult>
 
 private:
   V4    rect;
-  float r;
-  float g;
-  float b;
-  float a;
+  const float r;
+  const float g;
+  const float b;
+  const float a;
+  const int upgradeChance = 10;
   bool  removed;
 
 public:
-  Brick();
-  Brick ( float x_coord
-        , float y_coord
-        , float width
-        , float height
-        , float r
-        , float g
-        , float b
-        , float a
+  Brick ();
+  Brick ( const float x_coord
+        , const float y_coord
+        , const float width
+        , const float height
+        , const float r
+        , const float g
+        , const float b
+        , const float a
         );
 
-  void      render(SDL_Renderer* r);
-  V4 &      getBounds();
-  ColResult logic(double, const InputManager&, Breakout*);
-  void      onHit(Breakout*);
+  void      render    (SDL_Renderer* r);
+  V4 &      getBounds ();
+  ColResult logic     (double, const InputManager&, Breakout*);
+  void      onHit     (Breakout*);
 };
 
 #endif // BRICK_H

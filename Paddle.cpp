@@ -32,7 +32,11 @@ ColResult Paddle::logic (double dt, const InputManager & im, Breakout * g)
   }
 
   if (g->numRockets > 0 && im.isDownFirst(FireRocket)) {
-    g->addObject(*new Rocket<Breakout>(bounds.x+bounds.w/2, bounds.y-26));
+    g->addObject<Rocket<Breakout>>
+      ( true
+      , bounds.x+bounds.w/2
+      , bounds.y-26
+      );
     g->numRockets--;
   }
 

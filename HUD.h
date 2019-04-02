@@ -24,7 +24,9 @@ private:
   void renderString (SDL_Renderer *, std::string &, double x, double y);
 
 public:
-  HUD (const int fontSize)
+  HUD
+    ( const int fontSize
+    )
     : fontSize{fontSize}
     , rect { 0, 0, 1000, 1000 }
   {}
