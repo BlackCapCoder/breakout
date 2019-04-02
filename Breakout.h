@@ -35,6 +35,7 @@ private:
   double             meteorTime   = 0;
   double             magnetCharge = 0;
   unsigned int       points       = 0;
+  bool               gameLost     = false;
 
   // Time in seconds for the level speed to double
   const double speedDoubleRate  = 60;

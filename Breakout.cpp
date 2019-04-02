@@ -57,6 +57,24 @@ SceneR Breakout::tick
   , SceneS             * ptr
   )
 {
+  if (gameLost) {
+    gameLost      = false;
+    currentLevel  = 1;
+    spareBalls    = 3;
+    numRockets    = 5;
+    ballCounter   = 0;
+    numBalls      = 0;
+    levelTime     = 0;
+    speedUprades  = 0;
+    meteorTime    = 0;
+    magnetCharge  = 0;
+    points        = 0;
+    paddle        = Paddle {1000, 1000, (double) 1000 / 5, 30, 930};
+    loadLevel(currentLevel);
+
+    return true;
+  }
+
   levelTime += dt;
 
   if (numBricks <= 0) {
@@ -140,8 +158,9 @@ void Breakout::shiftDown ()
 
 void Breakout::onLose ()
 {
-  std::cout << "Game over!" << std::endl;
-  exit (0);
+  gameLost = true;
+  // std::cout << "Game over!" << std::endl;
+  // exit (0);
 }
 
 void Breakout::doubleBalls ()

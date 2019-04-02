@@ -22,7 +22,7 @@ int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
 
   initGame ();
 
-  Game<DualScene<MainMenu, Breakout>> g
+  Game<NScene<MainMenu, Breakout>> g
     { "Breakout", 1000, 1000, im };
 
   g.loop();
