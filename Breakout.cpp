@@ -92,6 +92,7 @@ void Breakout::spawnBall ()
 
 void Breakout::onBallLost (Ball * b)
 {
+  b->isDead = true;
   if (b < balls || b >= balls + ballCounter) return;
   numBalls--;
 
@@ -141,4 +142,17 @@ void Breakout::onLose ()
 {
   std::cout << "Game over!" << std::endl;
   exit (0);
+}
+
+void Breakout::doubleBalls ()
+{
+  for (int i = ballCounter-1; i >= 0 ; i--) {
+    Ball b = balls[i];
+    if (b.isDead) continue;
+    balls [ballCounter] = Ball { b.x, b.y, -b.vx, b.vy };
+
+    addObject (balls + ballCounter, true);
+    ballCounter++;
+    numBalls++;
+  }
 }

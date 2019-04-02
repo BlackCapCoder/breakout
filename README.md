@@ -17,7 +17,7 @@
 
 # Upgrade/Downgrade ideas
 
-- [ ] For each ball, spawn a second ball at the same position but with negative x-velocity
+- [x] For each ball, spawn a second ball at the same position but with negative x-velocity
 - [ ] Slow down paddle
 - [ ] Flip paddle movement keys
 - [ ] Increase ball radius

@@ -16,6 +16,7 @@ enum UpgradeType
   Meteor,
   Magnet,
   ShiftDown,
+  DoubleBalls,
 
   NUM_UPGRADES
 };
@@ -63,6 +64,9 @@ public:
       case (ShiftDown):
         img = rm.getImage ("resources/shiftdown.png");
         break;
+      case (DoubleBalls):
+        img = rm.getImage ("resources/doubleballs.png");
+        break;
     }
   }
 
@@ -98,6 +102,9 @@ public:
           break;
         case (ShiftDown):
           g->shiftDown();
+          break;
+        case (DoubleBalls):
+          g->doubleBalls();
           break;
       }
       return true;

@@ -71,6 +71,7 @@ public:
   bool   meteorActive  ();
   bool   hasMagnet     ();
   void   shiftDown     ();
+  void   doubleBalls   ();
 };
 
 #endif // ifndef BREAKOUT_H
