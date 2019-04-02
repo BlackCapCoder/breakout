@@ -29,7 +29,7 @@ public:
     , ttlOrig{ttl}
     {};
 
-  bool logic (double dt, InputManager*, S*)
+  bool logic (double dt, const InputManager&, S*)
   {
     ttl      -= dt;
     angle    += spin*dt;

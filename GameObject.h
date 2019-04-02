@@ -11,7 +11,7 @@ template <class S, class R>
 struct GameObject
 {
 public:
-  virtual void init (ResourceManager *, SDL_Renderer *) {}
+  virtual void init (ResourceManager &, SDL_Renderer *) {}
 
   virtual void render
     ( SDL_Renderer * r
@@ -19,7 +19,7 @@ public:
 
   virtual R logic
     ( double         dt // Milliseconds since last tick
-    , InputManager * im
+    , const InputManager & im
     , S            * st )
   { return tick (dt, nullptr, im, st); }
 
@@ -27,7 +27,7 @@ public:
   virtual R tick
     ( double         dt
     , SDL_Renderer * r
-    , InputManager * im
+    , const InputManager & im
     , S            * st )
   {
     R ret = logic (dt, im, st);
@@ -36,36 +36,8 @@ public:
   }
 };
 
-// We have to specialize for R=void, because c++
-template <class S>
-struct GameObject<S, void>
-{
-public:
-  virtual void init (ResourceManager *, SDL_Renderer *) {}
-
-  virtual void render
-    ( SDL_Renderer * r
-    ) {}
-
-  virtual void logic
-    ( double         dt // Milliseconds since last tick
-    , InputManager * im
-    , S            * st )
-  { tick (dt, nullptr, im, st); }
-
-  virtual void tick
-    ( double         dt
-    , SDL_Renderer * r
-    , InputManager * im
-    , S            * st )
-  {
-    logic (dt, im, st);
-    if (r != nullptr) render (r);
-  }
-};
-
-// A scene is like the catrige you stick in your gameboy
-typedef GameObject<void, void> Scene;
+struct Scene;
+struct Scene : GameObject<void, Scene*> {};
 
 
 #endif // GAMEOBJECT_H

@@ -4,7 +4,6 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "Breakout.h"
-#include "Text.h"
 
 
 class MainMenu : public Scene
@@ -28,7 +27,7 @@ private:
   bool inAnim = false;
 
   int w, h;
-  Game * game;
+  ResourceManager & rm;
 
   TTF_Font    * font;
   SDL_Texture * texture[NUM_OPTIONS];
@@ -36,15 +35,15 @@ private:
 
 
 public:
-  MainMenu (int w, int h, Game * g)
+  MainMenu (int w, int h, ResourceManager & rm)
     : w{w}
     , h{h}
-    , game{g}
+    , rm{rm}
   {}
 
-  void init (ResourceManager * rm, SDL_Renderer * r)
+  void init (ResourceManager & rm, SDL_Renderer * r)
   {
-    font = rm->getFont ("resources/DroidSans.ttf", 100);
+    font = rm.getFont ("resources/DroidSans.ttf", 100);
     init (r);
   }
 
@@ -70,21 +69,21 @@ public:
   }
 
 
-  void logic
-    ( double         dt // Milliseconds since last tick
-    , InputManager * im
+  Scene* logic
+    ( double         dt
+    , const InputManager & im
     , void         * st )
   {
     animTime = max (animTime-dt, 0);
 
     if (!inAnim) {
-      if (im->isDown(MoveUp)) {
+      if (im.isDown(MoveUp)) {
         oldSelection = selection;
         selection = (NUM_OPTIONS + selection - 1) % NUM_OPTIONS;
         animTime = animLen;
         dir = true;
         inAnim = true;
-      } else if (im->isDown(MoveDown)) {
+      } else if (im.isDown(MoveDown)) {
         oldSelection = selection;
         selection = (selection + 1) % NUM_OPTIONS;
         animTime = animLen;
@@ -93,21 +92,18 @@ public:
       }
     }
 
-    if (im->isDownFirst(MoveRight, FireRocket, ReleaseBall))
-      onSelect();
-  }
+    if (im.isDownFirst(MoveRight, FireRocket, ReleaseBall)) {
+      switch (selection) {
+        case (StartGame):
+          return new Breakout(w, h, rm);
 
-  void onSelect ()
-  {
-    switch (selection) {
-      case (StartGame):
-        game->setScene<Breakout>();
-        break;
-
-      case (Quit): // Quit
-        exit(0);
-        break;
+        case (Quit): // Quit
+          exit(0);
+          break;
+      }
     }
+
+    return nullptr;
   }
 
   std::string getText (Option o)

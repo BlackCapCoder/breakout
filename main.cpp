@@ -1,16 +1,27 @@
-#include <vector>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "Game.h"
-#include "Paddle.h"
 #include "InputManager.h"
-#include "Brick.h"
-#include "Ball.h"
-#include "Text.h"
 #include "Breakout.h"
 #include "MainMenu.h"
 
+
+inline void init ()
+{
+  SDL_Init (SDL_INIT_VIDEO);
+  IMG_Init (IMG_INIT_PNG);
+  TTF_Init ();
+
+  std::srand (std::time(nullptr));
+}
+
+
 int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
 {
+  init ();
+
   InputManager im = InputManager
     ( SDLK_h      , MoveLeft
     , SDLK_l      , MoveRight
@@ -24,11 +35,7 @@ int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
     , SDLK_ESCAPE , Quit
     );
 
-  Game g { 1000, 1000, &im, 60};
+  Game g { 1000, 1000, im };
   g.setScene<MainMenu>();
-
-  while (g.tick());
-  g.dispose();
-
-  return 0;
+  g.loop();
 }

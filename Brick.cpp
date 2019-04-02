@@ -36,12 +36,12 @@ void Brick::render(SDL_Renderer* rend)
   SDL_RenderFillRect(rend, rect.get());
 }
 
-V4 * Brick::getBounds()
+V4 & Brick::getBounds()
 {
-  return &rect;
+  return rect;
 }
 
-ColResult Brick::logic (double, InputManager*, Breakout * b)
+ColResult Brick::logic (double, const InputManager&, Breakout * b)
 {
   if (removed) {
     b->numBricks--;

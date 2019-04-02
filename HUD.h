@@ -28,9 +28,9 @@ public:
     , rect { 0, 0, 1000, 1000 }
   {}
 
-  void init   (ResourceManager *, SDL_Renderer *);
+  void init   (ResourceManager &, SDL_Renderer *);
   void render (SDL_Renderer *);
-  bool logic  (double dt, InputManager *, Breakout *);
+  bool logic  (double dt, const InputManager &, Breakout *);
 };
 
 

@@ -14,10 +14,10 @@ private:
   V4 bounds{(1000 - 200)/2, 930, 200, 30};
 
 public:
-  V4 * getBounds () { return &bounds; }
+  V4 & getBounds () { return bounds; }
 
   void render (SDL_Renderer *);
-  ColResult logic (double dt, InputManager *, Breakout *);
+  ColResult logic (double dt, const InputManager &, Breakout *);
 };
 
 

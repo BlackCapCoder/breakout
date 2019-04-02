@@ -19,7 +19,7 @@ private:
   QuadTree *qt = nullptr;
 
 public:
-  virtual V4 * getBounds () { return nullptr; }
+  virtual V4 & getBounds () = 0;
 };
 
 class QuadTree

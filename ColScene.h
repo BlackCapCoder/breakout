@@ -27,7 +27,7 @@ enum ColResult
 
 
 template <class St>
-class ColScene : public ColObj<void, void>
+class ColScene : public Scene
 {
 private:
   using Obj  = GameObject <St, bool>;
@@ -37,7 +37,7 @@ private:
   DualCachedVector<Box> objs;
   std::vector<CObj*> qtbuf;
 
-  ResourceManager * rm;
+  ResourceManager & rm;
   SDL_Renderer    * rend;
 
   V4 bounds;
@@ -45,25 +45,26 @@ private:
 public:
   QuadTree qt;
 
-  ColScene (int w, int h)
+  ColScene (int w, int h, ResourceManager & rm)
     : bounds{V4{0, 0, (double) w, (double) h}}
     , qt{QuadTree{bounds, 100, 4}}
+    , rm{rm}
   {}
 
-  V4 * getBounds () { return &bounds; }
+  V4 & getBounds () { return bounds; }
   int  getWidth  () { return bounds.w; }
   int  getHeight () { return bounds.h; }
 
-  void init (ResourceManager * rm, SDL_Renderer * rend)
+  void init (ResourceManager & rm, SDL_Renderer * rend)
   {
     this->rm   = rm;
     this->rend = rend;
   }
 
-  void tick
+  Scene * tick
     ( double dt
     , SDL_Renderer * rend
-    , InputManager * im
+    , const InputManager & im
     , void         *
     )
   {
@@ -95,6 +96,8 @@ public:
           }
         }
       });
+
+    return nullptr;
   }
 
   void addObject (Box b, bool front = true)

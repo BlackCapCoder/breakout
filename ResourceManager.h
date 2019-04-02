@@ -28,7 +28,7 @@ public:
   SDL_Texture * getImage (const FilePath & pth)
   {
     // Is it already loaded?
-    auto search = textureStore.find (pth);
+    const auto search = textureStore.find (pth);
     if (search != textureStore.end())
       return search->second;
 
@@ -45,7 +45,7 @@ public:
   TTF_Font * getFont (const FilePath & pth, const uint16_t size)
   {
     // Is it already loaded?
-    auto search = fontStore.find (std::make_pair(pth, size));
+    const auto search = fontStore.find (std::make_pair(pth, size));
     if (search != fontStore.end())
       return search->second;
 

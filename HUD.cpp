@@ -14,18 +14,18 @@ void HUD::renderString (SDL_Renderer * r, std::string & str, double x, double y)
   SDL_DestroyTexture(texture);
 }
 
-void HUD::init (ResourceManager * rm, SDL_Renderer *)
+void HUD::init (ResourceManager & rm, SDL_Renderer *)
 {
-  font = rm->getFont("resources/DroidSans.ttf", fontSize);
+  font = rm.getFont("resources/DroidSans.ttf", fontSize);
 }
 
 void HUD::render (SDL_Renderer * r)
 {
   double pad = 10;
-  renderString (r, str , pad, rect.h - fontSize - pad);
+  renderString (r, str, pad, rect.h - fontSize - pad);
 }
 
-bool HUD::logic (double dt, InputManager *, Breakout * b)
+bool HUD::logic (double dt, const InputManager &, Breakout * b)
 {
   str = "Balls: "   + std::to_string (b->spareBalls) + "  "
       + "Rockets: " + std::to_string (b->numRockets) + "  "

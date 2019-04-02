@@ -21,23 +21,25 @@ class InputManager
 private:
   using KeyT = unsigned char; // sizeof(KeyT) should be 4, but I'm stingy
 
-  KeyT * keybinds;
-  unsigned int  numKeybinds;
-  unsigned char active[NUM_INPUTS] = { 0 };
-  std::bitset< 256 << (sizeof(KeyT) - 1) > keyDown;
+  const unsigned int numKeybinds;
+  const KeyT * keybinds;
+  unsigned char active[NUM_INPUTS]{};
+  std::bitset<256 << (sizeof(KeyT) - 1)> keyDown;
 
 public:
   template <typename... Args>
-  InputManager (Args... args)
+  InputManager (const Args... args)
+    : numKeybinds { sizeof...(args) }
+    , keybinds    { new KeyT [numKeybinds] {(KeyT) args...} }
   {
-    numKeybinds = sizeof...(args);
-    KeyT kbs[numKeybinds]{ (KeyT) args... };
-    keybinds = (KeyT *) malloc (numKeybinds * sizeof (KeyT));
-    memcpy (keybinds, kbs, numKeybinds * sizeof (KeyT));
+  }
+
+  ~InputManager (void)
+  {
+    delete keybinds;
   }
 
 
-  int cnt=0;
   bool tick (void)
   {
     auto ev  = SDL_Event{};
@@ -78,21 +80,24 @@ public:
     return ret;
   }
 
-  void dispose () { free (keybinds); }
-
-  inline bool isDown () { return false; }
+  inline bool isDown () const
+  {
+    return false;
+  }
 
   template <typename... Args>
-  inline bool isDown (Input i, Args... args)
+  inline bool isDown (Input i, Args... args) const
   {
     return active[i] > 0 || isDown (args...);
   }
 
-
-  inline bool isDownFirst () { return false; }
+  inline bool isDownFirst () const
+  {
+    return false;
+  }
 
   template <typename... Args>
-  inline bool isDownFirst (Input i, Args... args)
+  inline bool isDownFirst (Input i, Args... args) const
   {
     return active[i] == 255 || isDown (args...);
   }

@@ -17,9 +17,6 @@ class Breakout : public ColScene<Breakout>
   friend class Paddle;
   friend class Ball;
   friend class HUD;
-  friend class GameObject <Breakout, bool>;
-  friend class ColObj     <Breakout, ColResult>;
-
 
 private:
   Paddle             paddle;
@@ -30,7 +27,7 @@ private:
   unsigned char      ballCounter  = 0;
   unsigned short     numBricks;
   unsigned char      currentLevel = 1;
-  unsigned short     numRockets   = 5;
+  unsigned short     numRockets   = 500;
   unsigned char      spareBalls   = 3;
   unsigned char      numBalls     = 0;
   double             levelTime    = 0;
@@ -52,13 +49,13 @@ private:
   void onLose    ();
 
 public:
-  Breakout (int w, int h, Game *);
+  Breakout (int w, int h, ResourceManager &);
 
-  void init (ResourceManager *, SDL_Renderer *);
-  void tick ( double       dt
-            , SDL_Renderer *
-            , InputManager *
-            , void         * );
+  void init (ResourceManager &, SDL_Renderer *);
+  Scene* tick ( double       dt
+              , SDL_Renderer *
+              , const InputManager &
+              , void         * );
 
   void   spawnBall     ();
   void   onBallLost    (Ball*);

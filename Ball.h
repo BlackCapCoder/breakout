@@ -26,7 +26,7 @@ public:
   void render (SDL_Renderer *);
 
   bool logic ( double         dt
-             , InputManager *
+             , const InputManager &
              , Breakout     * g  );
 };
 

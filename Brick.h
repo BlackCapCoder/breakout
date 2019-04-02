@@ -29,8 +29,8 @@ public:
         );
 
   void      render(SDL_Renderer* r);
-  V4 *      getBounds();
-  ColResult logic(double, InputManager*, Breakout*);
+  V4 &      getBounds();
+  ColResult logic(double, const InputManager&, Breakout*);
   void      onHit(Breakout*);
 };
 

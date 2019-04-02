@@ -2,16 +2,15 @@
 #include "Paddle.h"
 #include "Brick.h"
 #include "Math.h"
-#include "Text.h"
 #include "Levels.h"
 
-Breakout::Breakout (int w, int h, Game*)
-  : ColScene<Breakout>(w, h)
+Breakout::Breakout (int w, int h, ResourceManager & rm)
+  : ColScene<Breakout>(w, h, rm)
   , hud {32}
 {
 }
 
-void Breakout::init (ResourceManager * rm, SDL_Renderer * r)
+void Breakout::init (ResourceManager & rm, SDL_Renderer * r)
 {
   ColScene<Breakout>::init(rm, r);
   loadLevel (currentLevel);
@@ -49,10 +48,10 @@ void Breakout::onWin ()
   exit (0);
 }
 
-void Breakout::tick
+Scene* Breakout::tick
   ( double dt
   , SDL_Renderer * rend
-  , InputManager * im
+  , const InputManager & im
   , void         * ptr
   )
 {
@@ -66,14 +65,16 @@ void Breakout::tick
     ColScene<Breakout>::tick(dt, rend, im, ptr);
   }
 
-  if (im->isDown(PowerMagnet) && magnetCharge > 0) {
+  if (im.isDown(PowerMagnet) && magnetCharge > 0) {
     magnetCharge -= dt;
   }
+
+  return nullptr;
 }
 
 void Breakout::spawnBall ()
 {
-  V4 bounds = *paddle.getBounds();
+  V4 bounds = paddle.getBounds();
 
   balls [ballCounter] =
     Ball { bounds.x + bounds.w/2

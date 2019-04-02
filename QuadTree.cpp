@@ -21,7 +21,7 @@ bool QuadTree::insert(Collidable *obj)
 
   if (!isLeaf) {
     // insert object into leaf
-    if (QuadTree *child = getChild(*(obj->getBounds())))
+    if (QuadTree *child = getChild(obj->getBounds()))
       return child->insert(obj);
   }
   objects.push_back(obj);
@@ -53,24 +53,24 @@ bool QuadTree::update(Collidable *obj)
   if (!remove(obj)) return false;
 
   // Not contained in this node -- insert into parent
-  if (parent != nullptr && !bounds.contains(*(obj->getBounds())))
+  if (parent != nullptr && !bounds.contains(obj->getBounds()))
     return parent->insert(obj);
 
   if (!isLeaf) {
     // Still within current node -- insert into leaf
-    if (QuadTree *child = getChild(*(obj->getBounds())))
+    if (QuadTree *child = getChild(obj->getBounds()))
       return child->insert(obj);
   }
   return insert(obj);
 }
 
 // Searches quadtree for objects within the provided boundary and returns them in vector
-std::vector<Collidable*> &QuadTree::getObjectsInBound(const V4 &bound)
+std::vector<Collidable*> &QuadTree::getObjectsInBound(const V4 & bound)
 {
   foundObjects.clear();
   for (const auto &obj : objects) {
     // Only check for intersection with OTHER boundaries
-    if (obj->getBounds() != &bound && obj->getBounds()->intersects(bound))
+    if (&obj->getBounds() != &bound && obj->getBounds().intersects(bound))
         foundObjects.push_back(obj);
   }
   if (!isLeaf) {

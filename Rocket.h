@@ -24,14 +24,14 @@ private:
 public:
   Rocket (double x, double y) : p{ V2{x, y}} {}
 
-  bool logic (double dt, InputManager * im, ColScene<S> * g)
+  bool logic (double dt, const InputManager & im, ColScene<S> * g)
   {
     double _y = p.y - dt * speed;
     V4 b { p.x, _y, w, h + p.y - _y };
 
     ColObj<S, ColResult> * c = nullptr;
     for (ColObj<S, ColResult> * o : g->getObjectsInBound(b)) {
-      b = *o->getBounds();
+      b = o->getBounds();
       if (b.y + b.h < _y) continue;
       _y = b.y + b.h;
       c = o;
@@ -63,7 +63,7 @@ public:
 
     p.y = _y;
 
-    return !g->getBounds()->contains(getBounds());
+    return !g->getBounds().contains(getBounds());
   }
 
   void render (SDL_Renderer * rend)

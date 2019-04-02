@@ -1,63 +1,35 @@
 #include "Game.h"
-#include <SDL2/SDL_ttf.h>
 
 
-void Game::init ()
+Game::~Game()
 {
-  SDL_Init (SDL_INIT_VIDEO);
-
-  if ( SDL_CreateWindowAndRenderer
-        ( w
-        , h
-        , SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL
-        , &wndw
-        , &rend )
-      ) exit (EXIT_FAILURE);
-
-  TTF_Init ();
-
-  if (!IMG_Init(IMG_INIT_PNG))
-    exit (EXIT_FAILURE);
-
-  std::srand(std::time(nullptr));
-
-  rm = new ResourceManager (rend);
-
-  SDL_SetRenderDrawColor (rend, 0, 0, 0, 255);
-  SDL_RenderClear(rend);
-}
-
-bool Game::tick ()
-{
-  auto tick  = std::chrono::system_clock::now();
-  auto delta = std::chrono::duration<double, std::milli>(tick - lastTick).count();
-
-  if (1000 / fps <= delta) {
-    im->tick();
-
-    (void) s->tick (delta, rend, im, nullptr);
-    SDL_RenderPresent (rend);
-
-    lastTick = tick;
-    if (im->isDown(Quit)) shouldQuit = true;
-  } else {
-    std::this_thread::sleep_for
-      ( std::chrono::duration<double, std::milli>
-        (1000 / fps - delta)
-      );
-  }
-
-  return !this->shouldQuit;
-}
-
-void Game::dispose ()
-{
-  im->dispose         ();
+  delete s;
   SDL_DestroyRenderer (rend);
   SDL_DestroyWindow   (wndw);
 }
 
-SDL_Renderer* Game::getRenderer() const
+bool Game::tick ()
 {
-  return rend;
+  const auto tick  = std::chrono::system_clock::now();
+  const auto delta = std::chrono::duration<double, std::milli>(tick - lastTick).count();
+
+  im.tick();
+  Scene * newScene = s->tick(delta, rend, im, nullptr);
+
+  if (newScene == nullptr) {
+    SDL_RenderPresent (rend);
+  } else {
+    s = newScene;
+    s->init (rm, rend);
+  }
+
+  lastTick = tick;
+  if (im.isDown(Quit)) shouldQuit = true;
+
+  return !this->shouldQuit;
+}
+
+void Game::loop ()
+{
+  while (tick ());
 }

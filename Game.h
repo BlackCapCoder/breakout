@@ -17,45 +17,57 @@
 class Game
 {
 private:
-  int w, h;
-  InputManager  * im   = nullptr;
-  int fps;
-  SDL_Window    * wndw = nullptr;
-  SDL_Renderer  * rend = nullptr;
-  Scene         * s    = nullptr;
-  ResourceManager * rm = nullptr;
+  const int w;
+  const int h;
+  InputManager    & im;
+  SDL_Window      * wndw;
+  SDL_Renderer    * rend;
+  ResourceManager rm;
 
-  std::chrono::system_clock::time_point lastTick;
-  bool shouldQuit = false;
-
-private:
-  void init ();
+  mutable std::chrono::system_clock::time_point lastTick;
+  mutable bool shouldQuit = false;
+  mutable Scene * s = nullptr;
 
 public:
-  Game (int w, int h, InputManager * im, int fps = 60)
-    : w{w}, h{h}, im{im}, fps{fps}
+  Game ( const int w
+       , const int h
+       , InputManager & im
+       )
+    : w  { w  }
+    , h  { h  }
+    , im { im }
+    , wndw { SDL_CreateWindow
+        ( "Breakout"
+        , SDL_WINDOWPOS_CENTERED
+        , SDL_WINDOWPOS_CENTERED
+        , w
+        , h
+        , SDL_WINDOW_SHOWN
+        | SDL_WINDOW_OPENGL
+        ) }
+    , rend { SDL_CreateRenderer
+        ( wndw
+        , -1
+        , SDL_RENDERER_ACCELERATED
+        | SDL_RENDERER_PRESENTVSYNC
+        ) }
+    , rm { ResourceManager{rend} }
+    , lastTick { std::chrono::system_clock::now() }
   {
-    lastTick = std::chrono::system_clock::now();
-    init ();
   }
 
-  bool tick    ();
-  void dispose ();
+  ~Game();
+  bool tick ();
+  void loop ();
 
-  inline int getWidth  ()   { return w; }
-  inline int getHeight ()   { return h; }
-  void setScene (Scene * s) { this->s = s; }
-  inline ResourceManager * getResourceManager () { return rm; }
-
-  SDL_Renderer* getRenderer() const;
+  inline void quit () { shouldQuit = true; }
 
   template <class S>
-  S * setScene ()
+  void setScene ()
   {
-    S * s = new S (w, h, this);
-    s->init(rm, rend);
-    setScene(s);
-    return s;
+    if (s != nullptr) delete s;
+    s = new S {w, h, rm};
+    s->init (rm, rend);
   }
 };
 

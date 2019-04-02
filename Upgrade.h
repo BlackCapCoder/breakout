@@ -36,37 +36,37 @@ public:
     type = (UpgradeType) (std::rand() % NUM_UPGRADES);
   }
 
-  void init (ResourceManager * rm, SDL_Renderer *)
+  void init (ResourceManager & rm, SDL_Renderer *)
   {
     switch (type) {
       case (SizeUp):
-        img = rm->getImage("resources/sizeup.png");
+        img = rm.getImage("resources/sizeup.png");
         break;
       case (SizeDown):
-        img = rm->getImage("resources/sizedown.png");
+        img = rm.getImage("resources/sizedown.png");
         break;
       case (SpeedDown):
-        img = rm->getImage("resources/speeddown.png");
+        img = rm.getImage("resources/speeddown.png");
         break;
       case (SpeedUp):
-        img = rm->getImage("resources/speedup.png");
+        img = rm.getImage("resources/speedup.png");
         break;
       case (Rocket5):
-        img = rm->getImage("resources/rocket5.png");
+        img = rm.getImage("resources/rocket5.png");
         break;
       case (Meteor):
-        img = rm->getImage("resources/meteor.png");
+        img = rm.getImage("resources/meteor.png");
         break;
       case (Magnet):
-        img = rm->getImage("resources/magnet.png");
+        img = rm.getImage("resources/magnet.png");
         break;
       case (ShiftDown):
-        img = rm->getImage("resources/shiftdown.png");
+        img = rm.getImage("resources/shiftdown.png");
         break;
     }
   }
 
-  bool logic (double dt, InputManager * im, Breakout * g)
+  bool logic (double dt, const InputManager & im, Breakout * g)
   {
     p.y += dt * speed;
     Paddle * pad = &g->paddle;
@@ -103,7 +103,7 @@ public:
       return true;
     }
 
-    return !g->getBounds()->contains(getBounds());
+    return !g->getBounds().contains(getBounds());
   }
 
   V4 getBounds ()

@@ -25,12 +25,12 @@ void Ball::render (SDL_Renderer * r)
 
 
 bool Ball::logic
-  ( double         dt
-  , InputManager * im
-  , Breakout     * g  )
+  ( double               dt
+  , const InputManager & im
+  , Breakout           * g  )
 {
-  if (g->hasMagnet() && im->isDown(PowerMagnet)) {
-    V4 p = *g->paddle.getBounds();
+  if (g->hasMagnet() && im.isDown(PowerMagnet)) {
+    V4 p = g->paddle.getBounds();
     double q = p.x + p.w/2;
     if (x < q) vx += 0.005 * dt;
     if (x > q) vx -= 0.005 * dt;
@@ -46,19 +46,13 @@ bool Ball::logic
   double q, mx, my, consumed;
   bool hor;
 
-  V4 screen = *g->getBounds();
+  V4 screen = g->getBounds();
   std::set<ColObj<Breakout, ColResult>*> hit;
 
   do {
     mx       = vx * g->getLevelSpeed();
     my       = vy * g->getLevelSpeed();
     consumed = dt;
-
-    // V4 b = V4 { x + mx * dt - radius
-    //           , y + my * dt - radius
-    //           , radius*2
-    //           , radius*2
-    //           };
 
     double _x = x + mx * dt;
     double _y = y + my * dt;
@@ -112,7 +106,7 @@ bool Ball::logic
       for (auto obj : os) obj->onHit (g);
       os.clear();
 
-      if (b.intersects(*g->paddle.getBounds()))
+      if (b.intersects(g->paddle.getBounds()))
         os.push_back(&g->paddle);
     }
 
@@ -122,7 +116,7 @@ bool Ball::logic
 
       for (auto obj : os) {
         if (hit.find (obj) != hit.end()) continue;
-        b = *obj->getBounds();
+        b = obj->getBounds();
 
         q = ((mx > 0 ? b.x : b.x + b.w) - x - radius) / mx;
         if (q < consumed && q > 0) { hor = true;  consumed = q; c = obj; }
