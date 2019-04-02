@@ -8,7 +8,7 @@
 - [ ] Randomly generated levels
 - [ ] Bricks with more hp
 - [ ] Indestructible bricks
-- [ ] Add a score
+- [x] Add a score
 - [ ] Highscore list
 - [ ] Don't exit the game when the player loses
 - [ ] Rebindable keys

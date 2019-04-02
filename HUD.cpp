@@ -1,6 +1,10 @@
 #include "HUD.h"
 #include "Breakout.h"
 
+HUD::HUD(const int fontSize)
+  : fontSize{ fontSize }
+  , rect{ 0, 0, 1000, 1000 }
+{}
 
 void HUD::renderString (SDL_Renderer * r, std::string & str, double x, double y)
 {
@@ -29,6 +33,8 @@ bool HUD::logic (double dt, const InputManager &, Breakout * b)
 {
   str = "Balls: "   + std::to_string (b->spareBalls) + "  "
       + "Rockets: " + std::to_string (b->numRockets) + "  "
-      + "Magnet: "  + std::to_string (b->magnetCharge);
+      + "Magnet: "  + std::to_string (b->magnetCharge) + " "
+      + "Points: "  + std::to_string (b->points);
   return false;
 }
+
