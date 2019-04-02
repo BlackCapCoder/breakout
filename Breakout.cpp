@@ -11,7 +11,8 @@ Breakout::Breakout
   , SDL_Renderer    * rend
   )
   : ColScene<Breakout>(w, h, rm, rend)
-  , hud {32}
+  , paddle { w, h, (double) w / 5, 30, 930 }
+  , hud    { 32 }
 {
   loadLevel (currentLevel);
 }
@@ -132,7 +133,7 @@ void Breakout::shiftDown ()
   for (int i = 0; i < bricks.size(); i++) {
     if (bricks[i].removed) continue;
     bricks[i].rect.y += 100;
-    qt.update(&bricks[i]);
+    qt.update (&bricks[i]);
   }
 }
 

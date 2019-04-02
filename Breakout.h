@@ -56,10 +56,12 @@ public:
     , SDL_Renderer    *
     );
 
-  SceneR tick ( double       dt
-              , SDL_Renderer *
-              , const InputManager &
-              , SceneS       * );
+  SceneR tick
+    ( double
+    , SDL_Renderer*
+    , const InputManager&
+    , SceneS*
+    );
 
   void   spawnBall     ();
   void   onBallLost    (Ball*);

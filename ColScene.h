@@ -40,8 +40,6 @@ private:
   ResourceManager & rm;
   SDL_Renderer    * rend;
 
-  V4 bounds;
-
 public:
   QuadTree qt;
 
@@ -51,21 +49,20 @@ public:
     , ResourceManager & rm
     , SDL_Renderer    * rend
     )
-    : bounds{V4{0, 0, (double) w, (double) h}}
-    , qt{QuadTree{bounds, 100, 4}}
+    : qt{QuadTree{V4 {0, 0, (double) w, (double) h}, 100, 4}}
     , rm{rm}
     , rend{rend}
   {}
 
-  V4 & getBounds () { return bounds; }
-  int  getWidth  () { return bounds.w; }
-  int  getHeight () { return bounds.h; }
+  V4   getBounds () const { return qt.getBounds(); }
+  int  getWidth  () const { return getBounds().w; }
+  int  getHeight () const { return getBounds().h; }
 
   SceneR tick
-    ( double dt
-    , SDL_Renderer * rend
+    ( double               dt
+    , SDL_Renderer       * rend
     , const InputManager & im
-    , SceneS       *
+    , SceneS             *
     )
   {
     objs.flush ();
@@ -154,9 +151,10 @@ public:
     qt.clear  ();
   }
 
-  std::vector<CObj*> &getObjectsInBound(const V4 &bound)
+  std::vector<CObj*> & getObjectsInBound (const V4 & bound)
   {
-    std::vector<Collidable*> cs = qt.getObjectsInBound(bound);
+    std::vector<Collidable*> & cs = qt.getObjectsInBound(bound);
+    // return (std::vector<CObj*> &) cs;
     return qtbuf = std::vector<CObj*>{cs.begin(), cs.end()};
   }
 };

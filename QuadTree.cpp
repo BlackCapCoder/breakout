@@ -15,7 +15,7 @@ QuadTree::QuadTree(const V4 &_bound, unsigned _capacity, unsigned _maxLevel)
 }
 
 // Inserts an object into this quadtree
-bool QuadTree::insert(Collidable *obj)
+bool QuadTree::insert(ColT *obj)
 {
   if (obj == nullptr || obj->qt != nullptr) return false;
 
@@ -36,7 +36,7 @@ bool QuadTree::insert(Collidable *obj)
 }
 
 // Removes an object from this quadtree
-bool QuadTree::remove(Collidable *obj)
+bool QuadTree::remove(ColT *obj)
 {
   if (obj == nullptr || obj->qt == nullptr) return false; // Cannot exist in vector
   if (obj->qt != this) return obj->qt->remove(obj);
@@ -48,7 +48,7 @@ bool QuadTree::remove(Collidable *obj)
 }
 
 // Removes and re-inserts object into quadtree (for objects that move)
-bool QuadTree::update(Collidable *obj)
+bool QuadTree::update(ColT *obj)
 {
   if (!remove(obj)) return false;
 
@@ -65,7 +65,7 @@ bool QuadTree::update(Collidable *obj)
 }
 
 // Searches quadtree for objects within the provided boundary and returns them in vector
-std::vector<Collidable*> &QuadTree::getObjectsInBound(const V4 & bound)
+std::vector<ColT*> &QuadTree::getObjectsInBound(const V4 & bound)
 {
   foundObjects.clear();
   for (const auto &obj : objects) {

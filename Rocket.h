@@ -11,8 +11,8 @@ class Rocket : public GameObject<ColScene<S>, bool>
 {
 private:
   V2 p;
-  const double w = 10;
-  const double h = 25;
+  const double w     = 10;
+  const double h     = 25;
   const double speed = 1.5;
 
 private:
@@ -30,7 +30,7 @@ public:
     V4 b { p.x, _y, w, h + p.y - _y };
 
     ColObj<S, ColResult> * c = nullptr;
-    for (ColObj<S, ColResult> * o : g->getObjectsInBound(b)) {
+    for (auto * o : g->getObjectsInBound(b)) {
       b = o->getBounds();
       if (b.y + b.h < _y) continue;
       _y = b.y + b.h;

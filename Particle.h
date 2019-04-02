@@ -19,7 +19,14 @@ private:
   double x, y;
 
 public:
-  Particle (double x, double y, double a, double v, double s, double ttl)
+  Particle
+    ( const double x
+    , const double y
+    , const double a
+    , const double v
+    , const double s
+    , const double ttl
+    )
     : x{x}
     , y{y}
     , angle{a}
@@ -50,12 +57,13 @@ public:
   }
 
   static void explosion
-    ( V4 pos
-    , V2 angle
-    , V2 vel
-    , V2 spin
-    , V2 ttl
-    , int min, int max
+    ( const V4 pos
+    , const V2 angle
+    , const V2 vel
+    , const V2 spin
+    , const V2 ttl
+    , const int min
+    , const int max
     , std::function<void(Particle<S> *)> f
     )
   {
