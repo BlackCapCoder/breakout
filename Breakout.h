@@ -34,6 +34,7 @@ private:
   char               speedUprades = 0;
   double             meteorTime   = 0;
   double             magnetCharge = 0;
+  unsigned int       points       = 0;
 
   // Time in seconds for the level speed to double
   const double speedDoubleRate  = 60;

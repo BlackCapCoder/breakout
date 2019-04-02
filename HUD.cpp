@@ -33,7 +33,8 @@ bool HUD::logic (double dt, const InputManager &, Breakout * b)
 {
   str = "Balls: "   + std::to_string (b->spareBalls) + "  "
       + "Rockets: " + std::to_string (b->numRockets) + "  "
-      + "Magnet: "  + std::to_string (b->magnetCharge);
+      + "Magnet: "  + std::to_string (b->magnetCharge) + " "
+      + "Points: "  + std::to_string (b->points);
   return false;
 }
 

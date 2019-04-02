@@ -60,6 +60,8 @@ void Brick::onHit (Breakout * g)
       );
   }
 
+  g->points += 1;
+
   removed = true;
 }
 
