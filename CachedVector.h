@@ -4,6 +4,7 @@
 #include <vector>
 #include <functional>
 #include <cstdlib>
+#include <algorithm>
 
 template <class T>
 struct DualCachedVector
@@ -35,9 +36,9 @@ public:
   void clear ()
   {
     front.clear();
-    back.clear();
+    back. clear();
     queue_front.clear();
-    queue_back.clear();
+    queue_back. clear();
   }
 };
 

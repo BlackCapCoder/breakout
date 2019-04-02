@@ -1,6 +1,10 @@
 #include "HUD.h"
 #include "Breakout.h"
 
+HUD::HUD(const int fontSize)
+  : fontSize{ fontSize }
+  , rect{ 0, 0, 1000, 1000 }
+{}
 
 void HUD::renderString (SDL_Renderer * r, std::string & str, double x, double y)
 {
@@ -32,3 +36,4 @@ bool HUD::logic (double dt, const InputManager &, Breakout * b)
       + "Magnet: "  + std::to_string (b->magnetCharge);
   return false;
 }
+
