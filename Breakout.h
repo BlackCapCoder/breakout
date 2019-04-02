@@ -4,9 +4,9 @@
 #include <vector>
 #include "ColScene.h"
 #include "Paddle.h"
-#include "Game.h"
 #include "HUD.h"
 #include "Ball.h"
+#include "Brick.h"
 
 class Brick;
 
@@ -52,10 +52,10 @@ public:
   Breakout (int w, int h, ResourceManager &);
 
   void init (ResourceManager &, SDL_Renderer *);
-  Scene* tick ( double       dt
+  SceneR tick ( double       dt
               , SDL_Renderer *
               , const InputManager &
-              , void         * );
+              , SceneS       * );
 
   void   spawnBall     ();
   void   onBallLost    (Ball*);

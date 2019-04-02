@@ -1,7 +1,6 @@
 #ifndef MAIN_MENU_H
 #define MAIN_MENU_H
 
-#include "Game.h"
 #include "GameObject.h"
 #include "Breakout.h"
 
@@ -69,10 +68,10 @@ public:
   }
 
 
-  Scene* logic
+  SceneR logic
     ( double         dt
     , const InputManager & im
-    , void         * st )
+    , SceneS         * st )
   {
     animTime = max (animTime-dt, 0);
 
@@ -95,7 +94,7 @@ public:
     if (im.isDownFirst(MoveRight, FireRocket, ReleaseBall)) {
       switch (selection) {
         case (StartGame):
-          return new Breakout(w, h, rm);
+          return true;
 
         case (Quit): // Quit
           exit(0);
@@ -103,7 +102,7 @@ public:
       }
     }
 
-    return nullptr;
+    return false;
   }
 
   std::string getText (Option o)

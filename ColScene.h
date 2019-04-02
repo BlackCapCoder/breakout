@@ -61,11 +61,11 @@ public:
     this->rend = rend;
   }
 
-  Scene * tick
+  SceneR tick
     ( double dt
     , SDL_Renderer * rend
     , const InputManager & im
-    , void         *
+    , SceneS       *
     )
   {
     objs.flush ();
@@ -97,7 +97,7 @@ public:
         }
       });
 
-    return nullptr;
+    return false;
   }
 
   void addObject (Box b, bool front = true)

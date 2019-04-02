@@ -38,8 +38,11 @@ public:
   }
 };
 
-struct Scene;
-struct Scene : GameObject<void, Scene*> {};
+// struct Scene;
+// struct Scene : GameObject<void, Scene*> {};
+using SceneS = void;
+using SceneR = bool;
+typedef GameObject<SceneS, SceneR> Scene;
 
 
 #endif // GAMEOBJECT_H

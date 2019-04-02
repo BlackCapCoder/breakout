@@ -48,11 +48,11 @@ void Breakout::onWin ()
   exit (0);
 }
 
-Scene* Breakout::tick
+SceneR Breakout::tick
   ( double               dt
   , SDL_Renderer       * rend
   , const InputManager & im
-  , void               * ptr
+  , SceneS             * ptr
   )
 {
   levelTime += dt;
@@ -69,7 +69,7 @@ Scene* Breakout::tick
     magnetCharge -= dt;
   }
 
-  return nullptr;
+  return false;
 }
 
 void Breakout::spawnBall ()

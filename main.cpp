@@ -2,6 +2,7 @@
 #include "InputManager.h"
 #include "Breakout.h"
 #include "MainMenu.h"
+#include "DualScene.h"
 
 
 int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
@@ -19,8 +20,10 @@ int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
     , SDLK_ESCAPE , Quit
     );
 
-  Game::init ();
-  Game g { "Breakout", 1000, 1000, im };
-  g.setScene<MainMenu>();
+  initGame ();
+
+  Game<DualScene<MainMenu, Breakout>> g
+    { "Breakout", 1000, 1000, im };
+
   g.loop();
 }

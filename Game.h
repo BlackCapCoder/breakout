@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
@@ -12,6 +13,7 @@
 #include "ResourceManager.h"
 
 
+template <class S>
 class Game
 {
 private:
@@ -21,39 +23,71 @@ private:
   SDL_Window      * wndw;
   SDL_Renderer    * rend;
   ResourceManager rm;
-
-  mutable std::chrono::system_clock::time_point lastTick;
-  mutable Scene * s = nullptr;
+  S s;
 
 public:
-  Game ( const std::string title
-       , const int w
-       , const int h
-       , InputManager & im
-       );
-
-  ~Game();
-
-  bool tick ();
-  void loop ();
-
-
-  template <class S>
-  void setScene ()
+  Game <S>
+    ( const std::string title
+    , const int w
+    , const int h
+    , InputManager & im
+    )
+    : w  { w  }
+    , h  { h  }
+    , im { im }
+    , wndw { SDL_CreateWindow
+        ( title.c_str()
+        , SDL_WINDOWPOS_CENTERED
+        , SDL_WINDOWPOS_CENTERED
+        , w
+        , h
+        , SDL_WINDOW_SHOWN
+        | SDL_WINDOW_OPENGL
+        ) }
+    , rend { SDL_CreateRenderer
+        ( wndw
+        , -1
+        , SDL_RENDERER_ACCELERATED
+        | SDL_RENDERER_PRESENTVSYNC
+        ) }
+    , rm { ResourceManager{rend} }
+    , s  { S{w,h,rm} }
   {
-    if (s != nullptr) delete s;
-    s = new S {w, h, rm};
-    s->init (rm, rend);
+    s.init (rm, rend);
   }
 
-  static void init ()
+  ~Game<S> ()
   {
-    SDL_Init (SDL_INIT_VIDEO);
-    IMG_Init (IMG_INIT_PNG);
-    TTF_Init ();
+    SDL_DestroyRenderer (rend);
+    SDL_DestroyWindow   (wndw);
+  }
 
-    std::srand (std::time(nullptr));
+  void loop ()
+  {
+    bool quit = false;
+    std::chrono::system_clock::time_point lastTick = std::chrono::system_clock::now ();
+
+    do {
+      const auto tick  = std::chrono::system_clock::now ();
+      const auto delta = std::chrono::duration<double, std::milli> (tick - lastTick) . count ();
+
+      im.tick ();
+      quit = s.tick (delta, rend, im, nullptr) || im.isDown (Quit);
+      if (!quit) SDL_RenderPresent (rend);
+
+      lastTick = tick;
+    } while (!quit);
   }
 };
 
-#endif // GAME_H
+void initGame ()
+{
+  SDL_Init (SDL_INIT_VIDEO);
+  IMG_Init (IMG_INIT_PNG);
+  TTF_Init ();
+
+  std::srand (std::time(nullptr));
+}
+
+
+#endif // ifndef GAME_H
