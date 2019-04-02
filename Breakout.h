@@ -24,8 +24,8 @@ private:
   std::vector<Brick> bricks;
   Ball               balls[16];
 
-  unsigned char      ballCounter  = 0;
   unsigned short     numBricks;
+  unsigned char      ballCounter  = 0;
   unsigned char      currentLevel = 1;
   unsigned short     numRockets   = 5;
   unsigned char      spareBalls   = 3;
@@ -37,13 +37,13 @@ private:
   unsigned int       points       = 0;
   bool               gameLost     = false;
 
-  // Time in seconds for the level speed to double
-  const double speedDoubleRate  = 60;
-  const double speedMaxDoubles  = 3;
-  const double speedMult        = 0.5;
-  const double speedUpgradePwr  = 1.5;
-  const double meteorTimeout    = 10 * 1000;
-  const double magnetUpgrCharge = 5  * 1000;
+  static constexpr double speedDoubleRate  = 60;
+  static constexpr double speedMaxDoubles  = 3;
+  static constexpr double speedMult        = 0.5;
+  static constexpr double speedUpgradePwr  = 1.5;
+  static constexpr double meteorTimeout    = 10 * 1000;
+  static constexpr double magnetUpgrCharge = 5  * 1000;
+
 
 private:
   void loadLevel (int lvl);

@@ -11,9 +11,9 @@ class Rocket : public GameObject<ColScene<S>, bool>
 {
 private:
   V2 p;
-  const double w     = 10;
-  const double h     = 25;
-  const double speed = 1.5;
+  static constexpr double w     = 10;
+  static constexpr double h     = 25;
+  static constexpr double speed = 1.5;
 
 private:
   V4 getBounds ()

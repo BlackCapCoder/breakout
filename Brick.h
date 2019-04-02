@@ -14,8 +14,9 @@ private:
   const float g;
   const float b;
   const float a;
-  const int upgradeChance = 10;
   bool  removed;
+
+  static constexpr int upgradeChance = 10;
 
 public:
   Brick ();

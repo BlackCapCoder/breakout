@@ -26,9 +26,9 @@ class Upgrade : public GameObject<Breakout, bool>
 private:
   V2 p;
   const UpgradeType type;
-  const double size    = 100;
-  const double sizeInc = 100;
-  const double speed   = 0.3;
+  static constexpr double size    = 100;
+  static constexpr double sizeInc = 100;
+  static constexpr double speed   = 0.3;
   SDL_Texture * img = nullptr;
 
 public:
