@@ -18,13 +18,14 @@ private:
   };
 
 private:
-  const double animLen = 250;
+  static constexpr double animLen = 150;
 
   int selection    = StartGame;
   int oldSelection = selection;
-  double animTime;
+  double animTime  = 0;
   bool dir;
   bool inAnim = false;
+  bool redraw = true;
 
   const int w;
   const int h;
@@ -47,30 +48,19 @@ public:
     , rm{rm}
     , font{rm.getFont ("resources/DroidSans.ttf", 100)}
   {
-    init (rend);
   }
 
-  void init (SDL_Renderer * r) {
-    const double sh = h * 0.1;
-
-    SDL_SetRenderDrawColor(r, 255, 255, 255, 0);
-    SDL_RenderFillRect(r, V4 {0, sh * selection, (double) w, sh+2} . get());
-
-    for (int i = 0; i < NUM_OPTIONS; i++) {
-      std::string str = getText((Option) i);
-      SDL_Color c = i == selection ? SDL_Color { 0, 0, 0 } : SDL_Color {255, 255, 255, 0};
-      auto s = TTF_RenderText_Solid(font, str.c_str(), c);
-      widths[i] = s->w;
-      texture[i] = SDL_CreateTextureFromSurface(r, s);
-      SDL_FreeSurface(s);
-
-      int sw = widths[i];
-      const double y  = sh * i;
-      const double x  = (w - sw)/2;
-      SDL_RenderCopy (r, texture[i], nullptr, V4 { x, y, (double) sw, sh } . get());
-    }
+  SceneR tick
+    ( double               dt
+    , SDL_Renderer       * rend
+    , const InputManager & im
+    , SceneS             * st
+    )
+  {
+    if (logic(dt, im, st)) return true;
+    render(rend);
+    return false;
   }
-
 
   SceneR logic
     ( double         dt
@@ -98,6 +88,7 @@ public:
     if (im.isDownFirst(MoveRight, FireRocket, ReleaseBall)) {
       switch (selection) {
         case (StartGame):
+          redraw = true;
           return true;
 
         case (Quit): // Quit
@@ -120,12 +111,46 @@ public:
     return "ERROR";
   }
 
+
+  // Redraws everything
+  void init (SDL_Renderer * r) {
+    const double sh = h * 0.1;
+    const double off = (h - sh*NUM_OPTIONS)/2;
+
+    SDL_SetRenderDrawColor(r, 0, 0, 0, 0);
+    SDL_RenderClear(r);
+    SDL_SetRenderDrawColor(r, 255, 255, 255, 0);
+    SDL_RenderFillRect(r, V4 {0, off+sh * selection, (double) w, sh+2} . get());
+
+    for (int i = 0; i < NUM_OPTIONS; i++) {
+      std::string str = getText((Option) i);
+      SDL_Color c = i == selection ? SDL_Color { 0, 0, 0 } : SDL_Color {255, 255, 255, 0};
+      auto s = TTF_RenderText_Solid(font, str.c_str(), c);
+      widths[i] = s->w;
+      if (texture[i] != nullptr) SDL_DestroyTexture(texture[i]);
+      texture[i] = SDL_CreateTextureFromSurface(r, s);
+      SDL_FreeSurface(s);
+
+      int sw = widths[i];
+      const double y  = sh * i;
+      const double x  = (w - sw)/2;
+      SDL_RenderCopy (r, texture[i], nullptr, V4 { x, off+y, (double) sw, sh } . get());
+    }
+  }
+
+  // Partial redraw
   void render (SDL_Renderer * r)
   {
+    if (redraw) {
+      init(r);
+      redraw = false;
+    }
+
     if (!inAnim) return;
     inAnim = animTime > 0;
 
     const double sh = h * 0.1;
+    const double off = (h - sh * NUM_OPTIONS)/2;
     double t = 1.0 - std::pow(animTime / animLen, 2);
 
     const double yo = sh * oldSelection;
@@ -134,11 +159,11 @@ public:
     V4 Old, New;
 
     if (!dir) {
-      Old = V4 { 0, yo, (double) w, sh*t };
-      New = V4 { 0, yn, (double) w, sh*t };
+      Old = V4 { 0, off+yo, (double) w, sh*t };
+      New = V4 { 0, off+yn, (double) w, sh*t };
     } else {
-      Old = V4 { 0, yo+sh-sh*t, (double) w, sh*t+1 };
-      New = V4 { 0, yn+sh-sh*t, (double) w, sh*t+1 };
+      Old = V4 { 0, off+yo+sh-sh*t, (double) w, sh*t+1 };
+      New = V4 { 0, off+yn+sh-sh*t, (double) w, sh*t+1 };
     }
 
     SDL_SetRenderDrawColor(r, 255, 255, 255, 0);
@@ -163,13 +188,13 @@ public:
     double x  = (w - sw)/2;
 
     SDL_RenderSetClipRect (r, New . get());
-    SDL_RenderCopy (r, texture[selection], nullptr, V4 { x, sh*selection, (double) sw, sh } . get());
+    SDL_RenderCopy (r, texture[selection], nullptr, V4 { x, off+sh*selection, (double) sw, sh } . get());
 
     sw = widths[oldSelection];
     x  = (w - sw)/2;
 
     SDL_RenderSetClipRect (r, Old . get());
-    SDL_RenderCopy (r, texture[oldSelection], nullptr, V4 { x, sh*oldSelection, (double) sw, sh } . get());
+    SDL_RenderCopy (r, texture[oldSelection], nullptr, V4 { x, off+sh*oldSelection, (double) sw, sh } . get());
 
     SDL_RenderSetClipRect(r, V4{0,0,(double)w,(double)h}.get());
   }

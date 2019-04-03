@@ -18,13 +18,13 @@ private:
   SDL_Surface * surface = nullptr;
   SDL_Texture * texture = nullptr;
 
-  mutable std::string str;
+  mutable char str[256];
 
 private:
-  void renderString (SDL_Renderer *, std::string &, double x, double y);
+  void renderString (SDL_Renderer *, char *, double x, double y);
 
 public:
-  HUD (const int fontSize);
+  HUD (const int w, const int h, const int fontSize);
 
   void init   (ResourceManager &, SDL_Renderer *);
   void render (SDL_Renderer *);

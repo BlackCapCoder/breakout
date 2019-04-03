@@ -11,8 +11,8 @@ Breakout::Breakout
   , SDL_Renderer    * rend
   )
   : ColScene<Breakout>(w, h, rm, rend)
-  , paddle { w, h, (double) w / 5, 30, 930 }
-  , hud    { 32 }
+  , paddle { w, h, (double) w / 5, 30, (double) h-70 }
+  , hud    { w, h, 32 }
 {
   loadLevel (currentLevel);
 }
@@ -69,7 +69,9 @@ SceneR Breakout::tick
     meteorTime    = 0;
     magnetCharge  = 0;
     points        = 0;
-    paddle        = Paddle {1000, 1000, (double) 1000 / 5, 30, 930};
+    const double w = getWidth();
+    const double h = getHeight();
+    paddle        = Paddle {(int)w, (int)h, w / 5, 30, h-70};
     loadLevel(currentLevel);
 
     return true;

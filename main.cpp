@@ -20,13 +20,13 @@ int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
     , SDLK_ESCAPE , Quit
     );
 
+  constexpr int resolution = 1080;
+
+
   initGame ();
 
-  std::cout << sizeof(std::tuple<MainMenu, Breakout>) << std::endl;
-  std::cout << sizeof(NScene<MainMenu, Breakout>) << std::endl;
-
   Game<NScene<MainMenu, Breakout>> g
-    { "Breakout", 1000, 1000, im };
+    { "Breakout", resolution*16/9, resolution, im };
 
   g.loop();
 }

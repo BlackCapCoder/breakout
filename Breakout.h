@@ -22,7 +22,7 @@ private:
   Paddle             paddle;
   HUD                hud;
   std::vector<Brick> bricks;
-  Ball               balls[16];
+  Ball               balls[256];
 
   unsigned short     numBricks;
   unsigned char      ballCounter  = 0;
@@ -34,7 +34,7 @@ private:
   char               speedUprades = 0;
   double             meteorTime   = 0;
   double             magnetCharge = 0;
-  unsigned int       points       = 0;
+  unsigned           points       = 0;
   bool               gameLost     = false;
 
   static constexpr double speedDoubleRate  = 60;
