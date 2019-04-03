@@ -7,7 +7,7 @@
 
 
 template <class S>
-class Rocket : public GameObject<ColScene<S>, bool>
+class Rocket : public GameObject<bool, ColScene<S>*>
 {
 private:
   V2 p;
@@ -24,52 +24,52 @@ private:
 public:
   Rocket (double x, double y) : p{ V2{x, y}} {}
 
-  bool logic (double dt, const InputManager & im, ColScene<S> * g)
+  bool logic (const LogicArgs <ColScene<S>*> args)
   {
-    double _y = p.y - dt * speed;
+    double _y = p.y - args.dt() * speed;
     V4 b { p.x, _y, w, h + p.y - _y };
 
-    ColObj<S, ColResult> * c = nullptr;
-    for (auto * o : g->getObjectsInBound(b)) {
+    ColObj<ColResult, S*> * c = nullptr;
+    for (auto * o : args.st()->getObjectsInBound(b)) {
       b = o->getBounds();
       if (b.y + b.h < _y) continue;
       _y = b.y + b.h;
       c = o;
     }
 
-    Particle<S>::explosion
+    Particle<S*>::explosion
       ( V4 { p.x + w/2, _y+h, p.x + w/2, p.y+h }
       , V2 { 0.2, 0.3 }
       , V2 { 0.2, 0.4 }
       , V2 { -0.0003, 0.0003 }
       , V2 { 200, 800 }
-      , 0, (int) max(dt/2, 3)
-      , [ &g ] (auto p) { g->addObject (p); }
+      , 0, (int) max (args.dt()/2, 3)
+      , [ g=args.st() ] (auto p) { g->addObject (p); }
       );
 
     if (c != nullptr) {
-      c->onHit((S *) g);
-      Particle<S>::explosion
+      c->onHit((S *) args.st());
+      Particle<S*>::explosion
         ( V4 { p.x + w / 2, _y, p.x + w / 2, _y }
         , V2 { 0.0, 1.0 }
         , V2 { 0.5, 0.9 }
         , V2 { -0.001, 0.001 }
         , V2 { 200, 800 }
         , 40, 100
-        , [ &g ] (auto p) { g->addObject (p); }
+        , [ g=args.st() ] (auto p) { g->addObject (p); }
         );
       return true;
     }
 
     p.y = _y;
 
-    return !g->getBounds().intersects(getBounds());
+    return !args.st()->getBounds().intersects(getBounds());
   }
 
-  void render (SDL_Renderer * rend)
+  void render (SDL_Renderer & rend)
   {
-    SDL_SetRenderDrawColor (rend, 255, 255, 255, 1);
-    SDL_RenderFillRect (rend, getBounds() . get ());
+    SDL_SetRenderDrawColor (&rend, 255, 255, 255, 1);
+    SDL_RenderFillRect (&rend, getBounds() . get ());
   }
 };
 

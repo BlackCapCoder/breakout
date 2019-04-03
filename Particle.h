@@ -6,8 +6,8 @@
 #include <functional>
 
 
-template <class S>
-class Particle : public GameObject<S, bool>
+template <class ... S>
+class Particle : public GameObject<bool, S...>
 {
 private:
   double angle, velocity;
@@ -36,24 +36,24 @@ public:
     , ttlOrig{ttl}
     {};
 
-  bool logic (double dt, const InputManager&, S*)
+  bool logic (const LogicArgs<S...> args)
   {
-    ttl      -= dt;
-    angle    += spin*dt;
+    ttl      -= args.dt();
+    angle    += spin * args.dt();
     radius    = 5 * ttl/ttlOrig;
     double v = velocity * std::pow(ttl/ttlOrig, 1.3);
-    x        += std::cos(angle) * v * dt;
-    y        += std::sin(angle) * v * dt;
+    x        += std::cos(angle) * v * args.dt();
+    y        += std::sin(angle) * v * args.dt();
 
     return ttl <= 0;
   }
 
-  void render (SDL_Renderer* rnd)
+  void render (SDL_Renderer & rnd)
   {
     float k = 1 - std::pow((ttlOrig - ttl) / ttlOrig, 0.3);
     V4 bounds{x-radius, y-radius, radius*2, radius*2};
-    SDL_SetRenderDrawColor (rnd, r-64*k, k*64, k*255, 0);
-    SDL_RenderFillRect     (rnd, bounds.get());
+    SDL_SetRenderDrawColor (&rnd, r-64*k, k*64, k*255, 0);
+    SDL_RenderFillRect     (&rnd, bounds.get());
   }
 
   static void explosion
@@ -64,12 +64,12 @@ public:
     , const V2 ttl
     , const int min
     , const int max
-    , std::function<void(Particle<S> *)> f
+    , std::function<void(Particle<S...> *)> f
     )
   {
     int cnt = rand (min, max);
     for (int i = 0; i < cnt; i++)
-      f ( new Particle<S>
+      f ( new Particle<S...>
             { randDouble (pos.x, pos.w)
             , randDouble (pos.y, pos.h)
             , randDouble (angle) * 2.0 * M_PI

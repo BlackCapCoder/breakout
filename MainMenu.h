@@ -26,6 +26,7 @@ private:
   bool dir;
   bool inAnim = false;
   bool redraw = true;
+  bool firstInit = true;
 
   const int w;
   const int h;
@@ -37,46 +38,33 @@ private:
 
 
 public:
-  MainMenu
-    ( const int w
-    , const int h
-    , ResourceManager & rm
-    , SDL_Renderer    * rend
-    )
-    : w{w}
-    , h{h}
-    , rm{rm}
-    , font{rm.getFont ("resources/DroidSans.ttf", 100)}
+  MainMenu (InitArgs args)
+    : w{args.w}
+    , h{args.h}
+    , rm{args.rm}
+    , font{args.rm.getFont ("resources/DroidSans.ttf", 100)}
   {
   }
 
-  SceneR tick
-    ( double               dt
-    , SDL_Renderer       * rend
-    , const InputManager & im
-    , SceneS             * st
-    )
+  SceneR tick (const TickArgsS args)
   {
-    if (logic(dt, im, st)) return true;
-    render(rend);
+    if (logic (args.l)) return true;
+    render (args.r);
     return false;
   }
 
-  SceneR logic
-    ( double         dt
-    , const InputManager & im
-    , SceneS         * st )
+  SceneR logic (const LogicArgsS args)
   {
-    animTime = max (animTime-dt, 0);
+    animTime = max (animTime - args.dt(), 0);
 
     if (!inAnim) {
-      if (im.isDown(MoveUp)) {
+      if (args.im().isDown(MoveUp)) {
         oldSelection = selection;
         selection = (NUM_OPTIONS + selection - 1) % NUM_OPTIONS;
         animTime = animLen;
         dir = true;
         inAnim = true;
-      } else if (im.isDown(MoveDown)) {
+      } else if (args.im().isDown(MoveDown)) {
         oldSelection = selection;
         selection = (selection + 1) % NUM_OPTIONS;
         animTime = animLen;
@@ -85,7 +73,7 @@ public:
       }
     }
 
-    if (im.isDownFirst(MoveRight, FireRocket, ReleaseBall)) {
+    if (args.im().isDownFirst(MoveRight, FireRocket, ReleaseBall)) {
       switch (selection) {
         case (StartGame):
           redraw = true;
@@ -113,33 +101,35 @@ public:
 
 
   // Redraws everything
-  void init (SDL_Renderer * r) {
+  void init (SDL_Renderer & r) {
     const double sh = h * 0.1;
     const double off = (h - sh*NUM_OPTIONS)/2;
 
-    SDL_SetRenderDrawColor(r, 0, 0, 0, 0);
-    SDL_RenderClear(r);
-    SDL_SetRenderDrawColor(r, 255, 255, 255, 0);
-    SDL_RenderFillRect(r, V4 {0, off+sh * selection, (double) w, sh+2} . get());
+    SDL_SetRenderDrawColor(&r, 0, 0, 0, 0);
+    SDL_RenderClear(&r);
+    SDL_SetRenderDrawColor(&r, 255, 255, 255, 0);
+    SDL_RenderFillRect(&r, V4 {0, off+sh * selection, (double) w, sh+2} . get());
 
     for (int i = 0; i < NUM_OPTIONS; i++) {
       std::string str = getText((Option) i);
       SDL_Color c = i == selection ? SDL_Color { 0, 0, 0 } : SDL_Color {255, 255, 255, 0};
       auto s = TTF_RenderText_Solid(font, str.c_str(), c);
       widths[i] = s->w;
-      if (texture[i] != nullptr) SDL_DestroyTexture(texture[i]);
-      texture[i] = SDL_CreateTextureFromSurface(r, s);
+      if (!firstInit) SDL_DestroyTexture (texture[i]);
+      texture[i] = SDL_CreateTextureFromSurface(&r, s);
       SDL_FreeSurface(s);
 
       int sw = widths[i];
       const double y  = sh * i;
       const double x  = (w - sw)/2;
-      SDL_RenderCopy (r, texture[i], nullptr, V4 { x, off+y, (double) sw, sh } . get());
+      SDL_RenderCopy (&r, texture[i], nullptr, V4 { x, off+y, (double) sw, sh } . get());
     }
+
+    firstInit = false;
   }
 
   // Partial redraw
-  void render (SDL_Renderer * r)
+  void render (SDL_Renderer & r)
   {
     if (redraw) {
       init(r);
@@ -166,37 +156,37 @@ public:
       New = V4 { 0, off+yn+sh-sh*t, (double) w, sh*t+1 };
     }
 
-    SDL_SetRenderDrawColor(r, 255, 255, 255, 0);
-    SDL_RenderFillRect(r, New . get());
+    SDL_SetRenderDrawColor(&r, 255, 255, 255, 0);
+    SDL_RenderFillRect(&r, New . get());
 
-    SDL_SetRenderDrawColor(r, 0, 0, 0, 0);
-    SDL_RenderFillRect(r, Old . get());
+    SDL_SetRenderDrawColor(&r, 0, 0, 0, 0);
+    SDL_RenderFillRect(&r, Old . get());
 
     if (animTime == animLen) {
       SDL_DestroyTexture(texture[selection]);
       auto s = TTF_RenderText_Solid(font, getText((Option) selection).c_str(), SDL_Color{0,0,0});
-      texture[selection] = SDL_CreateTextureFromSurface(r, s);
+      texture[selection] = SDL_CreateTextureFromSurface(&r, s);
       SDL_FreeSurface(s);
 
       SDL_DestroyTexture(texture[oldSelection]);
       s = TTF_RenderText_Solid(font, getText((Option) oldSelection).c_str(), SDL_Color{255,255,255});
-      texture[oldSelection] = SDL_CreateTextureFromSurface(r, s);
+      texture[oldSelection] = SDL_CreateTextureFromSurface(&r, s);
       SDL_FreeSurface(s);
     }
 
     int sw = widths[selection];
     double x  = (w - sw)/2;
 
-    SDL_RenderSetClipRect (r, New . get());
-    SDL_RenderCopy (r, texture[selection], nullptr, V4 { x, off+sh*selection, (double) sw, sh } . get());
+    SDL_RenderSetClipRect (&r, New . get());
+    SDL_RenderCopy (&r, texture[selection], nullptr, V4 { x, off+sh*selection, (double) sw, sh } . get());
 
     sw = widths[oldSelection];
     x  = (w - sw)/2;
 
-    SDL_RenderSetClipRect (r, Old . get());
-    SDL_RenderCopy (r, texture[oldSelection], nullptr, V4 { x, off+sh*oldSelection, (double) sw, sh } . get());
+    SDL_RenderSetClipRect (&r, Old . get());
+    SDL_RenderCopy (&r, texture[oldSelection], nullptr, V4 { x, off+sh*oldSelection, (double) sw, sh } . get());
 
-    SDL_RenderSetClipRect(r, V4{0,0,(double)w,(double)h}.get());
+    SDL_RenderSetClipRect(&r, V4{0,0,(double)w,(double)h}.get());
   }
 
 };

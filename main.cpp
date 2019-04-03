@@ -2,7 +2,7 @@
 #include "InputManager.h"
 #include "Breakout.h"
 #include "MainMenu.h"
-#include "DualScene.h"
+#include "NScene.h"
 
 
 int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
@@ -22,11 +22,7 @@ int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
 
   constexpr int resolution = 1080;
 
-
-  initGame ();
-
-  Game<NScene<MainMenu, Breakout>> g
-    { "Breakout", resolution*16/9, resolution, im };
-
-  g.loop();
+  Game::initGame ();
+  Game g {"Breakout", resolution*16/9, resolution, im};
+  g.loop <NScene<MainMenu, Breakout>> ();
 }

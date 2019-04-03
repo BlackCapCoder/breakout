@@ -16,12 +16,12 @@ private:
   std::map<FilePath, SDL_Texture *> textureStore;
   std::map<std::pair<FilePath, uint16_t>, TTF_Font *> fontStore;
 
-  SDL_Renderer * rend;
+  SDL_Renderer & rend;
 
 
 public:
-  ResourceManager (SDL_Renderer * r)
-    : rend{r}
+  ResourceManager (SDL_Renderer & r)
+    : rend {r}
   {
   }
 
@@ -35,7 +35,7 @@ public:
     SDL_Surface * s = IMG_Load (pth.c_str());
     if (s == nullptr) return nullptr;
 
-    SDL_Texture * t = SDL_CreateTextureFromSurface (rend, s);
+    SDL_Texture * t = SDL_CreateTextureFromSurface (&rend, s);
     SDL_FreeSurface (s);
 
     textureStore.insert(std::make_pair(pth, t));

@@ -21,7 +21,7 @@ enum UpgradeType
   NUM_UPGRADES
 };
 
-class Upgrade : public GameObject<Breakout, bool>
+class Upgrade : public GameObject<bool, Breakout*>
 {
 private:
   V2 p;
@@ -31,49 +31,34 @@ private:
   static constexpr double speed   = 0.3;
   SDL_Texture * img = nullptr;
 
-public:
-  Upgrade (V2 p)
-    : p{p}
-    , type{(UpgradeType) (std::rand() % NUM_UPGRADES)}
-  {}
-
-  void init (ResourceManager & rm, SDL_Renderer *)
+private:
+  static auto imagePath (UpgradeType t)
   {
-    switch (type) {
-      case (SizeUp):
-        img = rm.getImage ("resources/sizeup.png");
-        break;
-      case (SizeDown):
-        img = rm.getImage ("resources/sizedown.png");
-        break;
-      case (SpeedDown):
-        img = rm.getImage ("resources/speeddown.png");
-        break;
-      case (SpeedUp):
-        img = rm.getImage ("resources/speedup.png");
-        break;
-      case (Rocket5):
-        img = rm.getImage ("resources/rocket5.png");
-        break;
-      case (Meteor):
-        img = rm.getImage ("resources/meteor.png");
-        break;
-      case (Magnet):
-        img = rm.getImage ("resources/magnet.png");
-        break;
-      case (ShiftDown):
-        img = rm.getImage ("resources/shiftdown.png");
-        break;
-      case (DoubleBalls):
-        img = rm.getImage ("resources/doubleballs.png");
-        break;
+    switch (t) {
+      case (SizeUp):      return "resources/sizeup.png";
+      case (SizeDown):    return "resources/sizedown.png";
+      case (SpeedDown):   return "resources/speeddown.png";
+      case (SpeedUp):     return "resources/speedup.png";
+      case (Rocket5):     return "resources/rocket5.png";
+      case (Meteor):      return "resources/meteor.png";
+      case (Magnet):      return "resources/magnet.png";
+      case (ShiftDown):   return "resources/shiftdown.png";
+      case (DoubleBalls): return "resources/doubleballs.png";
+      default: return "Unreachable";
     }
   }
 
-  bool logic (double dt, const InputManager & im, Breakout * g)
+public:
+  Upgrade (ResourceManager & rm, V2 p)
+    : p{p}
+    , type{(UpgradeType) (std::rand () % NUM_UPGRADES)}
+    , img { rm.getImage (imagePath(type)) }
+  {}
+
+  bool logic (const LogicArgs<Breakout*> args)
   {
-    p.y += dt * speed;
-    Paddle * pad = &g->paddle;
+    p.y += args.dt() * speed;
+    Paddle * pad = &args.st()->paddle;
 
     if (pad->bounds.intersects(getBounds())) {
       switch (type) {
@@ -86,41 +71,41 @@ public:
           pad->bounds.w -= sizeInc;
           break;
         case (SpeedDown):
-          g->speedUprades++;
+          args.st()->speedUprades++;
           break;
         case (SpeedUp):
-          g->speedUprades--;
+          args.st()->speedUprades--;
           break;
         case (Rocket5):
-          g->numRockets += 5;
+          args.st()->numRockets += 5;
           break;
         case (Meteor):
-          g->meteorUpgrade();
+          args.st()->meteorUpgrade();
           break;
         case (Magnet):
-          g->magnetUpgrade();
+          args.st()->magnetUpgrade();
           break;
         case (ShiftDown):
-          g->shiftDown();
+          args.st()->shiftDown();
           break;
         case (DoubleBalls):
-          g->doubleBalls();
+          args.st()->doubleBalls();
           break;
       }
       return true;
     }
 
-    return !g->getBounds().intersects(getBounds());
+    return !args.st()->getBounds().intersects(getBounds());
   }
 
-  V4 getBounds ()
+  V4 getBounds () const
   {
     return V4 { p.x-size/2, p.y-size/2, size, size };
   }
 
-  void render (SDL_Renderer * rend)
+  void render (SDL_Renderer & rend)
   {
-    SDL_RenderCopy (rend, img, nullptr, getBounds().get());
+    SDL_RenderCopy (&rend, img, nullptr, getBounds().get());
   }
 };
 

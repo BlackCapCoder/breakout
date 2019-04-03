@@ -8,6 +8,7 @@
 #include "Ball.h"
 #include "Brick.h"
 
+
 class Brick;
 
 class Breakout : public ColScene<Breakout>
@@ -27,7 +28,7 @@ private:
   unsigned short     numBricks;
   unsigned char      ballCounter  = 0;
   unsigned char      currentLevel = 1;
-  unsigned short     numRockets   = 5;
+  unsigned short     numRockets   = 500;
   unsigned char      spareBalls   = 3;
   unsigned char      numBalls     = 0;
   double             levelTime    = 0;
@@ -37,13 +38,15 @@ private:
   unsigned           points       = 0;
   bool               gameLost     = false;
 
-  static constexpr double speedDoubleRate  = 60;
-  static constexpr double speedMaxDoubles  = 3;
-  static constexpr double speedMult        = 0.5;
-  static constexpr double speedUpgradePwr  = 1.5;
-  static constexpr double meteorTimeout    = 10 * 1000;
-  static constexpr double magnetUpgrCharge = 5  * 1000;
+  static constexpr double   speedDoubleRate  = 60;
+  static constexpr double   speedMaxDoubles  = 3;
+  static constexpr double   speedMult        = 0.5;
+  static constexpr double   speedUpgradePwr  = 1.5;
+  static constexpr double   meteorTimeout    = 10 * 1000;
+  static constexpr double   magnetUpgrCharge = 5  * 1000;
+  static constexpr unsigned upgradeChance  = 10;
 
+  ResourceManager & rm;
 
 private:
   void loadLevel (int lvl);
@@ -51,29 +54,20 @@ private:
   void onLose    ();
 
 public:
-  Breakout
-    ( const int w
-    , const int h
-    , ResourceManager &
-    , SDL_Renderer    *
-    );
+  Breakout (InitArgs);
 
-  SceneR tick
-    ( double
-    , SDL_Renderer*
-    , const InputManager&
-    , SceneS*
-    );
+  SceneR tick (const TickArgsS);
 
   void   spawnBall     ();
-  void   onBallLost    (Ball*);
-  double getLevelSpeed (); // Determines the speed of the balls
+  void   onBallLost    (const Ball &);
+  double getLevelSpeed () const; // Determines the speed of the balls
   void   meteorUpgrade ();
   void   magnetUpgrade ();
-  bool   meteorActive  ();
-  bool   hasMagnet     ();
+  bool   meteorActive  () const;
+  bool   hasMagnet     () const;
   void   shiftDown     ();
   void   doubleBalls   ();
+  void   onBrickRemoved (const Brick &);
 };
 
 #endif // ifndef BREAKOUT_H

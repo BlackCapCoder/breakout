@@ -5,42 +5,49 @@
 #include "Rocket.h"
 
 
-void Paddle::render (SDL_Renderer * r)
+void Paddle::render (SDL_Renderer & r)
 {
-  SDL_SetRenderDrawColor (r, 255, 0, 0, 255);
-  SDL_RenderFillRect (r, bounds.get());
+  SDL_SetRenderDrawColor (&r, 255, 0, 0, 255);
+  SDL_RenderFillRect (&r, bounds.get());
   if (canSpawnBall) {
-    SDL_SetRenderDrawColor (r, 255, 255, 255, 255);
-    SDL_RenderFillRect (r, V4{bounds.x+bounds.w/2-5, bounds.y-5, 10, 10}.get());
+    SDL_SetRenderDrawColor (&r, 255, 255, 255, 255);
+    SDL_RenderFillRect (&r, V4{bounds.x+bounds.w/2-5, bounds.y-5, 10, 10}.get());
   }
 }
 
-ColResult Paddle::logic (double dt, const InputManager & im, Breakout * g)
+ColResult Paddle::logic (const LogicArgs<Breakout*> args)
 {
   float o = bounds.x;
-  canSpawnBall = g->spareBalls > 0;
+  canSpawnBall = args.st()->spareBalls > 0;
 
   const double speed = 1.7;
 
-  if (im.isDown(MoveLeft )) bounds.x -= dt * speed;
-  if (im.isDown(MoveRight)) bounds.x += dt * speed;
+  if (args.im().isDown(MoveLeft )) bounds.x -= args.dt() * speed;
+  if (args.im().isDown(MoveRight)) bounds.x += args.dt() * speed;
   if (bounds.x < 0) bounds.x = 0;
-  if (bounds.x > g->getWidth() - bounds.w) bounds.x = g->getWidth() - bounds.w;
+  if (bounds.x > args.st()->getWidth() - bounds.w) bounds.x = args.st()->getWidth() - bounds.w;
 
-  if (canSpawnBall && im.isDownFirst(ReleaseBall)) {
-    g->spawnBall ();
+  if (canSpawnBall && args.im().isDownFirst(ReleaseBall)) {
+    args.st()->spawnBall ();
   }
 
-  if (g->numRockets > 0 && im.isDownFirst(FireRocket)) {
-    g->addObject<Rocket<Breakout>>
+  if (args.st()->numRockets > 0 && args.im().isDownFirst(FireRocket)) {
+    args.st()->addObject<Rocket<Breakout>>
       ( true
       , bounds.x+bounds.w/2
       , bounds.y-26
       );
-    g->numRockets--;
+    args.st()->numRockets--;
   }
 
   if (o != bounds.x) return BoundsChanged;
 
   return None;
+}
+
+void Paddle::reset (const int sw, const int sh)
+{
+  const double w = (double) sw / 5;
+  const double y = (double) sh - 70;
+  bounds = V4 {(sw - w)/2, y, w, height};
 }

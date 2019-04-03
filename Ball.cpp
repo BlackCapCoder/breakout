@@ -5,53 +5,51 @@
 #include <SDL2/SDL2_gfxPrimitives.h>
 
 
-V4 Ball::getBounds ()
+V4 Ball::getBounds () const
 {
   return V4 {x-radius, y-radius, radius*2, radius*2};
 }
 
-void Ball::render (SDL_Renderer * r)
+void Ball::render (SDL_Renderer & r)
 {
   for (int i = 1; i < pts.size(); i++) {
     if (isMeteor)
-      thickLineRGBA(r, pts[i-1].x, pts[i-1].y, pts[i].x, pts[i].y, radius*2, 255,   0,   0, 255);
+      thickLineRGBA (&r, pts[i-1].x, pts[i-1].y, pts[i].x, pts[i].y, radius*2, 255,   0,   0, 255);
     else
-      thickLineRGBA(r, pts[i-1].x, pts[i-1].y, pts[i].x, pts[i].y, radius*2, 255, 255, 255, 255);
+      thickLineRGBA (&r, pts[i-1].x, pts[i-1].y, pts[i].x, pts[i].y, radius*2, 255, 255, 255, 255);
   }
 
-  SDL_SetRenderDrawColor (r, 255, 255, 255, 255);
-  SDL_RenderFillRect (r, getBounds().get());
+  SDL_SetRenderDrawColor (&r, 255, 255, 255, 255);
+  SDL_RenderFillRect (&r, getBounds().get());
 }
 
 
-bool Ball::logic
-  ( double               dt
-  , const InputManager & im
-  , Breakout           * g  )
+bool Ball::logic (const LogicArgs<Breakout*> args)
 {
-  if (g->hasMagnet() && im.isDown(PowerMagnet)) {
-    V4 p = g->paddle.getBounds();
+  if (args.st()->hasMagnet() && args.im().isDown(PowerMagnet)) {
+    V4 p = args.st()->paddle.getBounds();
     double q = p.x + p.w/2;
-    if (x < q) vx += 0.005 * dt;
-    if (x > q) vx -= 0.005 * dt;
+    if (x < q) vx += 0.005 * args.dt();
+    if (x > q) vx -= 0.005 * args.dt();
   }
 
-  isMeteor = g->meteorActive();
+  isMeteor = args.st()->meteorActive();
 
   pts.clear ();
   pts.push_back({(int) x, (int) y});
 
   // We need to loop through all the collisions that
   // have taken place since last tick. See (1) below.
+  double dt = args.dt();
   double q, mx, my, consumed;
   bool hor;
 
-  V4 screen = g->getBounds();
-  std::set<ColObj<Breakout, ColResult>*> hit;
+  V4 screen = args.st()->getBounds();
+  std::set<ColObj<ColResult, Breakout*>*> hit;
 
   do {
-    mx       = vx * g->getLevelSpeed();
-    my       = vy * g->getLevelSpeed();
+    mx       = vx * args.st()->getLevelSpeed();
+    my       = vy * args.st()->getLevelSpeed();
     consumed = dt;
 
     double _x = x + mx * dt;
@@ -68,7 +66,8 @@ bool Ball::logic
     // bottom
     q = (screen.y + screen.h - radius - y)/my;
     if (q > 0 && q < consumed) {
-      g->onBallLost (this);
+      isDead = true;
+      args.st()->onBallLost (*this);
       return true;
     }
 
@@ -86,33 +85,32 @@ bool Ball::logic
 
 
     // ---- Object collision
-
-    auto os = g->getObjectsInBound (b);
+    auto os = args.st()->getObjectsInBound (b);
 
     // Ignore everything but the paddle if meteor
     if (isMeteor) {
       double a = std::atan2 (my, mx) / (2 * M_PI) + 0.5;
-      double s = g->getLevelSpeed()*0.4;
-      Particle<Breakout>::explosion
+      double s = args.st()->getLevelSpeed()*0.4;
+      Particle<Breakout*>::explosion
         ( V4 { min(x, _x), min(y, _y), max(x, _x), max(y, _y) }
         , V2 { a, a }
         , V2 { s, s }
         , V2 { -0.0007, 0.0007 }
         , V2 { 50, 300 }
         , 0, (int) max (dt/2, 2)
-        , [ &g ] (auto p) { g->addObject (p); }
+        , [ g=args.st() ] (auto p) { g->addObject (p); }
         );
 
-      for (auto obj : os) obj->onHit (g);
+      for (auto obj : os) obj->onHit (args.st());
       os.clear();
 
-      if (b.intersects(g->paddle.getBounds()))
-        os.push_back(&g->paddle);
+      if (b.intersects(args.st()->paddle.getBounds()))
+        os.push_back(&args.st()->paddle);
     }
 
     // Check for collisions
     if (!os.empty()) {
-      ColObj<Breakout, ColResult> * c = nullptr;
+      ColObj<ColResult, Breakout*> * c = nullptr;
 
       for (auto obj : os) {
         if (hit.find (obj) != hit.end()) continue;
@@ -126,7 +124,7 @@ bool Ball::logic
       }
 
       if (c != nullptr) {
-        c->onHit   (g);
+        c->onHit   (args.st());
         hit.insert (c);
       }
     }
@@ -148,16 +146,16 @@ bool Ball::logic
         if ( hor && vx < 0) dir = {0.25, 0.75};
         if ( hor && vx > 0) dir = {0.75, 1.25};
 
-        double s = g->getLevelSpeed();
+        double s = args.st()->getLevelSpeed();
 
-        Particle<Breakout>::explosion
+        Particle<Breakout*>::explosion
           ( V4 { x, y, x, y }
           , dir
           , V2 { 0.5*s, 1.2*s }
           , V2 { -0.0007, 0.0007 }
           , V2 { 100, 600 }
           , 8*s, 20*s
-          , [ &g ] (auto p) { g->addObject (p); }
+          , [ g=args.st() ] (auto p) { g->addObject (p); }
           );
       }
     }

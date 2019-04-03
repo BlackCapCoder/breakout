@@ -4,22 +4,19 @@
 #include "Breakout.h"
 
 
-class Brick : public ColObj<Breakout, ColResult>
+class Brick : public ColObj<ColResult, Breakout*>
 {
   friend class Breakout;
 
 private:
-  V4    rect;
+  V4 rect;
   const float r;
   const float g;
   const float b;
   const float a;
   bool  removed;
 
-  static constexpr int upgradeChance = 10;
-
 public:
-  Brick ();
   Brick ( const float x_coord
         , const float y_coord
         , const float width
@@ -30,9 +27,9 @@ public:
         , const float a
         );
 
-  void      render    (SDL_Renderer* r);
+  void      render    (SDL_Renderer & r);
   V4 &      getBounds ();
-  ColResult logic     (double, const InputManager&, Breakout*);
+  ColResult logic     (const LogicArgs<Breakout*>);
   void      onHit     (Breakout*);
 };
 

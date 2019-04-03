@@ -108,8 +108,9 @@ V2 V4::getCenter() const noexcept
   return V2 { x + w/2, y + h/2 };
 }
 
+SDL_Rect SDL_RECT;
 SDL_Rect * V4::get()
 {
-  rect = SDL_Rect { (int) x, (int) y, (int) w, (int) h };
-  return &rect;
+  SDL_RECT = SDL_Rect { (int) x, (int) y, (int) w, (int) h };
+  return &SDL_RECT;
 }

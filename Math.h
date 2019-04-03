@@ -58,7 +58,6 @@ V2 closestPointPointLine (V2 p, V2 a, V2 b);
 struct V4
 {
   double x, y, w, h;
-  SDL_Rect rect;
 
   bool contains(const V4 &other) const noexcept;
   bool intersects(const V4 &other) const noexcept;
@@ -68,7 +67,7 @@ struct V4
   double getBottom() const noexcept;
   V2     getCenter() const noexcept;
 
-  SDL_Rect * get();
+  SDL_Rect * get ();
 
   V4(const V4&);
   V4(double _x = 0, double _y = 0, double _w = 0, double _h = 0);

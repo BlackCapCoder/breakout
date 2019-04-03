@@ -8,7 +8,7 @@
 class Breakout;
 
 
-class HUD : public GameObject<Breakout, bool>
+class HUD : public GameObject<bool, Breakout*>
 {
 private:
   const int     fontSize;
@@ -21,14 +21,13 @@ private:
   mutable char str[256];
 
 private:
-  void renderString (SDL_Renderer *, char *, double x, double y);
+  void renderString (SDL_Renderer &, char *, double x, double y);
 
 public:
-  HUD (const int w, const int h, const int fontSize);
+  HUD (const InitArgs, const int fontSize);
 
-  void init   (ResourceManager &, SDL_Renderer *);
-  void render (SDL_Renderer *);
-  bool logic  (double dt, const InputManager &, Breakout *);
+  void render (SDL_Renderer &);
+  bool logic  (const LogicArgs<Breakout*>);
 };
 
 

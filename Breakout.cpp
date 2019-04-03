@@ -3,16 +3,13 @@
 #include "Brick.h"
 #include "Math.h"
 #include "Levels.h"
+#include "Upgrade.h"
 
-Breakout::Breakout
-  ( const int w
-  , const int h
-  , ResourceManager & rm
-  , SDL_Renderer    * rend
-  )
-  : ColScene<Breakout>(w, h, rm, rend)
-  , paddle { w, h, (double) w / 5, 30, (double) h-70 }
-  , hud    { w, h, 32 }
+Breakout::Breakout (InitArgs args)
+  : ColScene<Breakout>(args)
+  , paddle { args.w, args.h }
+  , hud    { args, 32 }
+  , rm     { args.rm  }
 {
   loadLevel (currentLevel);
 }
@@ -36,26 +33,16 @@ void Breakout::onWin ()
   levelTime     = 0;
   speedUprades  = 0;
   meteorTime    = 0;
-  // magnetCharge  = 0;
   currentLevel += 1;
 
   loadLevel (currentLevel);
 
   if (numBricks > 0) return;
-  currentLevel = 1;
-  loadLevel(currentLevel);
+  loadLevel (currentLevel = 1);
   return;
-
-  std::cout << "You Win!" << std::endl;
-  exit (0);
 }
 
-SceneR Breakout::tick
-  ( double               dt
-  , SDL_Renderer       * rend
-  , const InputManager & im
-  , SceneS             * ptr
-  )
+SceneR Breakout::tick (const TickArgsS args)
 {
   if (gameLost) {
     gameLost      = false;
@@ -69,26 +56,24 @@ SceneR Breakout::tick
     meteorTime    = 0;
     magnetCharge  = 0;
     points        = 0;
-    const double w = getWidth();
-    const double h = getHeight();
-    paddle        = Paddle {(int)w, (int)h, w / 5, 30, h-70};
+    paddle.reset (getWidth(), getHeight());
     loadLevel(currentLevel);
 
     return true;
   }
 
-  levelTime += dt;
+  levelTime += args.dt();
 
   if (numBricks <= 0) {
     onWin ();
   } else {
-    SDL_SetRenderDrawColor (rend, 0, 0, 0, 255);
-    SDL_RenderClear(rend);
-    ColScene<Breakout>::tick(dt, rend, im, ptr);
+    SDL_SetRenderDrawColor (&args.r, 0, 0, 0, 255);
+    SDL_RenderClear(&args.r);
+    ColScene<Breakout>::tick(args);
   }
 
-  if (im.isDown(PowerMagnet) && magnetCharge > 0) {
-    magnetCharge -= dt;
+  if (args.im().isDown(PowerMagnet) && magnetCharge > 0) {
+    magnetCharge -= args.dt();
   }
 
   return false;
@@ -110,23 +95,20 @@ void Breakout::spawnBall ()
   spareBalls--;
 }
 
-void Breakout::onBallLost (Ball * b)
+void Breakout::onBallLost (const Ball & b)
 {
-  b->isDead = true;
-  if (b < balls || b >= balls + ballCounter) return;
+  if (&b < balls || &b >= balls + ballCounter) return;
   numBalls--;
 
-  if (numBalls == 0 && spareBalls == 0) {
-    onLose ();
-  }
+  if (numBalls == 0 && spareBalls == 0) onLose ();
 }
 
 
-double Breakout::getLevelSpeed ()
+double Breakout::getLevelSpeed () const
 {
   double ds = levelTime / (1000 * speedDoubleRate);
   if (ds > speedMaxDoubles) ds = speedMaxDoubles;
-  return std::pow (2.0, ds) * speedMult * std::pow(speedUpgradePwr, -speedUprades);
+  return std::pow (2.0, ds) * speedMult * std::pow (speedUpgradePwr, -speedUprades);
 }
 
 void Breakout::meteorUpgrade ()
@@ -134,7 +116,7 @@ void Breakout::meteorUpgrade ()
   meteorTime = levelTime + meteorTimeout;
 }
 
-bool Breakout::meteorActive ()
+bool Breakout::meteorActive () const
 {
   return meteorTime > levelTime;
 }
@@ -144,7 +126,7 @@ void Breakout::magnetUpgrade ()
   magnetCharge += magnetUpgrCharge;
 }
 
-bool Breakout::hasMagnet ()
+bool Breakout::hasMagnet () const
 {
   return magnetCharge > 0;
 }
@@ -161,8 +143,6 @@ void Breakout::shiftDown ()
 void Breakout::onLose ()
 {
   gameLost = true;
-  // std::cout << "Game over!" << std::endl;
-  // exit (0);
 }
 
 void Breakout::doubleBalls ()
@@ -176,4 +156,14 @@ void Breakout::doubleBalls ()
     ballCounter++;
     numBalls++;
   }
+}
+
+void Breakout::onBrickRemoved (const Brick & b)
+{
+  if (std::rand () % upgradeChance == 0) {
+    Upgrade * up = new Upgrade (rm, b.rect.getCenter());
+    addObject (up, true);
+  }
+
+  points += 1;
 }

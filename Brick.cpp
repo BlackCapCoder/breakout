@@ -21,30 +21,21 @@ Brick::Brick
     , removed{false}
 {}
 
-Brick::Brick()
-  : rect{0, 0, 0, 0}
-  , r{0}
-  , g{0}
-  , b{0}
-  , a{0}
-  , removed{false}
-{}
-
-void Brick::render (SDL_Renderer * rend)
+void Brick::render (SDL_Renderer & rend)
 {
-  SDL_SetRenderDrawColor (rend, r, g, b, a);
-  SDL_RenderFillRect     (rend, rect.get());
+  SDL_SetRenderDrawColor (&rend, r, g, b, a);
+  SDL_RenderFillRect     (&rend, rect.get());
 }
 
-V4 & Brick::getBounds()
+V4 & Brick::getBounds ()
 {
   return rect;
 }
 
-ColResult Brick::logic (double, const InputManager&, Breakout * b)
+ColResult Brick::logic (const LogicArgs<Breakout*> args)
 {
   if (removed) {
-    b->numBricks--;
+    args.st()->numBricks--;
     return Remove;
   }
 
@@ -53,15 +44,7 @@ ColResult Brick::logic (double, const InputManager&, Breakout * b)
 
 void Brick::onHit (Breakout * g)
 {
-  if (std::rand() % upgradeChance == 0) {
-    g->addObject<Upgrade>
-      ( true
-      , rect.getCenter ()
-      );
-  }
-
-  g->points += 1;
-
+  g->onBrickRemoved (*this);
   removed = true;
 }
 

@@ -5,7 +5,7 @@
 
 class Breakout;
 
-class Paddle : public ColObj<Breakout, ColResult>
+class Paddle : public ColObj<ColResult, Breakout*>
 {
   friend class Upgrade;
 
@@ -13,22 +13,23 @@ private:
   bool canSpawnBall = false;
   V4 bounds;
 
+  static constexpr double height = 30;
+
 public:
   Paddle
-    ( const int    sw
-    , const int    sh
-    , const double w
-    , const double h
-    , const double y
+    ( const int sw
+    , const int sh
     )
-    : bounds {V4 {(sw - w)/2, y, w, h}}
   {
+    reset (sw, sh);
   }
 
   V4 & getBounds () { return bounds; }
 
-  void render (SDL_Renderer *);
-  ColResult logic (double dt, const InputManager &, Breakout *);
+  void render (SDL_Renderer &);
+  ColResult logic (const LogicArgs<Breakout*>);
+
+  void reset (const int sw, const int sh);
 };
 
 

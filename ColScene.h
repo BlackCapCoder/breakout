@@ -12,11 +12,11 @@
 #include "Either.h"
 
 
-template <class S, class R>
-struct ColObj : public GameObject<S,R>, public Collidable
+template <class R, class ... S>
+struct ColObj : public GameObject<R,S...>, public Collidable<ColObj<R,S...>>
 {
 public:
-  virtual void onHit (S *) {}
+  virtual void onHit (S...) {}
 };
 
 enum ColResult
@@ -30,47 +30,39 @@ template <class St>
 class ColScene : public Scene
 {
 private:
-  using Obj  = GameObject <St, bool>;
-  using CObj = ColObj     <St, ColResult>;
+  using Obj  = GameObject <bool, St*>;
+  using CObj = ColObj     <ColResult, St*>;
   using Box  = Either     <Obj, CObj>;
 
   DualCachedVector<Box> objs;
   std::vector<CObj*> qtbuf;
 
-  ResourceManager & rm;
-  SDL_Renderer    * rend;
+  static constexpr int qtCap = 200;
+  static constexpr int qtLvl = 4;
 
 public:
-  QuadTree qt;
+  QuadTree<CObj> qt;
 
-  ColScene
-    ( const int w
-    , const int h
-    , ResourceManager & rm
-    , SDL_Renderer    * rend
-    )
-    : qt{QuadTree{V4 {0, 0, (double) w, (double) h}, 100, 4}}
-    , rm{rm}
-    , rend{rend}
-  {}
+  ColScene (InitArgs args)
+    : qt { V4 {0, 0, (double) args.w, (double) args.h}, qtCap, qtLvl}
+  {
+    qtbuf.reserve (qtCap);
+  }
 
   V4   getBounds () const { return qt.getBounds(); }
   int  getWidth  () const { return getBounds().w; }
   int  getHeight () const { return getBounds().h; }
 
-  SceneR tick
-    ( double               dt
-    , SDL_Renderer       * rend
-    , const InputManager & im
-    , SceneS             *
-    )
+  SceneR tick (const TickArgsS args)
   {
+    LogicArgs<St*> largs {args.dt(), args.im(), (St*) this};
+
     objs.flush ();
-    objs.filter ( [dt, &im, &rend, this] (Box b)
+    objs.filter ([&largs, &rend=args.r, &qt=qt] (Box b)
       {
         if (b.isR)
         {
-          ColResult r = b.r->logic (dt, im, (St*) this);
+          ColResult r = b.r->logic (largs);
 
           if (r & Remove) {
             qt.remove(b.r);
@@ -85,7 +77,7 @@ public:
         }
         else
         {
-          if (b.l->logic (dt, im, (St*) this))
+          if (b.l->logic (largs))
             return true;
           else {
             b.l->render (rend);
@@ -106,9 +98,8 @@ public:
 
     if (b.isR)
       qt.insert(b.r);
-
-    b.l->init (rm, rend);
   }
+
   void addObject (Obj  & obj, bool front = true) { addObject (Box{&obj}, front); }
   void addObject (CObj & obj, bool front = true) { addObject (Box{&obj}, front); }
 
@@ -120,29 +111,14 @@ public:
     return o;
   }
 
-  void addObject (GameObject<ColScene<St>, bool> & obj, bool front = true)
+  void addObject (GameObject<bool, ColScene<St>*> & obj, bool front = true)
   { addObject((Obj&) obj, front); }
 
-  void addObject (ColObj<ColScene<St>, ColResult> & obj, bool front = true)
+  void addObject (ColObj<ColResult, ColScene<St>*> & obj, bool front = true)
   { addObject((CObj&) obj, front); }
 
   template <template <class ...> class O>
   void addObject (bool front = true) { addObject<O<St>>(front); }
-
-
-  void removeObject (Box needle)
-  {
-    objs.filter([&needle] (Box x) { return x.l == needle.l; });
-  }
-  void removeObject (Obj * needle)
-  {
-    removeObject(Box(needle));
-  }
-  void removeObject (CObj * needle)
-  {
-    removeObject(Box(needle));
-    qt.remove(needle);
-  }
 
 
   void clear ()
@@ -151,12 +127,14 @@ public:
     qt.clear  ();
   }
 
+  inline
   std::vector<CObj*> & getObjectsInBound (const V4 & bound)
   {
-    std::vector<Collidable*> & cs = qt.getObjectsInBound(bound);
-    // return (std::vector<CObj*> &) cs;
-    return qtbuf = std::vector<CObj*>{cs.begin(), cs.end()};
+    qtbuf.clear();
+    qt.getObjectsInBound (bound, qtbuf);
+    return qtbuf;
   }
+
 };
 
 #endif // ifndef COLSCENE_H

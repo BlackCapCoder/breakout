@@ -7,30 +7,28 @@
 
 class Breakout;
 
-class Ball : public GameObject<Breakout, bool>
+class Ball : public GameObject <bool, Breakout*>
 {
   friend class Breakout;
 
 private:
   double x, y;
   double vx = 0.4, vy = 0.4;
-  double radius = 5;
+  bool isMeteor = false;
+  bool isDead   = false;
   std::vector<SDL_Point> pts;
-  bool isMeteor;
-  bool isDead = false;
+
+  static constexpr double radius = 5;
 
 private:
-  V4 getBounds ();
+  V4 getBounds () const;
 
 public:
   Ball (double x = 500, double y = 500, double vx = 0.4, double vy = 0.4)
     : x{x}, y{y}, vx{vx}, vy{vy} {};
 
-  void render (SDL_Renderer *);
-
-  bool logic ( double             dt
-             , const InputManager &
-             , Breakout           * );
+  void render (SDL_Renderer &);
+  bool logic  (const LogicArgs<Breakout*>);
 };
 
 #endif // BALL_H
