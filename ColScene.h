@@ -7,17 +7,10 @@
 #include <iostream>
 
 #include "GameObject.h"
-#include "CachedVector.h"
+#include "Cached.h"
 #include "QuadTree.h"
 #include "Either.h"
 
-
-template <class R, class ... S>
-struct ColObj : public GameObject<R,S...>, public Collidable<ColObj<R,S...>>
-{
-public:
-  virtual void onHit (S...) {}
-};
 
 enum ColResult
 { None          = 0,
@@ -25,16 +18,22 @@ enum ColResult
   Remove        = 2,
 };
 
+template <class...S>
+struct ColObj : public GameObject<ColResult,S...>, public Collidable<ColObj<S...>>
+{
+  virtual void onHit (S...) {}
+};
+
 
 template <class St>
 class ColScene : public Scene
 {
 private:
-  using Obj  = GameObject <bool, St*>;
-  using CObj = ColObj     <ColResult, St*>;
-  using Box  = Either     <Obj, CObj>;
+  using Obj  = GameObject <bool, St>;
+  using CObj = ColObj     <St>;
+  using Box  = Either     <Obj*, CObj*>;
 
-  DualCachedVector<Box> objs;
+  Cached<std::vector, Box, Box> objs;
   std::vector<CObj*> qtbuf;
 
   static constexpr int qtCap = 200;
@@ -43,26 +42,26 @@ private:
 public:
   QuadTree<CObj> qt;
 
-  ColScene (InitArgs args)
-    : qt { V4 {0, 0, (double) args.w, (double) args.h}, qtCap, qtLvl}
+  template <class ... Params>
+  ColScene (InitArgs args, Params ... ps)
+    : qt   { V4 {0, 0, (double) args.w, (double) args.h}, qtCap, qtLvl }
+    , objs { ps... }
   {
     qtbuf.reserve (qtCap);
   }
 
-  V4   getBounds () const { return qt.getBounds(); }
-  int  getWidth  () const { return getBounds().w; }
-  int  getHeight () const { return getBounds().h; }
+  inline V4  getBounds () const { return qt.getBounds(); }
+  inline int getWidth  () const { return getBounds().w; }
+  inline int getHeight () const { return getBounds().h; }
 
-  SceneR tick (const TickArgsS args)
+  void tickChildren (const TickArgs<St> args)
   {
-    LogicArgs<St*> largs {args.dt(), args.im(), (St*) this};
-
-    objs.flush ();
-    objs.filter ([&largs, &rend=args.r, &qt=qt] (Box b)
+    objs.flush  ();
+    objs.filter ([&args, &qt=qt] (Box b)
       {
         if (b.isR)
         {
-          ColResult r = b.r->logic (largs);
+          ColResult r = b.r->logic (args.l);
 
           if (r & Remove) {
             qt.remove(b.r);
@@ -72,29 +71,27 @@ public:
           if (r & BoundsChanged)
             qt.update (b.r);
 
-          b.r->render (rend);
+          b.r->render (args.r);
           return false;
         }
         else
         {
-          if (b.l->logic (largs))
+          if (b.l->logic (args.l))
             return true;
           else {
-            b.l->render (rend);
+            b.l->render (args.r);
             return false;
           }
         }
       });
-
-    return false;
   }
 
   void addObject (Box b, bool front = true)
   {
     if (front)
-      objs.push_front(b);
+      std::get<1>(objs.vs).insert(b);
     else
-      objs.push_back(b);
+      std::get<0>(objs.vs).insert(b);
 
     if (b.isR)
       qt.insert(b.r);
@@ -114,7 +111,7 @@ public:
   void addObject (GameObject<bool, ColScene<St>*> & obj, bool front = true)
   { addObject((Obj&) obj, front); }
 
-  void addObject (ColObj<ColResult, ColScene<St>*> & obj, bool front = true)
+  void addObject (ColObj<ColScene<St>*> & obj, bool front = true)
   { addObject((CObj&) obj, front); }
 
   template <template <class ...> class O>

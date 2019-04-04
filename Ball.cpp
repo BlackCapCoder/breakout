@@ -5,6 +5,7 @@
 #include <SDL2/SDL2_gfxPrimitives.h>
 
 
+inline
 V4 Ball::getBounds () const
 {
   return V4 {x-radius, y-radius, radius*2, radius*2};
@@ -45,7 +46,7 @@ bool Ball::logic (const LogicArgs<Breakout*> args)
   bool hor;
 
   V4 screen = args.st()->getBounds();
-  std::set<ColObj<ColResult, Breakout*>*> hit;
+  std::set<ColObj<Breakout*>*> hit;
 
   do {
     mx       = vx * args.st()->getLevelSpeed();
@@ -110,7 +111,7 @@ bool Ball::logic (const LogicArgs<Breakout*> args)
 
     // Check for collisions
     if (!os.empty()) {
-      ColObj<ColResult, Breakout*> * c = nullptr;
+      ColObj<Breakout*> * c = nullptr;
 
       for (auto obj : os) {
         if (hit.find (obj) != hit.end()) continue;

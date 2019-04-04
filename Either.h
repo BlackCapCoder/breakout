@@ -8,12 +8,12 @@ struct Either
   bool isR;
   union
   {
-    L * l;
-    R * r;
+    L l;
+    R r;
   };
 
-  Either<L,R> (L * l) : isR{false}, l{l} {}
-  Either<L,R> (R * r) : isR{true }, r{r} {}
+  Either<L,R> (L l) : isR{false}, l{l} {}
+  Either<L,R> (R r) : isR{true }, r{r} {}
 };
 
 

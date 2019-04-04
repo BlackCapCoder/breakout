@@ -4,7 +4,7 @@
 #include "Breakout.h"
 
 
-class Brick : public ColObj<ColResult, Breakout*>
+class Brick : public ColObj<Breakout*>
 {
   friend class Breakout;
 

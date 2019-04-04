@@ -5,7 +5,7 @@
 
 class Breakout;
 
-class Paddle : public ColObj<ColResult, Breakout*>
+class Paddle : public ColObj<Breakout*>
 {
   friend class Upgrade;
 

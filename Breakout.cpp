@@ -6,7 +6,7 @@
 #include "Upgrade.h"
 
 Breakout::Breakout (InitArgs args)
-  : ColScene<Breakout>(args)
+  : ColScene<Breakout*>(args)
   , paddle { args.w, args.h }
   , hud    { args, 32 }
   , rm     { args.rm  }
@@ -69,7 +69,8 @@ SceneR Breakout::tick (const TickArgsS args)
   } else {
     SDL_SetRenderDrawColor (&args.r, 0, 0, 0, 255);
     SDL_RenderClear(&args.r);
-    ColScene<Breakout>::tick(args);
+    ColScene<Breakout*>::tickChildren
+      ({{args.dt(), args.im(), this}, args.r});
   }
 
   if (args.im().isDown(PowerMagnet) && magnetCharge > 0) {

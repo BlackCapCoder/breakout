@@ -11,7 +11,7 @@
 
 class Brick;
 
-class Breakout : public ColScene<Breakout>
+class Breakout : public ColScene<Breakout*>
 {
   friend class Upgrade;
   friend class Brick;
