@@ -7,7 +7,8 @@
 
 
 template <class S>
-class Rocket : public GameObject<bool, ColScene<S*>*>
+// class Rocket : public GameObject<bool, ColScene<S*>*>
+class Rocket : public GameObject<bool, S*>
 {
 private:
   V2 p;
@@ -24,7 +25,7 @@ private:
 public:
   Rocket (double x, double y) : p{ V2{x, y}} {}
 
-  bool logic (const LogicArgs <ColScene<S*>*> args)
+  bool logic (const LogicArgs <S*> args)
   {
     double _y = p.y - args.dt() * speed;
     V4 b { p.x, _y, w, h + p.y - _y };
@@ -44,7 +45,7 @@ public:
       , V2 { -0.0003, 0.0003 }
       , V2 { 200, 800 }
       , 0, (int) max (args.dt()/2, 3)
-      , [ g=args.st() ] (auto p) { g->addObject (p); }
+      , [ g=args.st() ] (auto p) { g->insert (p); }
       );
 
     if (c != nullptr) {
@@ -56,7 +57,7 @@ public:
         , V2 { -0.001, 0.001 }
         , V2 { 200, 800 }
         , 40, 100
-        , [ g=args.st() ] (auto p) { g->addObject (p); }
+        , [ & ] (auto p) { args.st()->insert (p); }
         );
       return true;
     }

@@ -6,7 +6,7 @@
 #include "Upgrade.h"
 
 Breakout::Breakout (InitArgs args)
-  : ColScene<Breakout*>(args)
+  : ColScene<2, Breakout*>(args)
   , paddle { args.w, args.h }
   , hud    { args, 32 }
   , rm     { args.rm  }
@@ -18,11 +18,11 @@ void Breakout::loadLevel (int level)
 {
   bricks.clear ();
   clear        ();
-  addObject    (&paddle);
-  addObject    (&hud);
+  insert<1> (&paddle);
+  insert<1> (&hud);
 
   numBricks = Levels::construct (level, bricks, getWidth(), getHeight());
-  for (int i=0; i < numBricks; i++) addObject (&bricks[i], false);
+  for (int i=0; i < numBricks; i++) insert<0>(&bricks[i]);
 }
 
 void Breakout::onWin ()
@@ -57,7 +57,7 @@ SceneR Breakout::tick (const TickArgsS args)
     magnetCharge  = 0;
     points        = 0;
     paddle.reset (getWidth(), getHeight());
-    loadLevel(currentLevel);
+    loadLevel (currentLevel);
 
     return true;
   }
@@ -69,7 +69,7 @@ SceneR Breakout::tick (const TickArgsS args)
   } else {
     SDL_SetRenderDrawColor (&args.r, 0, 0, 0, 255);
     SDL_RenderClear(&args.r);
-    ColScene<Breakout*>::tickChildren
+    ColScene<2, Breakout*>::tickChildren
       ({{args.dt(), args.im(), this}, args.r});
   }
 
@@ -90,7 +90,7 @@ void Breakout::spawnBall ()
          , (randDouble() - 0.5) * 2
          , -1.0 };
 
-  addObject (balls + ballCounter, true);
+  insert<0> (balls + ballCounter);
   ballCounter++;
   numBalls++;
   spareBalls--;
@@ -137,7 +137,7 @@ void Breakout::shiftDown ()
   for (int i = 0; i < bricks.size(); i++) {
     if (bricks[i].removed) continue;
     bricks[i].rect.y += 100;
-    qt.update (&bricks[i]);
+    updateQuadtree(&bricks[i]);
   }
 }
 
@@ -153,7 +153,7 @@ void Breakout::doubleBalls ()
     if (b.isDead) continue;
     balls [ballCounter] = Ball { b.x, b.y, -b.vx, b.vy };
 
-    addObject (balls + ballCounter, true);
+    insert<0> (balls + ballCounter);
     ballCounter++;
     numBalls++;
   }
@@ -162,8 +162,7 @@ void Breakout::doubleBalls ()
 void Breakout::onBrickRemoved (const Brick & b)
 {
   if (std::rand () % upgradeChance == 0) {
-    Upgrade * up = new Upgrade (rm, b.rect.getCenter());
-    addObject (up, true);
+    insert<1> (new Upgrade (rm, b.rect.getCenter()));
   }
 
   points += 1;

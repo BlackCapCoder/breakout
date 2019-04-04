@@ -11,7 +11,7 @@
 
 class Brick;
 
-class Breakout : public ColScene<Breakout*>
+class Breakout : public ColScene<2, Breakout*>
 {
   friend class Upgrade;
   friend class Brick;
@@ -28,7 +28,7 @@ private:
   unsigned short     numBricks;
   unsigned char      ballCounter  = 0;
   unsigned char      currentLevel = 1;
-  unsigned short     numRockets   = 500;
+  unsigned short     numRockets   = 5;
   unsigned char      spareBalls   = 3;
   unsigned char      numBalls     = 0;
   double             levelTime    = 0;

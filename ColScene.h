@@ -4,7 +4,8 @@
 #define COLSCENE_H
 
 #include <vector>
-#include <iostream>
+#include <list>
+#include <type_traits>
 
 #include "GameObject.h"
 #include "Cached.h"
@@ -18,34 +19,46 @@ enum ColResult
   Remove        = 2,
 };
 
+// A game object that supports collision
 template <class...S>
 struct ColObj : public GameObject<ColResult,S...>, public Collidable<ColObj<S...>>
 {
   virtual void onHit (S...) {}
 };
 
-
-template <class St>
+// A scene that supports collision
+template <unsigned layers, class St>
 class ColScene : public Scene
 {
 private:
+
+  // This class can hold two different kinds of objects
   using Obj  = GameObject <bool, St>;
   using CObj = ColObj     <St>;
-  using Box  = Either     <Obj*, CObj*>;
 
-  Cached<std::vector, Box, Box> objs;
+  // And supports storing them on different layers. The lower
+  // an object's layer is, the sooner it will receive the logic/render tick.
+
+  // And by the way, I might add objects in the middle of ticks and I don't
+  // want those to be rendered!
+  CachedN
+    < std::list
+    , layers
+    // , Obj,   CObj
+    , Obj*,  CObj*
+    > objs;
+
+  QuadTree<CObj>        qt;
   std::vector<CObj*> qtbuf;
 
-  static constexpr int qtCap = 200;
-  static constexpr int qtLvl = 4;
+  static constexpr int      qtCap     = 200;
+  static constexpr int      qtLvl     = 4;
+  static constexpr unsigned LayerSize = 2;
+
 
 public:
-  QuadTree<CObj> qt;
-
-  template <class ... Params>
-  ColScene (InitArgs args, Params ... ps)
-    : qt   { V4 {0, 0, (double) args.w, (double) args.h}, qtCap, qtLvl }
-    , objs { ps... }
+  ColScene (InitArgs args)
+    : qt { V4 {0, 0, (double) args.w, (double) args.h}, qtCap, qtLvl }
   {
     qtbuf.reserve (qtCap);
   }
@@ -54,84 +67,62 @@ public:
   inline int getWidth  () const { return getBounds().w; }
   inline int getHeight () const { return getBounds().h; }
 
-  void tickChildren (const TickArgs<St> args)
-  {
-    objs.flush  ();
-    objs.filter ([&args, &qt=qt] (Box b)
-      {
-        if (b.isR)
-        {
-          ColResult r = b.r->logic (args.l);
+  template <class T>
+  inline void updateQuadtree (T obj) { qt.update (obj); }
 
-          if (r & Remove) {
-            qt.remove(b.r);
-            return true;
-          }
-
-          if (r & BoundsChanged)
-            qt.update (b.r);
-
-          b.r->render (args.r);
-          return false;
-        }
-        else
-        {
-          if (b.l->logic (args.l))
-            return true;
-          else {
-            b.l->render (args.r);
-            return false;
-          }
-        }
-      });
-  }
-
-  void addObject (Box b, bool front = true)
-  {
-    if (front)
-      std::get<1>(objs.vs).insert(b);
-    else
-      std::get<0>(objs.vs).insert(b);
-
-    if (b.isR)
-      qt.insert(b.r);
-  }
-
-  void addObject (Obj  & obj, bool front = true) { addObject (Box{&obj}, front); }
-  void addObject (CObj & obj, bool front = true) { addObject (Box{&obj}, front); }
-
-  template <class O, typename... Args>
-  O & addObject (bool front = true, Args... args)
-  {
-    O & o = *new O (args...);
-    addObject (o, front);
-    return o;
-  }
-
-  void addObject (GameObject<bool, ColScene<St>*> & obj, bool front = true)
-  { addObject((Obj&) obj, front); }
-
-  void addObject (ColObj<ColScene<St>*> & obj, bool front = true)
-  { addObject((CObj&) obj, front); }
-
-  template <template <class ...> class O>
-  void addObject (bool front = true) { addObject<O<St>>(front); }
-
-
+  inline
   void clear ()
   {
     objs.clear ();
-    qt.clear  ();
+    qt.clear   ();
   }
 
   inline
   std::vector<CObj*> & getObjectsInBound (const V4 & bound)
   {
-    qtbuf.clear();
+    qtbuf.clear ();
     qt.getObjectsInBound (bound, qtbuf);
     return qtbuf;
   }
 
+  void tickChildren (const TickArgs<St> args)
+  {
+    objs.flush  ();
+    objs.filter ([&args, &qt=qt](auto c) constexpr {
+      using C = decltype(c);
+      if constexpr (std::is_same<C, Obj>::value || std::is_same<C, Obj&>::value) {
+        if (c.logic (args.l)) return true;
+        else c.render (args.r);
+      } else if constexpr (std::is_same<C, Obj*>::value) {
+        if (c->logic (args.l)) return true;
+        else c->render (args.r);
+      } else if constexpr (std::is_same<C, CObj>::value || std::is_same<C, CObj&>::value) {
+        ColResult r = c.logic (args.l);
+        if (r & Remove) {
+          qt.remove(&c);
+          return true;
+        }
+        if (r & BoundsChanged) qt.update(&c);
+        c.render(args.r);
+      } else if constexpr (std::is_same<C, CObj*>::value) {
+        ColResult r = c->logic (args.l);
+        if (r & Remove) {
+          qt.remove(c);
+          return true;
+        }
+        if (r & BoundsChanged) qt.update(c);
+        c->render(args.r);
+      }
+      return false;
+    });
+  }
+
+  // template <unsigned L=1> void insert (Obj    obj) { std::get <0 + L*LayerSize> (objs.vs) . insert (obj); }
+  // template <unsigned L=1> void insert (CObj   obj) { std::get <1 + L*LayerSize> (objs.vs) . insert (obj); qt.insert(&obj); }
+  template <unsigned L=1> void insert (Obj  * obj) { std::get <0 + L*LayerSize> (objs.vs) . insert (obj); }
+  template <unsigned L=1> void insert (CObj * obj) { std::get <1 + L*LayerSize> (objs.vs) . insert (obj); qt.insert(obj); }
+  // template <unsigned L=1> void insert (Obj  & obj) { std::get <2 + L*LayerSize> (objs.vs) . insert (&obj); }
+  // template <unsigned L=1> void insert (CObj & obj) { std::get <3 + L*LayerSize> (objs.vs) . insert (&obj); qt.insert(&obj); }
 };
 
 #endif // ifndef COLSCENE_H

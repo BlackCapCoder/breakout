@@ -1,7 +1,6 @@
 #ifndef CACHED_VECTOR_H
 #define CACHED_VECTOR_H
 
-#include <vector>
 #include <functional>
 #include <cstdlib>
 #include <algorithm>
@@ -19,6 +18,11 @@ namespace Cache
     void insert (T x)
     {
       queue.push_back (x);
+    }
+
+    void skip (T x)
+    {
+      elems.push_back (x);
     }
 
     void flush ()
@@ -40,7 +44,7 @@ namespace Cache
   };
 
 
-  // Wrapper <W,C,  a,b,c> => C <W<a>, W<b>, W<c>>
+  // Wrap <W,C,  a,b,c> => C <W<a>, W<b>, W<c>>
 
   template <template <class...> class, template <class...> class, class...>
   struct Wrapper;
@@ -64,7 +68,8 @@ namespace Cache
   template <template <class...> class C, class...Xs>
   struct CMany
   {
-    Wrap<C, std::tuple, Xs...> vs;
+    template <class X> using One = COne<C,X>;
+    Wrap<One, std::tuple, Xs...> vs;
 
     template <unsigned Ix, class X>
     inline void constexpr insert (X x)
@@ -78,50 +83,79 @@ namespace Cache
       std::get<X>(vs).insert (x);
     }
 
+    template <unsigned Ix, class X>
+    inline void constexpr skip (X x)
+    {
+      std::get<Ix>(vs).skip (x);
+    }
+
+    template <class X>
+    inline void constexpr skip (X x)
+    {
+      std::get<X>(vs).skip (x);
+    }
+
     inline void constexpr flush ()
     {
-      std::apply([](auto& ...x){(..., x.flush());}, vs);
+      std::apply([](auto& ...x)constexpr{(..., x.flush());}, vs);
     }
 
     inline void constexpr filter (auto f)
     {
-      std::apply([&f](auto& ...x){(..., x.filter(f));}, vs);
+      std::apply([&f](auto& ...x)constexpr{(..., x.filter(f));}, vs);
     }
 
     inline void constexpr clear ()
     {
-      std::apply([](auto& ...x){(..., x.clear());}, vs);
+      std::apply([](auto& ...x)constexpr{(..., x.clear());}, vs);
     }
   };
 
 
-  template <template <class...> class C>
-  struct Both
-  {
-    template <class T>
-    using One = COne<C, T>;
-
-    template <class...Xs>
-    using Many = CMany<One, Xs...>;
-  };
-
-
+  // Use COne when only 1 type
   template <template <class...> class C, class...> struct Select;
 
   template <template <class...> class C, class A>
   struct Select<C,A> {
-    using T = typename Both<C>::template One<A>;
+    using T = COne<C, A>;
   };
 
   template <template <class...> class C, class...As>
   struct Select {
-    using T = typename Both<C>::template Many<As...>;
+    using T = CMany<C, As...>;
   };
 
+
+  // Replicate arguments N times
+  template <class...> struct Pack;
+
+  template <template <class...> class C, class, unsigned, class...> struct Rep;
+
+  template <template <class...> class C, class...A, unsigned N, class...B>
+  struct Rep<C,Pack<A...>, N, B...>
+  {
+    using T = typename Rep<C,Pack<A...,B...>, N-1, B...>::T;
+  };
+
+  template <template <class...> class C, class...A, class...B>
+  struct Rep<C,Pack<A...>, 1, B...>
+  {
+    using T = typename Select<C,A...>::T;
+  };
+
+
+  // Accessor
+  template <template <class...> class C, unsigned N, class...Ts>
+  using F = typename Rep<C,Pack<Ts...>,N,Ts...>::T;
 }
+
 
 template <template <class...> class C, class...Xs>
 using Cached = typename Cache::Select<C, Xs...>::T;
+
+template <template <class...> class C, unsigned N, class...Xs>
+using CachedN = Cache::F<C,N,Xs...>;
+
 
 
 #endif // ifndef CACHED_VECTOR_H

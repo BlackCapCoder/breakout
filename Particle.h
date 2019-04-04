@@ -64,12 +64,12 @@ public:
     , const V2 ttl
     , const int min
     , const int max
-    , std::function<void(Particle<S...> *)> f
+    , std::function<void(Particle<S...>*)> f
     )
   {
     int cnt = rand (min, max);
     for (int i = 0; i < cnt; i++)
-      f ( new Particle<S...>
+      f (new Particle<S...>
             { randDouble (pos.x, pos.w)
             , randDouble (pos.y, pos.h)
             , randDouble (angle) * 2.0 * M_PI

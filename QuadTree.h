@@ -3,6 +3,7 @@
 #ifndef QUADTREE_H
 #define QUADTREE_H
 
+#include <iostream>
 #include <vector>
 #include <algorithm>
 #include "Math.h"
@@ -21,7 +22,11 @@ private:
   QuadTree<T> *qt = nullptr;
 
 public:
-  virtual V4 & getBounds () = 0;
+  virtual V4 & getBounds ()
+  {
+    std::cout << "root getBounds called" << std::endl;
+    return *reinterpret_cast<V4*>(0);
+  }
 };
 
 

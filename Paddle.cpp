@@ -15,6 +15,7 @@ void Paddle::render (SDL_Renderer & r)
   }
 }
 
+
 ColResult Paddle::logic (const LogicArgs<Breakout*> args)
 {
   float o = bounds.x;
@@ -32,11 +33,7 @@ ColResult Paddle::logic (const LogicArgs<Breakout*> args)
   }
 
   if (args.st()->numRockets > 0 && args.im().isDownFirst(FireRocket)) {
-    args.st()->addObject<Rocket<Breakout>>
-      ( true
-      , bounds.x+bounds.w/2
-      , bounds.y-26
-      );
+    args.st()->insert(new Rocket<Breakout>{bounds.x+bounds.w/2 , bounds.y-26});
     args.st()->numRockets--;
   }
 
