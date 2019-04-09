@@ -4,6 +4,7 @@
 #include "Breakout.h"
 #include "MainMenu.h"
 #include "NScene.h"
+#include "Highscore.h"
 
 
 int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
@@ -25,5 +26,5 @@ int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
 
   Game::initGame ();
   Game g {"Breakout", resolution*16/9, resolution, im};
-  g.loop <NScene<MainMenu, Breakout>> ();
+  g.loop <NScene<Highscore, MainMenu, Breakout>> ();
 }
