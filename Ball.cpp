@@ -173,8 +173,13 @@ bool Ball::logic (const LogicArgs<Breakout*> args)
   if (x < screen.x + radius)            x = screen.x + radius + 1;
   if (x > screen.x + screen.w - radius) x = screen.x + screen.w - radius - 1;
 
+  // audio
   if (numCollisions > 0) {
     args.st()->onBounce();
+  }
+
+  if (isMeteor) {
+    args.st()->meteorSound();
   }
 
   return false;

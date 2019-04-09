@@ -15,6 +15,8 @@ Breakout::Breakout (InitArgs args)
   , audioBlockBreak { args.rm }
   , audioShoot      { args.rm }
   , audioExplosion  { args.rm }
+  , audioBounce     { args.rm }
+  , audioMeteor     { args.rm }
 {
   loadLevel (currentLevel);
 }
@@ -188,9 +190,17 @@ void Breakout::spawnRocket ()
 
 void Breakout::onBounce () const
 {
+  audioBounce.play();
 }
 
 void Breakout::onExplosion () const
 {
   audioExplosion.play();
+}
+
+void Breakout::meteorSound ()
+{
+  if (levelTime < meteorAudioTime) return;
+  // audioMeteor.play();
+  meteorAudioTime = levelTime + 3000;
 }

@@ -38,6 +38,7 @@ private:
   double             magnetCharge = 0;
   unsigned           points       = 0;
   bool               gameLost     = false;
+  double             meteorAudioTime = 0;
 
   static constexpr double   speedDoubleRate  = 60;
   static constexpr double   speedMaxDoubles  = 3;
@@ -51,11 +52,12 @@ private:
 
 
   const ResourceManager::Sound
-    < str ("resources/Selection.wav")
+    < str ("resources/break.wav")
     > audioBlockBreak;
 
   const ResourceManager::Sound
-    < str ("resources/Rocket.wav")
+    < str ("resources/shoot.wav")
+    , str ("resources/shoot2.wav")
     > audioShoot;
 
   const ResourceManager::Sound
@@ -64,6 +66,16 @@ private:
     , str ("resources/Explosion3.wav")
     , str ("resources/Explosion4.wav")
     > audioExplosion;
+
+  const ResourceManager::Sound
+    < str ("resources/bounce1.wav")
+    , str ("resources/bounce2.wav")
+    , str ("resources/bounce3.wav")
+    > audioBounce;
+
+  const ResourceManager::Sound
+    < str ("resources/meteor.wav")
+    > audioMeteor;
 
 private:
   void loadLevel (const int lvl);
@@ -86,6 +98,7 @@ public:
   void   onBrickRemoved (const Brick &);
   void   onBounce       () const;
   void   onExplosion    () const;
+  void   meteorSound    ();
 
   void spawnBall   ();
   void spawnRocket ();

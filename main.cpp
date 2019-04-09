@@ -33,5 +33,5 @@ int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
     , true             // Lazy redraw
     };
 
-  g.loop <NScene<Highscore, MainMenu, Breakout>> ();
+  g.loop <NScene<MainMenu, Breakout, Highscore>> ();
 }
