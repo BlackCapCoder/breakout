@@ -3,10 +3,12 @@
 
 
 #include <map>
+#include <unordered_map>
+#include <string>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
-
+#include <SDL2/SDL_mixer.h>
 
 class ResourceManager
 {
@@ -15,6 +17,7 @@ private:
 
   std::map<FilePath, SDL_Texture *> textureStore;
   std::map<std::pair<FilePath, uint16_t>, TTF_Font *> fontStore;
+  std::unordered_map<std::string, Mix_Chunk*> audioStore;
 
   SDL_Renderer & rend;
 
@@ -56,6 +59,19 @@ public:
     return f;
   }
 
+  Mix_Chunk * getAudio (const FilePath & pth)
+  {
+    // Is it already loaded?
+    const auto search = audioStore.find (pth);
+    if (search != audioStore.end())
+      return search->second;
+
+    Mix_Chunk* sound = Mix_LoadWAV(pth.c_str());
+    if (sound == nullptr) return nullptr;
+
+    audioStore.insert(std::make_pair(pth, sound));
+    return sound;
+  }
 
   ~ResourceManager ()
   {
@@ -65,8 +81,12 @@ public:
     for (auto f : fontStore)
       TTF_CloseFont(f.second);
 
+    for (auto f : audioStore)
+      Mix_FreeChunk(f.second);
+
     textureStore.clear();
     fontStore.clear();
+    audioStore.clear();
   }
 
 };

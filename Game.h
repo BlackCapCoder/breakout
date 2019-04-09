@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include <cstdlib>
 #include <ctime>
 #include <chrono>
@@ -57,13 +58,14 @@ public:
   {
     SDL_DestroyRenderer (&rend);
     SDL_DestroyWindow   (&wndw);
+    Mix_CloseAudio();
   }
 
   static void initGame ()
   {
-    SDL_Init (SDL_INIT_VIDEO);
-    IMG_Init (IMG_INIT_PNG);
+    SDL_Init (SDL_INIT_VIDEO | IMG_INIT_PNG | SDL_INIT_AUDIO);
     TTF_Init ();
+    Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
 
     std::srand (std::time (nullptr));
   }
