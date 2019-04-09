@@ -5,16 +5,20 @@
 #include "ColScene.h"
 #include "Particle.h"
 
+class Breakout;
 
-template <class S>
+// template <class S>
 // class Rocket : public GameObject<bool, ColScene<S*>*>
-class Rocket : public GameObject<bool, S*>
+// class Rocket : public GameObject<bool, S*>
+class Rocket : public GameObject<bool, Breakout*>
 {
 private:
   V2 p;
   static constexpr double w     = 10;
   static constexpr double h     = 25;
   static constexpr double speed = 1.5;
+
+  using S = Breakout;
 
 private:
   V4 getBounds ()
@@ -59,6 +63,7 @@ public:
         , 40, 100
         , [ & ] (auto p) { args.st()->insert (p); }
         );
+      args.st()->onExplosion();
       return true;
     }
 
