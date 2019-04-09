@@ -51,6 +51,12 @@ private:
   ResourceManager & rm;
   ResourceManager::Sound<str("resources/Selection.wav")> audioBlockBreak;
   ResourceManager::Sound<str("resources/Rocket.wav")> audioShoot;
+  ResourceManager::Sound
+    < str ("resources/Explosion1.wav")
+    , str ("resources/Explosion2.wav")
+    , str ("resources/Explosion3.wav")
+    , str ("resources/Explosion4.wav")
+    > audioExplosion;
 
 private:
   void loadLevel (int lvl);
@@ -72,6 +78,7 @@ public:
   void   doubleBalls   ();
   void   onBrickRemoved (const Brick &);
   void   onBounce    ();
+  void   onExplosion ();
 
   void spawnBall   ();
   void spawnRocket ();

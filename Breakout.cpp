@@ -12,7 +12,8 @@ Breakout::Breakout (InitArgs args)
   , hud    { args, 32 }
   , rm     { args.rm  }
   , audioBlockBreak { args.rm }
-  , audioShoot { args.rm }
+  , audioShoot      { args.rm }
+  , audioExplosion  { args.rm }
 {
   loadLevel (currentLevel);
 }
@@ -178,10 +179,15 @@ void Breakout::spawnRocket ()
 {
   audioShoot.play();
   V4 & b = paddle.getBounds();
-  insert<1> (new Rocket<Breakout>{b.x+b.w/2 , b.y-26});
+  insert<1> (new Rocket{b.x+b.w/2 , b.y-26});
   numRockets--;
 }
 
 void Breakout::onBounce ()
 {
+}
+
+void Breakout::onExplosion ()
+{
+  audioExplosion.play();
 }

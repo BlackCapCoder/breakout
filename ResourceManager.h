@@ -25,25 +25,27 @@ private:
   SDL_Renderer & rend;
 
 public:
-  struct SOUND
-  {
-    Mix_Chunk * mc;
 
-    SOUND (ResourceManager & rm, const char * a)
-    {
-      mc = rm._getAudio(a);
-    }
-
-    void play ()
-    {
-      Mix_PlayChannel(-1, mc, 0);
-    }
-  };
-
+  // Making this a termplate saves a whopping 8 bytes per sound!
   template <class ... Params>
   struct Sound
   {
   private:
+    struct SOUND
+    {
+      Mix_Chunk * mc;
+
+      SOUND (ResourceManager & rm, const char * a)
+      {
+        mc = rm._getAudio(a);
+      }
+
+      void play ()
+      {
+        Mix_PlayChannel(-1, mc, 0);
+      }
+    };
+
     SOUND ss[sizeof...(Params)];
 
   public:
@@ -53,7 +55,7 @@ public:
 
     void play ()
     {
-      ss[0].play();
+      ss[std::rand() % sizeof...(Params)].play();
     }
   };
 
