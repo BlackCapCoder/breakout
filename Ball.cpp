@@ -44,6 +44,7 @@ bool Ball::logic (const LogicArgs<Breakout*> args)
   double dt = args.dt();
   double q, mx, my, consumed;
   bool hor;
+  char numCollisions = 0;
 
   V4 screen = args.st()->getBounds();
   std::set<ColObj<Breakout*>*> hit;
@@ -163,14 +164,18 @@ bool Ball::logic (const LogicArgs<Breakout*> args)
 
     dt -= consumed;
     pts.push_back({(int) x, (int) y});
+    if (dt > 0) numCollisions++;
   } while (dt > 0);
-
 
   // Just to be safe..
   if (y < screen.y + radius)            y = screen.y + radius + 1;
   if (y > screen.y + screen.h - radius) y = screen.y + screen.h - radius - 1;
   if (x < screen.x + radius)            x = screen.x + radius + 1;
   if (x > screen.x + screen.w - radius) x = screen.x + screen.w - radius - 1;
+
+  if (numCollisions > 0) {
+    args.st()->onBounce();
+  }
 
   return false;
 }

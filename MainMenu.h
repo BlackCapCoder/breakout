@@ -24,8 +24,8 @@ private:
   int oldSelection = selection;
   double animTime  = 0;
   bool dir;
-  bool inAnim = false;
-  bool redraw = true;
+  bool inAnim    = false;
+  bool redraw    = true;
   bool firstInit = true;
 
   const int w;
@@ -36,7 +36,7 @@ private:
   SDL_Texture * texture[NUM_OPTIONS];
   int           widths[NUM_OPTIONS];
 
-  Mix_Chunk * selectionSound;
+  Sound selectionSound;
 
 public:
   MainMenu (InitArgs args)
@@ -66,14 +66,14 @@ public:
         animTime = animLen;
         dir = true;
         inAnim = true;
-        playSound(selectionSound);
+        selectionSound.play();
       } else if (args.im().isDown(MoveDown)) {
         oldSelection = selection;
         selection = (selection + 1) % NUM_OPTIONS;
         animTime = animLen;
         dir = false;
         inAnim = true;
-        playSound(selectionSound);
+        selectionSound.play();
       }
     }
 
@@ -101,11 +101,6 @@ public:
       case (Quit):      return "Quit";
     }
     return "ERROR";
-  }
-
-  void playSound(Mix_Chunk* sound)
-  {
-    Mix_PlayChannel(-1, sound, 0);
   }
 
   // Redraws everything

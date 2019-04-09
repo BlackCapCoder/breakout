@@ -4,12 +4,15 @@
 #include "Math.h"
 #include "Levels.h"
 #include "Upgrade.h"
+#include "Rocket.h"
 
 Breakout::Breakout (InitArgs args)
-  : ColScene<2, Breakout*>(args)
+  : ColScene<Breakout_NumLayers, Breakout*>(args)
   , paddle { args.w, args.h }
   , hud    { args, 32 }
   , rm     { args.rm  }
+  , audioBlockBreak { args.rm.getAudio("resources/Selection.wav") }
+  , audioShoot { args.rm.getAudio("resources/Shooting.wav") }
 {
   loadLevel (currentLevel);
 }
@@ -161,9 +164,24 @@ void Breakout::doubleBalls ()
 
 void Breakout::onBrickRemoved (const Brick & b)
 {
+  audioBlockBreak.play ();
+
   if (std::rand () % upgradeChance == 0) {
     insert<1> (new Upgrade (rm, b.rect.getCenter()));
   }
 
   points += 1;
+}
+
+
+void Breakout::spawnRocket ()
+{
+  audioShoot.play();
+  V4 & b = paddle.getBounds();
+  insert<1> (new Rocket<Breakout>{b.x+b.w/2 , b.y-26});
+  numRockets--;
+}
+
+void Breakout::onBounce ()
+{
 }

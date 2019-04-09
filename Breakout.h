@@ -11,7 +11,9 @@
 
 class Brick;
 
-class Breakout : public ColScene<2, Breakout*>
+constexpr unsigned Breakout_NumLayers = 2;
+
+class Breakout : public ColScene<Breakout_NumLayers, Breakout*>
 {
   friend class Upgrade;
   friend class Brick;
@@ -47,6 +49,8 @@ private:
   static constexpr unsigned upgradeChance  = 10;
 
   ResourceManager & rm;
+  Sound audioBlockBreak;
+  Sound audioShoot;
 
 private:
   void loadLevel (int lvl);
@@ -58,7 +62,6 @@ public:
 
   SceneR tick (const TickArgsS);
 
-  void   spawnBall     ();
   void   onBallLost    (const Ball &);
   double getLevelSpeed () const; // Determines the speed of the balls
   void   meteorUpgrade ();
@@ -68,6 +71,10 @@ public:
   void   shiftDown     ();
   void   doubleBalls   ();
   void   onBrickRemoved (const Brick &);
+  void   onBounce    ();
+
+  void spawnBall   ();
+  void spawnRocket ();
 };
 
 #endif // ifndef BREAKOUT_H

@@ -9,6 +9,21 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
+#include <stdexcept>
+
+struct Sound
+{
+private:
+  Mix_Chunk * mc;
+
+public:
+  Sound (Mix_Chunk * mc) : mc{mc} {}
+
+  void play ()
+  {
+    Mix_PlayChannel(-1, mc, 0);
+  }
+};
 
 class ResourceManager
 {
@@ -59,18 +74,19 @@ public:
     return f;
   }
 
-  Mix_Chunk * getAudio (const FilePath & pth)
+  Sound getAudio (const FilePath & pth)
   {
     // Is it already loaded?
     const auto search = audioStore.find (pth);
     if (search != audioStore.end())
-      return search->second;
+      return Sound {search->second};
 
     Mix_Chunk* sound = Mix_LoadWAV(pth.c_str());
-    if (sound == nullptr) return nullptr;
+    if (sound == nullptr)
+      throw std::runtime_error ("Sound not found!");
 
     audioStore.insert(std::make_pair(pth, sound));
-    return sound;
+    return Sound{sound};
   }
 
   ~ResourceManager ()

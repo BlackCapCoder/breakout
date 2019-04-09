@@ -65,7 +65,7 @@ public:
   {
     SDL_Init (SDL_INIT_VIDEO | IMG_INIT_PNG | SDL_INIT_AUDIO);
     TTF_Init ();
-    Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
 
     std::srand (std::time (nullptr));
   }
@@ -87,6 +87,7 @@ public:
       im.tick ();
       quit = s.tick (targs) || im.isDown (Quit);
       SDL_RenderPresent (&rend);
+      // std::cout << std::chrono::duration<double, std::milli> (tick - lastTick) . count () << std::endl;
 
       lastTick = tick;
     } while (!quit);

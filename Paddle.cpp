@@ -33,8 +33,7 @@ ColResult Paddle::logic (const LogicArgs<Breakout*> args)
   }
 
   if (args.st()->numRockets > 0 && args.im().isDownFirst(FireRocket)) {
-    args.st()->insert(new Rocket<Breakout>{bounds.x+bounds.w/2 , bounds.y-26});
-    args.st()->numRockets--;
+    args.st()->spawnRocket();
   }
 
   if (o != bounds.x) return BoundsChanged;
