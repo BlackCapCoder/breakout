@@ -77,6 +77,10 @@ private:
     < str ("resources/meteor.wav")
     > audioMeteor;
 
+  const ResourceManager::Sound
+    < str ("resources/upgrade.wav")
+    > audioUpgrade;
+
 private:
   void loadLevel (const int lvl);
   void onWin     ();
@@ -99,6 +103,7 @@ public:
   void   onBounce       () const;
   void   onExplosion    () const;
   void   meteorSound    ();
+  void   upgradeSound   () const;
 
   void spawnBall   ();
   void spawnRocket ();

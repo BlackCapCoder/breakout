@@ -45,7 +45,7 @@ private:
       case (Magnet):      return "resources/magnet.png";
       case (ShiftDown):   return "resources/shiftdown.png";
       case (DoubleBalls): return "resources/doubleballs.png";
-      default: return "Unreachable";
+      default: throw std::runtime_error ("" __FILE__ ": The impossible happened!");
     }
   }
 
@@ -95,6 +95,8 @@ public:
         default:
           throw std::runtime_error ("" __FILE__ ": The impossible happened!");
       }
+
+      args.st()->upgradeSound();
       return true;
     }
 

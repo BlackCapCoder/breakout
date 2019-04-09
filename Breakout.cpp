@@ -8,15 +8,16 @@
 #include "HighscoreManager.h"
 
 Breakout::Breakout (InitArgs args)
-  : Parent (args)
-  , paddle { args.w, args.h }
-  , hud    { args, 32 }
-  , rm     { args.rm  }
+  : Parent          ( args )
+  , paddle          { args.w, args.h }
+  , hud             { args, 32 }
+  , rm              { args.rm  }
   , audioBlockBreak { args.rm }
   , audioShoot      { args.rm }
   , audioExplosion  { args.rm }
   , audioBounce     { args.rm }
   , audioMeteor     { args.rm }
+  , audioUpgrade    { args.rm }
 {
   loadLevel (currentLevel);
 }
@@ -203,4 +204,9 @@ void Breakout::meteorSound ()
   if (levelTime < meteorAudioTime) return;
   // audioMeteor.play();
   meteorAudioTime = levelTime + 3000;
+}
+
+void Breakout::upgradeSound () const
+{
+  audioUpgrade.play ();
 }
