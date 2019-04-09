@@ -12,8 +12,11 @@ enum Input
 , FireRocket
 , PowerMagnet
 
+#define MenuSelect FireRocket, ReleaseBall
+
 , NUM_INPUTS
 };
+
 
 
 class InputManager
@@ -99,7 +102,7 @@ public:
   template <typename... Args>
   inline bool isDownFirst (Input i, Args... args) const
   {
-    return active[i] == 255 || isDown (args...);
+    return active[i] == 255 || isDownFirst (args...);
   }
 };
 

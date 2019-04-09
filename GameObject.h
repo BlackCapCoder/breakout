@@ -45,6 +45,7 @@ struct TickArgs
 {
   const LogicArgs<S...> & l;
   SDL_Renderer          & r;
+  bool                  & dirty;
 
   constexpr auto   dt () const { return l.dt (); }
   constexpr auto & im () const { return l.im (); }

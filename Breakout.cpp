@@ -74,7 +74,8 @@ SceneR Breakout::tick (const TickArgsS args)
     SDL_SetRenderDrawColor (&args.r, 0, 0, 0, 255);
     SDL_RenderClear(&args.r);
     ColScene<2, Breakout*>::tickChildren
-      ({{args.dt(), args.im(), this}, args.r});
+      ({{args.dt(), args.im(), this}, args.r, args.dirty});
+    args.dirty = true;
   }
 
   if (args.im().isDown(PowerMagnet) && magnetCharge > 0) {

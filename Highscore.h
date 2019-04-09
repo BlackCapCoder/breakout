@@ -5,66 +5,54 @@
 #include <stdexcept>
 #include <array>
 #include <fstream>
-#include <algorithm>
 #include "GameObject.h"
+#include "HighscoreManager.h"
 
-int globalpoints = 50;
 
-#define SETTEXT(T) \
-  TTF_RenderText_Solid(font, T, {255, 255, 255, 255})
+class Highscore : public Scene
+{
+private:
+  static constexpr unsigned NScores = HighscoreManager::NScores;
+  static constexpr int fontSize     = 200;
+  static constexpr int topMargin    = 100;
+  static constexpr int leftMargin   = 500;
 
-#define CREATETEXT(T) \
-  SDL_CreateTextureFromSurface(&args.rend, T)
+  TTF_Font*                           font;
+  std::array<SDL_Texture*, NScores+1> scoreArrayTexture;
+  std::array<SDL_Rect,     NScores+1> rect;
+  bool redraw = true;
 
-#define SETR(x, y, T) \
-  SDL_Rect{x, y, T->w, T->h}
-
-class Highscore : public Scene {
 public:
-  TTF_Font*                   font;
-  SDL_Surface*                highscoreSurface;
-  std::array<SDL_Surface*, 4> scoreArraySurface;
-  SDL_Texture*                texture;
-  std::array<SDL_Texture*, 4> scoreArrayTexture;
-  std::array<SDL_Rect, 4>     rect;
-
-  std::array<u_int16_t, 3> readHighscores(std::string const& fp)
+  Highscore (const InitArgs args)
+    : font{args.rm.getFont ("resources/DroidSans.ttf", fontSize)}
   {
-    auto* pf = std::fopen(fp.c_str(), "r");
-    std::array<u_int16_t, 3> arr{};
+    SDL_Surface * surf = TTF_RenderText_Solid (font, "Highscore", {255, 255, 255, 255});
+    scoreArrayTexture[0] = SDL_CreateTextureFromSurface(&args.rend, surf);
+    rect[0] = SDL_Rect {leftMargin, topMargin, surf->w, surf->h};
+    SDL_FreeSurface (surf);
 
-    for (int i{}; i < 3; i++)
-      arr[i] = std::fgetc(pf) + (std::fgetc(pf) << 8);
+    auto scores = HighscoreManager::read();
 
-    return arr;
-  }
-
-  Highscore(const InitArgs args)
-    : font{args.rm.getFont("resources/DroidSans.ttf", 200)}
-    , scoreArraySurface{ SETTEXT("Highscore") }
-  {
-    std::array<u_int16_t, 3> scores = readHighscores("scores.txt");
-
-    scoreArrayTexture[0] = CREATETEXT(scoreArraySurface[0]);
-    rect[0] = SETR(500, 100, scoreArraySurface[0]);
-
-    for (int i = 1; i != 4; ++i) {
-      std::string s = std::to_string(scores[i-1]);
-      scoreArraySurface[i] = SETTEXT(s.c_str());
-      scoreArrayTexture[i] = CREATETEXT(scoreArraySurface[i]);
-      rect[i] = SETR(500, scoreArraySurface[i]->h*i + 100, scoreArraySurface[i]);
+    for (int i = 1; i < NScores+1; ++i) {
+      surf = TTF_RenderText_Solid (font, std::to_string(scores[i-1]).c_str(), {255, 255, 255, 255});
+      scoreArrayTexture[i] = SDL_CreateTextureFromSurface(&args.rend, surf);
+      rect[i] = SDL_Rect {leftMargin, fontSize*i + topMargin, surf->w, surf->h};
+      SDL_FreeSurface (surf);
     }
-
-    for (auto i : scoreArraySurface)
-      SDL_FreeSurface(i);
   }
 
   SceneR tick (const TickArgsS args) override
   {
-    SDL_RenderClear(&args.r);
-    for (int i{}; i != scoreArrayTexture.size(); ++i)
-      SDL_RenderCopy(&args.r, scoreArrayTexture[i], nullptr, &rect[i]);
-    return false;
+    if (redraw) {
+      SDL_SetRenderDrawColor(&args.r,0,0,0,255);
+      SDL_RenderClear (&args.r);
+      for (int i{}; i != scoreArrayTexture.size(); ++i)
+        SDL_RenderCopy (&args.r, scoreArrayTexture[i], nullptr, &rect[i]);
+      redraw     = false;
+      args.dirty = true;
+    }
+
+    return redraw = args.im().isDownFirst (MenuSelect);
   }
 
   ~Highscore()

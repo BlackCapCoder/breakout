@@ -51,7 +51,16 @@ public:
   SceneR tick (const TickArgsS args)
   {
     if (logic (args.l)) return true;
-    render (args.r);
+
+    if (redraw) {
+      init (args.r);
+      redraw = false;
+      args.dirty = true;
+    } else if (inAnim) {
+      render (args.r);
+      args.dirty = true;
+    }
+
     return false;
   }
 
@@ -62,22 +71,22 @@ public:
     if (!inAnim) {
       if (args.im().isDown(MoveUp)) {
         oldSelection = selection;
-        selection = (NUM_OPTIONS + selection - 1) % NUM_OPTIONS;
-        animTime = animLen;
-        dir = true;
-        inAnim = true;
-        selectionSound.play();
+        selection    = (NUM_OPTIONS + selection - 1) % NUM_OPTIONS;
+        animTime     = animLen;
+        dir          = true;
+        inAnim       = true;
+        selectionSound.play ();
       } else if (args.im().isDown(MoveDown)) {
         oldSelection = selection;
-        selection = (selection + 1) % NUM_OPTIONS;
-        animTime = animLen;
-        dir = false;
-        inAnim = true;
-        selectionSound.play();
+        selection    = (selection + 1) % NUM_OPTIONS;
+        animTime     = animLen;
+        dir          = false;
+        inAnim       = true;
+        selectionSound.play ();
       }
     }
 
-    if (args.im().isDownFirst(MoveRight, FireRocket, ReleaseBall)) {
+    if (args.im().isDownFirst(MenuSelect, MoveRight)) {
       switch (selection) {
         case (StartGame):
           redraw = true;
@@ -134,12 +143,6 @@ public:
   // Partial redraw
   void render (SDL_Renderer & r)
   {
-    if (redraw) {
-      init(r);
-      redraw = false;
-    }
-
-    if (!inAnim) return;
     inAnim = animTime > 0;
 
     const double sh = h * 0.1;

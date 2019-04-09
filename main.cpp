@@ -25,6 +25,13 @@ int main ([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
   constexpr int resolution = 1080;
 
   Game::initGame ();
-  Game g {"Breakout", resolution*16/9, resolution, im};
+  Game g
+    { "Breakout"       // Window title
+    , resolution*16/9  // Window width
+    , resolution       // Window height
+    , im               // Input manager
+    , true             // Lazy redraw
+    };
+
   g.loop <NScene<Highscore, MainMenu, Breakout>> ();
 }
