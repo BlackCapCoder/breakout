@@ -36,6 +36,7 @@ private:
   SDL_Texture * texture[NUM_OPTIONS];
   int           widths[NUM_OPTIONS];
 
+  Mix_Chunk * selectionSound;
 
 public:
   MainMenu (InitArgs args)
@@ -43,6 +44,7 @@ public:
     , h{args.h}
     , rm{args.rm}
     , font{args.rm.getFont ("resources/DroidSans.ttf", 100)}
+    , selectionSound{ args.rm.getAudio("resources/Selection.wav") }
   {
   }
 
@@ -64,12 +66,14 @@ public:
         animTime = animLen;
         dir = true;
         inAnim = true;
+        playSound(selectionSound);
       } else if (args.im().isDown(MoveDown)) {
         oldSelection = selection;
         selection = (selection + 1) % NUM_OPTIONS;
         animTime = animLen;
         dir = false;
         inAnim = true;
+        playSound(selectionSound);
       }
     }
 
@@ -99,6 +103,10 @@ public:
     return "ERROR";
   }
 
+  void playSound(Mix_Chunk* sound)
+  {
+    Mix_PlayChannel(-1, sound, 0);
+  }
 
   // Redraws everything
   void init (SDL_Renderer & r) {
