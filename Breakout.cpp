@@ -12,7 +12,7 @@ Breakout::Breakout (InitArgs args)
   , hud    { args, 32 }
   , rm     { args.rm  }
   , audioBlockBreak { args.rm.getAudio("resources/Selection.wav") }
-  , audioShoot { args.rm.getAudio("resources/Shooting.wav") }
+  , audioShoot { args.rm.getAudio("resources/Rocket.wav") }
 {
   loadLevel (currentLevel);
 }

@@ -2,7 +2,6 @@
 #define RESOURCE_MANAGER_H
 
 
-#include <map>
 #include <unordered_map>
 #include <string>
 #include <SDL2/SDL.h>
@@ -25,14 +24,15 @@ public:
   }
 };
 
+
 class ResourceManager
 {
 private:
   using FilePath = std::string;
 
-  std::map<FilePath, SDL_Texture *> textureStore;
-  std::map<std::pair<FilePath, uint16_t>, TTF_Font *> fontStore;
-  std::unordered_map<std::string, Mix_Chunk*> audioStore;
+  std::unordered_map<FilePath, SDL_Texture *> textureStore;
+  std::unordered_map<std::pair<FilePath, uint16_t>, TTF_Font *> fontStore;
+  std::unordered_map<FilePath, Mix_Chunk*> audioStore;
 
   SDL_Renderer & rend;
 
