@@ -37,12 +37,12 @@ public:
 
       SOUND (ResourceManager & rm, const char * a)
       {
-        mc = rm._getAudio(a);
+        mc = rm._getAudio (a);
       }
 
-      void play ()
+      void play () const
       {
-        Mix_PlayChannel(-1, mc, 0);
+        Mix_PlayChannel (-1, mc, 0);
       }
     };
 
@@ -53,7 +53,7 @@ public:
       : ss { SOUND(rm, Params::GetString()) ... }
     {}
 
-    void play ()
+    void play () const
     {
       ss[std::rand() % sizeof...(Params)].play();
     }

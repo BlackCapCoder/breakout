@@ -36,7 +36,9 @@ private:
   SDL_Texture * texture[NUM_OPTIONS];
   int           widths[NUM_OPTIONS];
 
-  ResourceManager::Sound<str("resources/Selection.wav")> selectionSound;
+  const ResourceManager::Sound
+    < str ("resources/Selection.wav")
+    > selectionSound;
 
 public:
   MainMenu (InitArgs args)

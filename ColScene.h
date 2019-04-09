@@ -56,16 +56,12 @@ private:
   static constexpr unsigned LayerSize = 2;
 
 
-public:
+protected:
   ColScene (InitArgs args)
     : qt { V4 {0, 0, (double) args.w, (double) args.h}, qtCap, qtLvl }
   {
     qtbuf.reserve (qtCap);
   }
-
-  inline V4  getBounds () const { return qt.getBounds(); }
-  inline int getWidth  () const { return getBounds().w; }
-  inline int getHeight () const { return getBounds().h; }
 
   template <class T>
   inline void updateQuadtree (T obj) { qt.update (obj); }
@@ -75,14 +71,6 @@ public:
   {
     objs.clear ();
     qt.clear   ();
-  }
-
-  inline
-  std::vector<CObj*> & getObjectsInBound (const V4 & bound)
-  {
-    qtbuf.clear ();
-    qt.getObjectsInBound (bound, qtbuf);
-    return qtbuf;
   }
 
   void tickChildren (const TickArgs<St> args)
@@ -117,12 +105,23 @@ public:
     });
   }
 
-  // template <unsigned L=1> void insert (Obj    obj) { std::get <0 + L*LayerSize> (objs.vs) . insert (obj); }
-  // template <unsigned L=1> void insert (CObj   obj) { std::get <1 + L*LayerSize> (objs.vs) . insert (obj); qt.insert(&obj); }
+
+public:
+
   template <unsigned L=1> void insert (Obj  * obj) { std::get <0 + L*LayerSize> (objs.vs) . insert (obj); }
   template <unsigned L=1> void insert (CObj * obj) { std::get <1 + L*LayerSize> (objs.vs) . insert (obj); qt.insert(obj); }
-  // template <unsigned L=1> void insert (Obj  & obj) { std::get <2 + L*LayerSize> (objs.vs) . insert (&obj); }
-  // template <unsigned L=1> void insert (CObj & obj) { std::get <3 + L*LayerSize> (objs.vs) . insert (&obj); qt.insert(&obj); }
+
+  inline V4  getBounds () const { return qt.getBounds(); }
+  inline int getWidth  () const { return getBounds().w; }
+  inline int getHeight () const { return getBounds().h; }
+
+  inline
+  std::vector<CObj*> & getObjectsInBound (const V4 & bound)
+  {
+    qtbuf.clear ();
+    qt.getObjectsInBound (bound, qtbuf);
+    return qtbuf;
+  }
 };
 
 #endif // ifndef COLSCENE_H

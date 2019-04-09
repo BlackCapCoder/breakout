@@ -8,7 +8,7 @@
 #include "HighscoreManager.h"
 
 Breakout::Breakout (InitArgs args)
-  : ColScene<Breakout_NumLayers, Breakout*>(args)
+  : Parent (args)
   , paddle { args.w, args.h }
   , hud    { args, 32 }
   , rm     { args.rm  }
@@ -19,15 +19,16 @@ Breakout::Breakout (InitArgs args)
   loadLevel (currentLevel);
 }
 
-void Breakout::loadLevel (int level)
+void Breakout::loadLevel (const int level)
 {
-  bricks.clear ();
-  clear        ();
-  insert<1> (&paddle);
-  insert<1> (&hud);
+  bricks.clear      ();
+  Parent::clear     ();
+  Parent::insert<1> (&paddle);
+  Parent::insert<1> (&hud);
 
   numBricks = Levels::construct (level, bricks, getWidth(), getHeight());
-  for (int i=0; i < numBricks; i++) insert<0>(&bricks[i]);
+  for (int i=0; i < numBricks; i++)
+    Parent::insert<0> (&bricks[i]);
 }
 
 void Breakout::onWin ()
@@ -60,7 +61,7 @@ SceneR Breakout::tick (const TickArgsS args)
     meteorTime    = 0;
     magnetCharge  = 0;
     points        = 0;
-    paddle.reset (getWidth(), getHeight());
+    paddle.reset (Parent::getWidth(), Parent::getHeight());
     loadLevel (currentLevel);
 
     return true;
@@ -73,7 +74,7 @@ SceneR Breakout::tick (const TickArgsS args)
   } else {
     SDL_SetRenderDrawColor (&args.rend, 0, 0, 0, 255);
     SDL_RenderClear        (&args.rend);
-    ColScene<2, Breakout*>::tickChildren
+    Parent::tickChildren
       ({{args.dt(), args.im(), this}, args.rend, args.dirty});
     args.dirty = true;
   }
@@ -95,7 +96,7 @@ void Breakout::spawnBall ()
          , (randDouble() - 0.5) * 2
          , -1.0 };
 
-  insert<0> (balls + ballCounter);
+  Parent::insert<0> (balls + ballCounter);
   ballCounter++;
   numBalls++;
   spareBalls--;
@@ -142,7 +143,7 @@ void Breakout::shiftDown ()
   for (int i = 0; i < bricks.size(); i++) {
     if (bricks[i].removed) continue;
     bricks[i].rect.y += 100;
-    updateQuadtree(&bricks[i]);
+    Parent::updateQuadtree(&bricks[i]);
   }
 }
 
@@ -159,7 +160,7 @@ void Breakout::doubleBalls ()
     if (b.isDead) continue;
     balls [ballCounter] = Ball { b.x, b.y, -b.vx, b.vy };
 
-    insert<0> (balls + ballCounter);
+    Parent::insert<0> (balls + ballCounter);
     ballCounter++;
     numBalls++;
   }
@@ -170,7 +171,7 @@ void Breakout::onBrickRemoved (const Brick & b)
   audioBlockBreak.play ();
 
   if (std::rand () % upgradeChance == 0) {
-    insert<1> (new Upgrade (rm, b.rect.getCenter()));
+    Parent::insert<1> (new Upgrade (rm, b.rect.getCenter()));
   }
 
   points += 1;
@@ -181,15 +182,15 @@ void Breakout::spawnRocket ()
 {
   audioShoot.play();
   V4 & b = paddle.getBounds();
-  insert<1> (new Rocket{b.x+b.w/2 , b.y-26});
+  Parent::insert<1> (new Rocket{b.x+b.w/2 , b.y-26});
   numRockets--;
 }
 
-void Breakout::onBounce ()
+void Breakout::onBounce () const
 {
 }
 
-void Breakout::onExplosion ()
+void Breakout::onExplosion () const
 {
   audioExplosion.play();
 }

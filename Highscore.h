@@ -23,9 +23,9 @@ private:
 
 public:
   Highscore (const InitArgs args)
-    : fontHeader{args.rm.getFont ("resources/DroidSans.ttf", fontSizeHeader)}
-    , font{args.rm.getFont ("resources/DroidSans.ttf", fontSize)}
-    , w {args.w}
+    : fontHeader {args.rm.getFont ("resources/DroidSans.ttf", fontSizeHeader)}
+    , font       {args.rm.getFont ("resources/DroidSans.ttf", fontSize)}
+    , w          {args.w}
   {
   }
 

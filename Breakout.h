@@ -10,10 +10,10 @@
 
 class Brick;
 
-constexpr unsigned Breakout_NumLayers = 2;
-
-class Breakout : public ColScene<Breakout_NumLayers, Breakout*>
+class Breakout : public ColScene<2, Breakout*>
 {
+  using Parent = ColScene<2, Breakout*>;
+
   friend class Upgrade;
   friend class Brick;
   friend class Paddle;
@@ -45,12 +45,20 @@ private:
   static constexpr double   speedUpgradePwr  = 1.5;
   static constexpr double   meteorTimeout    = 10 * 1000;
   static constexpr double   magnetUpgrCharge = 5  * 1000;
-  static constexpr unsigned upgradeChance  = 10;
+  static constexpr unsigned upgradeChance    = 10;
 
   ResourceManager & rm;
-  ResourceManager::Sound<str("resources/Selection.wav")> audioBlockBreak;
-  ResourceManager::Sound<str("resources/Rocket.wav")> audioShoot;
-  ResourceManager::Sound
+
+
+  const ResourceManager::Sound
+    < str ("resources/Selection.wav")
+    > audioBlockBreak;
+
+  const ResourceManager::Sound
+    < str ("resources/Rocket.wav")
+    > audioShoot;
+
+  const ResourceManager::Sound
     < str ("resources/Explosion1.wav")
     , str ("resources/Explosion2.wav")
     , str ("resources/Explosion3.wav")
@@ -58,7 +66,7 @@ private:
     > audioExplosion;
 
 private:
-  void loadLevel (int lvl);
+  void loadLevel (const int lvl);
   void onWin     ();
   void onLose    ();
 
@@ -67,17 +75,17 @@ public:
 
   SceneR tick (const TickArgsS) override;
 
-  void   onBallLost    (const Ball &);
-  double getLevelSpeed () const; // Determines the speed of the balls
-  void   meteorUpgrade ();
-  void   magnetUpgrade ();
-  bool   meteorActive  () const;
-  bool   hasMagnet     () const;
-  void   shiftDown     ();
-  void   doubleBalls   ();
+  void   onBallLost     (const Ball &);
+  double getLevelSpeed  () const; // Determines the speed of the balls
+  void   meteorUpgrade  ();
+  void   magnetUpgrade  ();
+  bool   meteorActive   () const;
+  bool   hasMagnet      () const;
+  void   shiftDown      ();
+  void   doubleBalls    ();
   void   onBrickRemoved (const Brick &);
-  void   onBounce    ();
-  void   onExplosion ();
+  void   onBounce       () const;
+  void   onExplosion    () const;
 
   void spawnBall   ();
   void spawnRocket ();
