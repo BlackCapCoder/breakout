@@ -8,7 +8,6 @@
 #include "Ball.h"
 #include "Brick.h"
 
-
 class Brick;
 
 constexpr unsigned Breakout_NumLayers = 2;

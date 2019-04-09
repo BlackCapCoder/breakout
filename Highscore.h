@@ -3,35 +3,74 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <array>
+#include <fstream>
+#include <algorithm>
 #include "GameObject.h"
+
+int globalpoints = 50;
+
+#define SETTEXT(T) \
+  TTF_RenderText_Solid(font, T, {255, 255, 255, 255})
+
+#define CREATETEXT(T) \
+  SDL_CreateTextureFromSurface(&args.rend, T)
+
+#define SETR(x, y, T) \
+  SDL_Rect{x, y, T->w, T->h}
 
 class Highscore : public Scene {
 public:
-  TTF_Font* font;
-  SDL_Surface* surface;
-  SDL_Texture* texture;
-  SDL_Rect rect;
-  Highscore(const InitArgs args)
-    : font{args.rm.getFont("resources/DroidSans.ttf", 24)}
-    , surface{ TTF_RenderText_Solid(font, "Cock", {255, 255, 255, 255}) }
-    , texture{ SDL_CreateTextureFromSurface(&args.rend, surface) }
-    , rect { 50, 50, args.w, args.h }
-  {
-    if (surface == nullptr)
-      throw std::runtime_error("Could not create font surface");
+  TTF_Font*                   font;
+  SDL_Surface*                highscoreSurface;
+  std::array<SDL_Surface*, 4> scoreArraySurface;
+  SDL_Texture*                texture;
+  std::array<SDL_Texture*, 4> scoreArrayTexture;
+  std::array<SDL_Rect, 4>     rect;
 
-    SDL_FreeSurface(surface);
+  std::array<u_int16_t, 3> readHighscores(std::string const& fp)
+  {
+    auto* pf = std::fopen(fp.c_str(), "r");
+    std::array<u_int16_t, 3> arr{};
+
+    for (int i{}; i < 3; i++)
+      arr[i] = std::fgetc(pf) + (std::fgetc(pf) << 8);
+
+    return arr;
+  }
+
+  Highscore(const InitArgs args)
+    : font{args.rm.getFont("resources/DroidSans.ttf", 200)}
+    , scoreArraySurface{ SETTEXT("Highscore") }
+  {
+    std::array<u_int16_t, 3> scores = readHighscores("scores.txt");
+
+    scoreArrayTexture[0] = CREATETEXT(scoreArraySurface[0]);
+    rect[0] = SETR(500, 100, scoreArraySurface[0]);
+
+    for (int i = 1; i != 4; ++i) {
+      std::string s = std::to_string(scores[i-1]);
+      scoreArraySurface[i] = SETTEXT(s.c_str());
+      scoreArrayTexture[i] = CREATETEXT(scoreArraySurface[i]);
+      rect[i] = SETR(500, scoreArraySurface[i]->h*i + 100, scoreArraySurface[i]);
+    }
+
+    for (auto i : scoreArraySurface)
+      SDL_FreeSurface(i);
   }
 
   SceneR tick (const TickArgsS args) override
   {
-    SDL_RenderCopy(&args.r, texture, nullptr, &rect);
+    SDL_RenderClear(&args.r);
+    for (int i{}; i != scoreArrayTexture.size(); ++i)
+      SDL_RenderCopy(&args.r, scoreArrayTexture[i], nullptr, &rect[i]);
     return false;
   }
 
   ~Highscore()
   {
-    SDL_DestroyTexture(texture);
+    for (auto i : scoreArrayTexture)
+      SDL_DestroyTexture(i);
   }
 };
 
