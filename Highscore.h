@@ -13,7 +13,7 @@ public:
   SDL_Rect rect;
   Highscore(const InitArgs args)
     : font{args.rm.getFont("resources/DroidSans.ttf", 24)}
-    , surface{ TTF_RenderText_Solid(font, "Cock", {0, 0, 0, 255}) }
+    , surface{ TTF_RenderText_Solid(font, "Cock", {255, 255, 255, 255}) }
     , texture{ SDL_CreateTextureFromSurface(&args.rend, surface) }
     , rect { 50, 50, args.w, args.h }
   {
@@ -25,7 +25,6 @@ public:
 
   SceneR tick (const TickArgsS args) override
   {
-
     SDL_RenderCopy(&args.r, texture, nullptr, &rect);
     return false;
   }
