@@ -105,7 +105,7 @@ public:
 
     Mix_Chunk* sound = Mix_LoadWAV(pth);
     if (sound == nullptr)
-      throw std::runtime_error ("Sound not found!");
+      throw std::runtime_error ("" __FILE__ ": Sound not found!");
 
     audioStore.insert(std::make_pair(pth, sound));
     return sound;

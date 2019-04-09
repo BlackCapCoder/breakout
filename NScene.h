@@ -27,20 +27,20 @@ public:
   }
 
   inline
-  void render (SDL_Renderer & r) noexcept
+  void render (const RenderArgs args) noexcept override
   {
-    getActive () . render (r);
+    getActive () . render (args);
   }
 
   inline
-  SceneR logic (const LogicArgsS args) noexcept
+  SceneR logic (const LogicArgsS args) noexcept override
   {
     if (getActive () . logic (args)) toggle ();
     return false;
   }
 
   inline
-  SceneR tick (const TickArgsS args) noexcept
+  SceneR tick (const TickArgsS args) noexcept override
   {
     if (getActive () . tick (args)) toggle ();
     return false;

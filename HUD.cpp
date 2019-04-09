@@ -19,10 +19,10 @@ void HUD::renderString (SDL_Renderer & r, char * str, double x, double y)
   SDL_DestroyTexture(texture);
 }
 
-void HUD::render (SDL_Renderer & r)
+void HUD::render (const RenderArgs args)
 {
   double pad = 10;
-  renderString (r, str, pad, rect.h - fontSize - pad);
+  renderString (args.rend, str, pad, rect.h - fontSize - pad);
 }
 
 bool HUD::logic (const LogicArgs<Breakout*> args)

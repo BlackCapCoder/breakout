@@ -65,7 +65,7 @@ private:
 public:
   Breakout (InitArgs);
 
-  SceneR tick (const TickArgsS);
+  SceneR tick (const TickArgsS) override;
 
   void   onBallLost    (const Ball &);
   double getLevelSpeed () const; // Determines the speed of the balls

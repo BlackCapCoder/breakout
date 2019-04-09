@@ -5,6 +5,7 @@
 #include "Math.h"
 #include "Paddle.h"
 #include "Breakout.h"
+#include <stdexcept>
 
 
 enum UpgradeType
@@ -55,7 +56,7 @@ public:
     , img { rm.getImage (imagePath(type)) }
   {}
 
-  bool logic (const LogicArgs<Breakout*> args)
+  bool logic (const LogicArgs<Breakout*> args) override
   {
     p.y += args.dt() * speed;
     Paddle * pad = &args.st()->paddle;
@@ -91,6 +92,8 @@ public:
         case (DoubleBalls):
           args.st()->doubleBalls();
           break;
+        default:
+          throw std::runtime_error ("" __FILE__ ": The impossible happened!");
       }
       return true;
     }
@@ -103,9 +106,9 @@ public:
     return V4 { p.x-size/2, p.y-size/2, size, size };
   }
 
-  void render (SDL_Renderer & rend)
+  void render (const RenderArgs args) override
   {
-    SDL_RenderCopy (&rend, img, nullptr, getBounds().get());
+    SDL_RenderCopy (&args.rend, img, nullptr, getBounds().get());
   }
 };
 

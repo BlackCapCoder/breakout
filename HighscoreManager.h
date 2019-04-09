@@ -10,7 +10,7 @@
 
 struct HighscoreManager
 {
-  static constexpr unsigned NScores = 3;
+  static constexpr unsigned NScores = 5;
   static constexpr char     Path[]  = "highscore";
 
   static inline
@@ -18,8 +18,8 @@ struct HighscoreManager
   {
     auto* pf = std::fopen (Path, "r");
 
-    std::array<u_int16_t, NScores> arr;
-    if (std::fread(&arr, 2, NScores, pf) != NScores) memset (&arr, 0, NScores*2);
+    std::array<u_int16_t, NScores> arr{};
+    int nread = std::fread(&arr, 2, NScores, pf);
     std::fclose (pf);
 
     return arr;

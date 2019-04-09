@@ -26,8 +26,8 @@ private:
 public:
   HUD (const InitArgs, const int fontSize);
 
-  void render (SDL_Renderer &);
-  bool logic  (const LogicArgs<Breakout*>);
+  void render (const RenderArgs) override;
+  bool logic  (const LogicArgs<Breakout*>) override;
 };
 
 

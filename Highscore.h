@@ -12,66 +12,61 @@
 class Highscore : public Scene
 {
 private:
-  static constexpr unsigned NScores = HighscoreManager::NScores;
-  static constexpr int fontSize     = 200;
-  static constexpr int topMargin    = 100;
-  static constexpr int leftMargin   = 500;
+  static constexpr int fontSizeHeader = 200;
+  static constexpr int fontSize       = 100;
+  static constexpr int topMargin      = 100;
 
-  TTF_Font*                           font;
-  std::array<SDL_Texture*, NScores+1> scoreArrayTexture;
-  std::array<SDL_Rect,     NScores+1> rect;
-  bool redraw = true;
+  TTF_Font* fontHeader;
+  TTF_Font* font;
+  bool      redraw = true;
+  int       w;
 
 public:
   Highscore (const InitArgs args)
-    : font{args.rm.getFont ("resources/DroidSans.ttf", fontSize)}
+    : fontHeader{args.rm.getFont ("resources/DroidSans.ttf", fontSizeHeader)}
+    , font{args.rm.getFont ("resources/DroidSans.ttf", fontSize)}
+    , w {args.w}
   {
   }
 
-  void load (SDL_Renderer & rend)
+  void render (SDL_Renderer & rend)
   {
-    dispose ();
+    SDL_SetRenderDrawColor (&rend, 0, 0, 0, 255);
+    SDL_RenderClear        (&rend);
 
-    SDL_Surface * surf = TTF_RenderText_Solid (font, "Highscore", {255, 255, 255, 255});
-    scoreArrayTexture[0] = SDL_CreateTextureFromSurface(&rend, surf);
-    rect[0] = SDL_Rect {leftMargin, topMargin, surf->w, surf->h};
+    SDL_Surface * surf;
+    SDL_Texture * text;
+    SDL_Rect      rect;
+
+    surf = TTF_RenderText_Solid (fontHeader, "HIGHSCORES", {255, 255, 255, 255});
+    text = SDL_CreateTextureFromSurface(&rend, surf);
+    rect = SDL_Rect {(w - surf->w)/2, topMargin, surf->w, surf->h};
+    SDL_RenderCopy (&rend, text, nullptr, &rect);
     SDL_FreeSurface (surf);
+    SDL_DestroyTexture (text);
 
     auto scores = HighscoreManager::read();
 
-    for (int i = 1; i < NScores+1; ++i) {
+    for (int i = 1; i < scores.size()+1; ++i) {
       surf = TTF_RenderText_Solid (font, std::to_string(scores[i-1]).c_str(), {255, 255, 255, 255});
-      scoreArrayTexture[i] = SDL_CreateTextureFromSurface(&rend, surf);
-      rect[i] = SDL_Rect {leftMargin, fontSize*i + topMargin, surf->w, surf->h};
+      text = SDL_CreateTextureFromSurface(&rend, surf);
+      rect = SDL_Rect {(w - surf->w)/2, rect.y + rect.h, surf->w, surf->h};
+      SDL_RenderCopy (&rend, text, nullptr, &rect);
       SDL_FreeSurface (surf);
-    }
-  }
-
-  void dispose ()
-  {
-    for (auto i : scoreArrayTexture) {
-      if (i != nullptr) SDL_DestroyTexture (i);
+      SDL_DestroyTexture (text);
     }
   }
 
   SceneR tick (const TickArgsS args) override
   {
     if (redraw) {
-      load (args.r);
-
-      SDL_SetRenderDrawColor(&args.r,0,0,0,255);
-      SDL_RenderClear (&args.r);
-      for (int i{}; i != scoreArrayTexture.size(); ++i)
-        SDL_RenderCopy (&args.r, scoreArrayTexture[i], nullptr, &rect[i]);
-
+      render (args.rend);
       redraw     = false;
       args.dirty = true;
     }
 
     return redraw = args.im().isDownFirst (MenuSelect);
   }
-
-  ~Highscore () { dispose (); }
 };
 
 #endif // HIGHSCORE_H

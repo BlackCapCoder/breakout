@@ -24,10 +24,10 @@ public:
     reset (sw, sh);
   }
 
-  V4 & getBounds () { return bounds; }
+  V4 & getBounds () override { return bounds; }
 
-  void render (SDL_Renderer &);
-  ColResult logic (const LogicArgs<Breakout*>);
+  void render (const RenderArgs) override;
+  ColResult logic (const LogicArgs<Breakout*>) override;
 
   void reset (const int sw, const int sh);
 };

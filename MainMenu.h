@@ -48,16 +48,16 @@ public:
   {
   }
 
-  SceneR tick (const TickArgsS args)
+  SceneR tick (const TickArgsS args) override
   {
     if (logic (args.l)) return true;
 
     if (redraw) {
-      init (args.r);
+      init (args.rend);
       redraw = false;
       args.dirty = true;
     } else if (inAnim) {
-      render (args.r);
+      render (args.rend);
       args.dirty = true;
     }
 
@@ -108,8 +108,9 @@ public:
       case (Settings):  return "Settings";
       case (Highscore): return "Highscore";
       case (Quit):      return "Quit";
+      default:
+        throw std::runtime_error ("" __FILE__ ": The impossible happened!");
     }
-    return "ERROR";
   }
 
   // Redraws everything

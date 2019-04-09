@@ -27,9 +27,9 @@ public:
         , const float a
         );
 
-  void      render    (SDL_Renderer & r);
-  V4 &      getBounds ();
-  ColResult logic     (const LogicArgs<Breakout*>);
+  void      render    (const RenderArgs) override;
+  V4 &      getBounds () override;
+  ColResult logic     (const LogicArgs<Breakout*>) override;
   void      onHit     (Breakout*);
 };
 

@@ -5,13 +5,13 @@
 #include "Rocket.h"
 
 
-void Paddle::render (SDL_Renderer & r)
+void Paddle::render (const RenderArgs args)
 {
-  SDL_SetRenderDrawColor (&r, 255, 0, 0, 255);
-  SDL_RenderFillRect (&r, bounds.get());
+  SDL_SetRenderDrawColor (&args.rend, 255, 0, 0, 255);
+  SDL_RenderFillRect (&args.rend, bounds.get());
   if (canSpawnBall) {
-    SDL_SetRenderDrawColor (&r, 255, 255, 255, 255);
-    SDL_RenderFillRect (&r, V4{bounds.x+bounds.w/2-5, bounds.y-5, 10, 10}.get());
+    SDL_SetRenderDrawColor (&args.rend, 255, 255, 255, 255);
+    SDL_RenderFillRect (&args.rend, V4{bounds.x+bounds.w/2-5, bounds.y-5, 10, 10}.get());
   }
 }
 

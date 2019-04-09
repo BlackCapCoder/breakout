@@ -30,34 +30,46 @@ public:
     , wad { im, args... }
   {}
 
-  constexpr auto   dt () const { return _dt; }
-  constexpr auto & im () const { return std::get<0>(wad); }
-  constexpr auto   st () const { return std::get<1>(wad); }
+  inline constexpr auto   dt () const { return _dt; }
+  inline constexpr auto & im () const { return std::get<0>(wad); }
+  inline constexpr auto   st () const { return std::get<1>(wad); }
 
-  constexpr void setDt (double dt) { _dt = dt; }
+  inline constexpr void setDt (double dt) { _dt = dt; }
 
   template <unsigned Ix>
-  constexpr auto get () const { return std::get<Ix-1>(wad); }
+  inline constexpr auto get () const { return std::get<Ix-1>(wad); }
+};
+
+struct RenderArgs
+{
+  SDL_Renderer & rend;
+  bool         & dirty;
 };
 
 template <class ... S>
 struct TickArgs
 {
   const LogicArgs<S...> & l;
-  SDL_Renderer          & r;
-  bool                  & dirty;
+  SDL_Renderer & rend;
+  bool         & dirty;
 
-  constexpr auto   dt () const { return l.dt (); }
-  constexpr auto & im () const { return l.im (); }
-  constexpr auto   st () const { return l.st (); }
+  inline constexpr auto   dt () const { return l.dt (); }
+  inline constexpr auto & im () const { return l.im (); }
+  inline constexpr auto   st () const { return l.st (); }
+
+  inline constexpr const RenderArgs r () const
+  {
+    return RenderArgs { rend, dirty };
+    // return reinterpret_cast<const RenderArgs&>(*(this + sizeof (LogicArgs<S...> &)));
+  }
 };
 
 template <class R, class ... S>
 struct GameObject
 {
-  virtual void render (SDL_Renderer & r) {}
+  virtual void render (const RenderArgs) {}
 
-  virtual R logic (const LogicArgs<S...> args)
+  virtual R logic (const LogicArgs<S...>)
   {
     return R {};
   }
@@ -66,7 +78,7 @@ struct GameObject
   virtual R tick (const TickArgs<S...> args)
   {
     R ret = logic (args.l);
-    render (args.r);
+    render (args.r());
     return ret;
   }
 };
@@ -80,10 +92,10 @@ struct InitArgs
   SDL_Renderer    & rend;
 };
 
-using SceneR = bool;
-typedef GameObject<SceneR> Scene;
-typedef LogicArgs<> LogicArgsS;
-typedef TickArgs<>  TickArgsS;
+using SceneR     = bool;
+using Scene      = GameObject<SceneR>;
+using LogicArgsS = LogicArgs<>;
+using TickArgsS  = TickArgs<>;
 
 
 #endif // GAMEOBJECT_H

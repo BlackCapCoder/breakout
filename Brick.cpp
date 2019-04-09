@@ -21,10 +21,10 @@ Brick::Brick
     , removed{false}
 {}
 
-void Brick::render (SDL_Renderer & rend)
+void Brick::render (const RenderArgs args)
 {
-  SDL_SetRenderDrawColor (&rend, r, g, b, a);
-  SDL_RenderFillRect     (&rend, rect.get());
+  SDL_SetRenderDrawColor (&args.rend, r, g, b, a);
+  SDL_RenderFillRect     (&args.rend, rect.get());
 }
 
 V4 & Brick::getBounds ()

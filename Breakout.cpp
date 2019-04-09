@@ -44,7 +44,6 @@ void Breakout::onWin ()
 
   if (numBricks > 0) return;
   loadLevel (currentLevel = 1);
-  return;
 }
 
 SceneR Breakout::tick (const TickArgsS args)
@@ -72,10 +71,10 @@ SceneR Breakout::tick (const TickArgsS args)
   if (numBricks <= 0) {
     onWin ();
   } else {
-    SDL_SetRenderDrawColor (&args.r, 0, 0, 0, 255);
-    SDL_RenderClear(&args.r);
+    SDL_SetRenderDrawColor (&args.rend, 0, 0, 0, 255);
+    SDL_RenderClear        (&args.rend);
     ColScene<2, Breakout*>::tickChildren
-      ({{args.dt(), args.im(), this}, args.r, args.dirty});
+      ({{args.dt(), args.im(), this}, args.rend, args.dirty});
     args.dirty = true;
   }
 

@@ -11,17 +11,17 @@ V4 Ball::getBounds () const
   return V4 {x-radius, y-radius, radius*2, radius*2};
 }
 
-void Ball::render (SDL_Renderer & r)
+void Ball::render (const RenderArgs args)
 {
   for (int i = 1; i < pts.size(); i++) {
     if (isMeteor)
-      thickLineRGBA (&r, pts[i-1].x, pts[i-1].y, pts[i].x, pts[i].y, radius*2, 255,   0,   0, 255);
+      thickLineRGBA (&args.rend, pts[i-1].x, pts[i-1].y, pts[i].x, pts[i].y, radius*2, 255,   0,   0, 255);
     else
-      thickLineRGBA (&r, pts[i-1].x, pts[i-1].y, pts[i].x, pts[i].y, radius*2, 255, 255, 255, 255);
+      thickLineRGBA (&args.rend, pts[i-1].x, pts[i-1].y, pts[i].x, pts[i].y, radius*2, 255, 255, 255, 255);
   }
 
-  SDL_SetRenderDrawColor (&r, 255, 255, 255, 255);
-  SDL_RenderFillRect (&r, getBounds().get());
+  SDL_SetRenderDrawColor (&args.rend, 255, 255, 255, 255);
+  SDL_RenderFillRect (&args.rend, getBounds().get());
 }
 
 

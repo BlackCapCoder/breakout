@@ -11,12 +11,12 @@ class Particle : public GameObject<bool, S...>
 {
 private:
   double angle, velocity;
-  double r=255,g,b;
   double radius;
-  double spin;
   double ttl;
-  double ttlOrig;
   double x, y;
+  const double r=255, g=0, b=0;
+  const double spin;
+  const double ttlOrig;
 
 public:
   Particle
@@ -36,24 +36,24 @@ public:
     , ttlOrig{ttl}
     {};
 
-  bool logic (const LogicArgs<S...> args)
+  bool logic (const LogicArgs<S...> args) override
   {
-    ttl      -= args.dt();
-    angle    += spin * args.dt();
-    radius    = 5 * ttl/ttlOrig;
-    double v = velocity * std::pow(ttl/ttlOrig, 1.3);
-    x        += std::cos(angle) * v * args.dt();
-    y        += std::sin(angle) * v * args.dt();
+    ttl   -= args.dt();
+    angle += spin * args.dt();
+    radius = 5 * ttl/ttlOrig;
+    const double v = velocity * std::pow(ttl/ttlOrig, 1.3);
+
+    x += std::cos(angle) * v * args.dt();
+    y += std::sin(angle) * v * args.dt();
 
     return ttl <= 0;
   }
 
-  void render (SDL_Renderer & rnd)
+  void render (const RenderArgs args) override
   {
-    float k = 1 - std::pow ((ttlOrig - ttl) / ttlOrig, 0.3);
-    V4 bounds{x-radius, y-radius, radius*2, radius*2};
-    SDL_SetRenderDrawColor (&rnd, r-64*k, k*64, k*255, 0);
-    SDL_RenderFillRect     (&rnd, bounds.get());
+    const float k = 1 - std::pow ((ttlOrig - ttl) / ttlOrig, 0.3);
+    SDL_SetRenderDrawColor (&args.rend, r-64*k, k*64, k*255, 0);
+    SDL_RenderFillRect     (&args.rend, V4{x-radius, y-radius, radius*2, radius*2}.get());
   }
 
   static void explosion
@@ -67,7 +67,7 @@ public:
     , std::function<void(Particle<S...>*)> f
     )
   {
-    int cnt = rand (min, max);
+    const int cnt = rand (min, max);
     for (int i = 0; i < cnt; i++)
       f (new Particle<S...>
             { randDouble (pos.x, pos.w)

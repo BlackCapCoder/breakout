@@ -29,7 +29,7 @@ private:
 public:
   Rocket (double x, double y) : p{ V2{x, y}} {}
 
-  bool logic (const LogicArgs <S*> args)
+  bool logic (const LogicArgs <S*> args) override
   {
     double _y = p.y - args.dt() * speed;
     V4 b { p.x, _y, w, h + p.y - _y };
@@ -72,10 +72,10 @@ public:
     return !args.st()->getBounds().intersects(getBounds());
   }
 
-  void render (SDL_Renderer & rend)
+  void render (const RenderArgs args) override
   {
-    SDL_SetRenderDrawColor (&rend, 255, 255, 255, 1);
-    SDL_RenderFillRect (&rend, getBounds() . get ());
+    SDL_SetRenderDrawColor (&args.rend, 255, 255, 255, 1);
+    SDL_RenderFillRect (&args.rend, getBounds() . get ());
   }
 };
 
