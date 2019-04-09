@@ -49,8 +49,8 @@ private:
   static constexpr unsigned upgradeChance  = 10;
 
   ResourceManager & rm;
-  Sound audioBlockBreak;
-  Sound audioShoot;
+  ResourceManager::Sound<str("resources/Selection.wav")> audioBlockBreak;
+  ResourceManager::Sound<str("resources/Rocket.wav")> audioShoot;
 
 private:
   void loadLevel (int lvl);

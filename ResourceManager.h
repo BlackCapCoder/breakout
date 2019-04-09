@@ -2,6 +2,7 @@
 #define RESOURCE_MANAGER_H
 
 
+#include <map>
 #include <unordered_map>
 #include <string>
 #include <SDL2/SDL.h>
@@ -9,20 +10,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
 #include <stdexcept>
-
-struct Sound
-{
-private:
-  Mix_Chunk * mc;
-
-public:
-  Sound (Mix_Chunk * mc) : mc{mc} {}
-
-  void play ()
-  {
-    Mix_PlayChannel(-1, mc, 0);
-  }
-};
+#include "TypeString.h"
 
 
 class ResourceManager
@@ -30,12 +18,44 @@ class ResourceManager
 private:
   using FilePath = std::string;
 
-  std::unordered_map<FilePath, SDL_Texture *> textureStore;
-  std::unordered_map<std::pair<FilePath, uint16_t>, TTF_Font *> fontStore;
+  std::map<FilePath, SDL_Texture *> textureStore;
+  std::map<std::pair<FilePath, uint16_t>, TTF_Font *> fontStore;
   std::unordered_map<FilePath, Mix_Chunk*> audioStore;
 
   SDL_Renderer & rend;
 
+public:
+  struct SOUND
+  {
+    Mix_Chunk * mc;
+
+    SOUND (ResourceManager & rm, const char * a)
+    {
+      mc = rm._getAudio(a);
+    }
+
+    void play ()
+    {
+      Mix_PlayChannel(-1, mc, 0);
+    }
+  };
+
+  template <class ... Params>
+  struct Sound
+  {
+  private:
+    SOUND ss[sizeof...(Params)];
+
+  public:
+    Sound<Params...> (ResourceManager & rm)
+      : ss { SOUND(rm, Params::GetString()) ... }
+    {}
+
+    void play ()
+    {
+      ss[0].play();
+    }
+  };
 
 public:
   ResourceManager (SDL_Renderer & r)
@@ -74,19 +94,19 @@ public:
     return f;
   }
 
-  Sound getAudio (const FilePath & pth)
+  Mix_Chunk * _getAudio (const char * pth)
   {
     // Is it already loaded?
     const auto search = audioStore.find (pth);
     if (search != audioStore.end())
-      return Sound {search->second};
+      return search->second;
 
-    Mix_Chunk* sound = Mix_LoadWAV(pth.c_str());
+    Mix_Chunk* sound = Mix_LoadWAV(pth);
     if (sound == nullptr)
       throw std::runtime_error ("Sound not found!");
 
     audioStore.insert(std::make_pair(pth, sound));
-    return Sound{sound};
+    return sound;
   }
 
   ~ResourceManager ()

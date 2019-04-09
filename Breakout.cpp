@@ -11,8 +11,8 @@ Breakout::Breakout (InitArgs args)
   , paddle { args.w, args.h }
   , hud    { args, 32 }
   , rm     { args.rm  }
-  , audioBlockBreak { args.rm.getAudio("resources/Selection.wav") }
-  , audioShoot { args.rm.getAudio("resources/Rocket.wav") }
+  , audioBlockBreak { args.rm }
+  , audioShoot { args.rm }
 {
   loadLevel (currentLevel);
 }

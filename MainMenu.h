@@ -36,7 +36,7 @@ private:
   SDL_Texture * texture[NUM_OPTIONS];
   int           widths[NUM_OPTIONS];
 
-  Sound selectionSound;
+  ResourceManager::Sound<str("resources/Selection.wav")> selectionSound;
 
 public:
   MainMenu (InitArgs args)
@@ -44,7 +44,7 @@ public:
     , h{args.h}
     , rm{args.rm}
     , font{args.rm.getFont ("resources/DroidSans.ttf", 100)}
-    , selectionSound{ args.rm.getAudio("resources/Selection.wav") }
+    , selectionSound {args.rm}
   {
   }
 
