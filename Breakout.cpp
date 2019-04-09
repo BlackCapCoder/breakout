@@ -5,6 +5,7 @@
 #include "Levels.h"
 #include "Upgrade.h"
 #include "Rocket.h"
+#include "HighscoreManager.h"
 
 Breakout::Breakout (InitArgs args)
   : ColScene<Breakout_NumLayers, Breakout*>(args)
@@ -148,6 +149,7 @@ void Breakout::shiftDown ()
 
 void Breakout::onLose ()
 {
+  HighscoreManager::commit (points);
   gameLost = true;
 }
 
