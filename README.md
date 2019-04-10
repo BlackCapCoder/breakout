@@ -1,6 +1,6 @@
 # TODO/Ideas
 
-- [ ] Clean the code. Replace pointers with references and add const
+- [x] Clean the code. Replace pointers with references and add const
 - [x] Better menu
 - [ ] Better HUD
 - [x] GFX for upgrades
@@ -9,10 +9,10 @@
 - [ ] Bricks with more hp
 - [ ] Indestructible bricks
 - [x] Add a score
-- [ ] Highscore list
-- [ ] Don't exit the game when the player loses
+- [x] Highscore list
+- [x] Don't exit the game when the player loses
 - [ ] Rebindable keys
-- [ ] Sound effects / BGM
+- [x] Sound effects / BGM
 
 
 # Upgrade/Downgrade ideas
