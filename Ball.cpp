@@ -115,6 +115,9 @@ bool Ball::logic (const LogicArgs<Breakout*> args)
 
       if (b.intersects(args.st()->paddle.getBounds()))
         os.push_back(&args.st()->paddle);
+
+      if (b.intersects(args.st()->pongPaddle->getBounds()))
+        os.push_back(args.st()->pongPaddle);
     }
 
     // Check for collisions
