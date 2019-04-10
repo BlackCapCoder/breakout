@@ -9,7 +9,7 @@
 
 Breakout::Breakout (InitArgs args)
   : Parent          ( args )
-  , paddle          { args.w, args.h }
+  , paddle          { args.w, args.h, false }
   , hud             { args, 32 }
   , rm              { args.rm  }
   , audioBlockBreak { args.rm }
@@ -44,6 +44,7 @@ void Breakout::onWin ()
   meteorTime    = 0;
   currentLevel += 1;
 
+  disablePong();
   loadLevel (currentLevel);
 
   if (numBricks > 0) return;
@@ -65,12 +66,18 @@ SceneR Breakout::tick (const TickArgsS args)
     magnetCharge  = 0;
     points        = 0;
     paddle.reset (Parent::getWidth(), Parent::getHeight());
+
+    disablePong ();
     loadLevel (currentLevel);
 
     return true;
   }
 
   levelTime += args.dt();
+
+  if (pongTime < levelTime) {
+    disablePong ();
+  }
 
   if (numBricks <= 0) {
     onWin ();
@@ -89,17 +96,32 @@ SceneR Breakout::tick (const TickArgsS args)
   return false;
 }
 
-void Breakout::spawnBall ()
+void Breakout::spawnBall (bool up)
 {
-  V4 bounds = paddle.getBounds();
+  if (spareBalls <= 0) return;
 
-  balls [ballCounter] =
-    Ball { bounds.x + bounds.w/2
-         , bounds.y - 10
-         , (randDouble() - 0.5) * 2
-         , -1.0 };
+  if (up) {
+    V4 bounds = pongPaddle->getBounds();
 
-  Parent::insert<0> (balls + ballCounter);
+    balls [ballCounter] =
+      Ball { bounds.x + bounds.w/2
+          , bounds.y + bounds.h + 10
+          , (randDouble() - 0.5) * 2
+          , 1.0 };
+
+    Parent::insert<1> (balls + ballCounter);
+  } else {
+    V4 bounds = paddle.getBounds();
+
+    balls [ballCounter] =
+      Ball { bounds.x + bounds.w/2
+          , bounds.y - 10
+          , (randDouble() - 0.5) * 2
+          , -1.0 };
+
+    Parent::insert<1> (balls + ballCounter);
+  }
+
   ballCounter++;
   numBalls++;
   spareBalls--;
@@ -181,12 +203,19 @@ void Breakout::onBrickRemoved (const Brick & b)
 }
 
 
-void Breakout::spawnRocket ()
+void Breakout::spawnRocket (bool up)
 {
+  if (numRockets <= 0) return;
   audioShoot.play();
-  V4 & b = paddle.getBounds();
-  Parent::insert<1> (new Rocket{b.x+b.w/2 , b.y-26});
   numRockets--;
+
+  if (up) {
+    V4 b = paddle.getBounds();
+    Parent::insert<1> (new Rocket{b.x+b.w/2, b.y-26, true});
+  } else {
+    V4 b = pongPaddle->getBounds();
+    Parent::insert<1> (new Rocket{b.x+b.w/2, b.y+b.h+1, false});
+  }
 }
 
 void Breakout::onBounce () const
@@ -209,4 +238,26 @@ void Breakout::meteorSound ()
 void Breakout::upgradeSound () const
 {
   audioUpgrade.play ();
+}
+
+void Breakout::pongUpgrade ()
+{
+  if (isPongActive()) return;
+  pongTime = levelTime + pongTimeout;
+  pongPaddle = new Paddle {(int)paddle.getBounds().x, (int)paddle.getBounds().w, true};
+  Parent::insert<1>(pongPaddle);
+}
+
+bool Breakout::isPongActive () const
+{
+  return pongTime > levelTime;
+}
+
+void Breakout::disablePong ()
+{
+  if (pongPaddle == nullptr) return;
+  pongTime = 0;
+  pongPaddle->setRemoved ();
+  // delete pongPaddle;
+  pongPaddle = nullptr;
 }

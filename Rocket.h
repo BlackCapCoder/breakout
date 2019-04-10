@@ -17,6 +17,7 @@ private:
   static constexpr double w     = 10;
   static constexpr double h     = 25;
   static constexpr double speed = 1.5;
+  const bool up;
 
   using S = Breakout;
 
@@ -27,11 +28,11 @@ private:
   }
 
 public:
-  Rocket (double x, double y) : p{ V2{x, y}} {}
+  Rocket (double x, double y, bool up = true) : p{ V2{x, y}}, up{up} {}
 
   bool logic (const LogicArgs <S*> args) override
   {
-    double _y = p.y - args.dt() * speed;
+    double _y = p.y - args.dt() * (up? speed: -speed);
     V4 b { p.x, _y, w, h + p.y - _y };
 
     ColObj<S*> * c = nullptr;

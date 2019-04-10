@@ -22,23 +22,25 @@ class Breakout : public ColScene<2, Breakout*>
 
 private:
   Paddle             paddle;
+  Paddle *           pongPaddle = nullptr;
   HUD                hud;
   std::vector<Brick> bricks;
   Ball               balls[256];
 
   unsigned short     numBricks;
-  unsigned char      ballCounter  = 0;
-  unsigned char      currentLevel = 1;
-  unsigned short     numRockets   = 5;
-  unsigned char      spareBalls   = 3;
-  unsigned char      numBalls     = 0;
-  double             levelTime    = 0;
-  char               speedUprades = 0;
-  double             meteorTime   = 0;
-  double             magnetCharge = 0;
-  unsigned           points       = 0;
-  bool               gameLost     = false;
+  unsigned char      ballCounter     = 0;
+  unsigned char      currentLevel    = 1;
+  unsigned short     numRockets      = 5;
+  unsigned char      spareBalls      = 3;
+  unsigned char      numBalls        = 0;
+  double             levelTime       = 0;
+  char               speedUprades    = 0;
+  double             meteorTime      = 0;
+  double             magnetCharge    = 0;
+  unsigned           points          = 0;
+  bool               gameLost        = false;
   double             meteorAudioTime = 0;
+  double             pongTime        = 0;
 
   static constexpr double   speedDoubleRate  = 60;
   static constexpr double   speedMaxDoubles  = 3;
@@ -47,6 +49,7 @@ private:
   static constexpr double   meteorTimeout    = 10 * 1000;
   static constexpr double   magnetUpgrCharge = 5  * 1000;
   static constexpr unsigned upgradeChance    = 10;
+  static constexpr double   pongTimeout      = 40 * 1000;
 
   ResourceManager & rm;
 
@@ -85,6 +88,7 @@ private:
   void loadLevel (const int lvl);
   void onWin     ();
   void onLose    ();
+  void disablePong ();
 
 public:
   Breakout (InitArgs);
@@ -105,8 +109,10 @@ public:
   void   meteorSound    ();
   void   upgradeSound   () const;
 
-  void spawnBall   ();
-  void spawnRocket ();
+  void spawnBall   (bool up = false);
+  void spawnRocket (bool up = true);
+  void pongUpgrade ();
+  bool isPongActive () const;
 };
 
 #endif // ifndef BREAKOUT_H

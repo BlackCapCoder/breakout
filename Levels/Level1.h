@@ -14,7 +14,7 @@ namespace Levels
       , const int height
 
       , const float horMarg = 50
-      , const float verMarg = 50
+      , const float verMarg = 100
       , const float space   = 15
       , const int   ncols   = 10*16/9
       , const int   nrows   = 7

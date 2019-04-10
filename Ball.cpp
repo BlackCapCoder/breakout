@@ -75,7 +75,14 @@ bool Ball::logic (const LogicArgs<Breakout*> args)
 
     // top
     q = (screen.y + radius - y)/my;
-    if (q > 0 && q < consumed) { consumed = q; hor = false; }
+    if (q > 0 && q < consumed) {
+      if (args.st()->isPongActive()) {
+        isDead = true;
+        args.st()->onBallLost (*this);
+        return true;
+      }
+      consumed = q; hor = false;
+    }
 
     // left
     q = (screen.x + radius - x)/mx;

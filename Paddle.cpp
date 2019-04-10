@@ -9,18 +9,16 @@ void Paddle::render (const RenderArgs args)
 {
   SDL_SetRenderDrawColor (&args.rend, 255, 0, 0, 255);
   SDL_RenderFillRect (&args.rend, bounds.get());
-  if (canSpawnBall) {
-    SDL_SetRenderDrawColor (&args.rend, 255, 255, 255, 255);
-    SDL_RenderFillRect (&args.rend, V4{bounds.x+bounds.w/2-5, bounds.y-5, 10, 10}.get());
-  }
+  // if (canSpawnBall) {
+  //   SDL_SetRenderDrawColor (&args.rend, 255, 255, 255, 255);
+  //   SDL_RenderFillRect (&args.rend, V4{bounds.x+bounds.w/2-5, bounds.y-5, 10, 10}.get());
+  // }
 }
 
 
 ColResult Paddle::logic (const LogicArgs<Breakout*> args)
 {
   float o = bounds.x;
-  canSpawnBall = args.st()->spareBalls > 0;
-
   const double speed = 1.7;
 
   if (args.im().isDown(MoveLeft )) bounds.x -= args.dt() * speed;
@@ -28,16 +26,17 @@ ColResult Paddle::logic (const LogicArgs<Breakout*> args)
   if (bounds.x < 0) bounds.x = 0;
   if (bounds.x > args.st()->getWidth() - bounds.w) bounds.x = args.st()->getWidth() - bounds.w;
 
-  if (canSpawnBall && args.im().isDownFirst(ReleaseBall)) {
-    args.st()->spawnBall ();
+  if (args.im().isDownFirst(ReleaseBall)) {
+    args.st()->spawnBall (top);
   }
 
-  if (args.st()->numRockets > 0 && args.im().isDownFirst(FireRocket)) {
-    args.st()->spawnRocket();
+  if (args.im().isDownFirst(FireRocket)) {
+    args.st()->spawnRocket(!top);
   }
 
   if (o != bounds.x) return BoundsChanged;
 
+  if (remove) return Remove;
   return None;
 }
 

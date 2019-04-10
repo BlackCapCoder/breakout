@@ -8,23 +8,25 @@
 #include <stdexcept>
 
 
-enum UpgradeType
-{ SizeUp,
-  SizeDown,
-  SpeedUp,
-  SpeedDown,
-  Rocket5,
-  Meteor,
-  Magnet,
-  ShiftDown,
-  DoubleBalls,
-
-  NUM_UPGRADES
-};
 
 class Upgrade : public GameObject<bool, Breakout*>
 {
 private:
+  enum UpgradeType
+  { SizeUp,
+    SizeDown,
+    SpeedUp,
+    SpeedDown,
+    Rocket5,
+    Meteor,
+    Magnet,
+    ShiftDown,
+    DoubleBalls,
+    Pong,
+
+    NUM_UPGRADES
+  };
+
   V2 p;
   const UpgradeType type;
   static constexpr double size    = 100;
@@ -45,6 +47,7 @@ private:
       case (Magnet):      return "resources/magnet.png";
       case (ShiftDown):   return "resources/shiftdown.png";
       case (DoubleBalls): return "resources/doubleballs.png";
+      case (Pong):        return "resources/pong.png";
       default: throw std::runtime_error ("" __FILE__ ": The impossible happened!");
     }
   }
@@ -91,6 +94,9 @@ public:
           break;
         case (DoubleBalls):
           args.st()->doubleBalls();
+          break;
+        case (Pong):
+          args.st()->pongUpgrade();
           break;
         default:
           throw std::runtime_error ("" __FILE__ ": The impossible happened!");
