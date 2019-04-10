@@ -10,40 +10,13 @@
 
 struct HighscoreManager
 {
+public:
   static constexpr unsigned NScores = 5;
   static constexpr char     Path[]  = "highscore";
 
-  static inline
-  std::array<u_int16_t, NScores> read (void)
-  {
-    auto* pf = std::fopen (Path, "r");
-
-    std::array<u_int16_t, NScores> arr{};
-    int nread = std::fread(&arr, 2, NScores, pf);
-    std::fclose (pf);
-
-    return arr;
-  }
-
-  static inline
-  void commit (u_int16_t score)
-  {
-    auto scores  = read ();
-    uint16_t tmp = UINT16_MAX;
-
-    for (int i = 0; i < NScores; i++) {
-      if (scores[i] > score) continue;
-      tmp       = scores[i];
-      scores[i] = score;
-      score     = tmp;
-    }
-
-    if (tmp == UINT16_MAX) return;
-
-    auto* pf = std::fopen (Path, "w");
-    std::fwrite (&scores, 2, NScores, pf);
-    std::fclose (pf);
-  }
+  static std::array<u_int16_t, NScores> read (void);
+  static void commit (u_int16_t score);
+  static uint16_t getLastScore ();
 };
 
 

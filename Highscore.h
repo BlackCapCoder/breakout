@@ -46,9 +46,16 @@ public:
     SDL_DestroyTexture (text);
 
     auto scores = HighscoreManager::read();
+    bool foundScore = false;
 
     for (int i = 1; i < scores.size()+1; ++i) {
-      surf = TTF_RenderText_Solid (font, std::to_string(scores[i-1]).c_str(), {255, 255, 255, 255});
+      if (!foundScore && scores[i-1] == HighscoreManager::getLastScore()) {
+        foundScore = true;
+        surf = TTF_RenderText_Solid (font, std::to_string(scores[i-1]).c_str(), {255, 255, 0, 0});
+      } else {
+        surf = TTF_RenderText_Solid (font, std::to_string(scores[i-1]).c_str(), {255, 255, 255, 255});
+      }
+
       text = SDL_CreateTextureFromSurface(&rend, surf);
       rect = SDL_Rect {(w - surf->w)/2, rect.y + rect.h, surf->w, surf->h};
       SDL_RenderCopy (&rend, text, nullptr, &rect);
