@@ -42,7 +42,7 @@ ColResult Brick::operator()(const ProxyIX<LOGIC>, const LogicArgs<Breakout*> arg
   return None;
 }
 
-void Brick::onHit (Breakout * g)
+void Brick::operator()(const ProxyIX<ONHIT>, Breakout* g)
 {
   g->onBrickRemoved (*this);
   removed = true;

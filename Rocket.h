@@ -50,7 +50,7 @@ public:
       , V2 { -0.0003, 0.0003 }
       , V2 { 200, 800 }
       , 0, (int) max (args.dt()/2, 3)
-      , [ g=args.st() ] (auto p) { g->insert (p); }
+      , [ g=args.st() ] (auto p) { g->insert<1> (p); }
       );
 
     if (c != nullptr) {
@@ -62,7 +62,7 @@ public:
         , V2 { -0.001, 0.001 }
         , V2 { 200, 800 }
         , 40, 100
-        , [ & ] (auto p) { args.st()->insert (p); }
+        , [ g=args.st() ] (auto p) { g->insert<1> (p); }
         );
       args.st()->onExplosion();
       return true;

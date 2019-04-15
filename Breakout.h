@@ -8,7 +8,9 @@
 #include "Ball.h"
 #include "Brick.h"
 
+
 class Brick;
+
 
 class Breakout : public ColScene<2, Breakout*>
 {

@@ -22,11 +22,7 @@ private:
   QuadTree<T> *qt = nullptr;
 
 public:
-  virtual V4 & getBounds ()
-  {
-    std::cout << "root getBounds called" << std::endl;
-    return *reinterpret_cast<V4*>(0);
-  }
+  virtual V4 & getBounds () = 0;
 };
 
 

@@ -8,6 +8,7 @@
 #include <stdexcept>
 
 
+class Breakout;
 
 class Upgrade : public GameObject<bool, Breakout*>
 {

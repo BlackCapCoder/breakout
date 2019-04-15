@@ -108,7 +108,7 @@ bool Ball::operator()(const ProxyIX<LOGIC>, const LogicArgs<Breakout*> args)
         , V2 { -0.0007, 0.0007 }
         , V2 { 50, 300 }
         , 0, (int) max (dt/2, 2)
-        , [ g=args.st() ] (auto p) { g->insert ((GameObject<bool, Breakout*>*)p); }
+        , [ g=args.st() ] (auto p) { g->insert<1> ((GameObject<bool, Breakout*>*)p); }
         );
 
       for (auto obj : os) obj->onHit (args.st());
@@ -169,7 +169,7 @@ bool Ball::operator()(const ProxyIX<LOGIC>, const LogicArgs<Breakout*> args)
           , V2 { -0.0007, 0.0007 }
           , V2 { 100, 600 }
           , 8*s, 20*s
-          , [ g=args.st() ] (auto p) { g->insert ((GameObject<bool, Breakout*>*) p); }
+          , [ g=args.st() ] (auto p) { g->insert<1> ((GameObject<bool, Breakout*>*) p); }
           );
       }
     }

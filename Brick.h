@@ -27,11 +27,11 @@ public:
         , const float a
         );
 
-  void operator()(const ProxyIX<RENDER>, const RenderArgs) override;
+  void      operator()(const ProxyIX<RENDER>, const RenderArgs) override;
   ColResult operator()(const ProxyIX<LOGIC>,  const LogicArgs<Breakout*>) override;
-
   V4 &      getBounds () override;
-  void      onHit     (Breakout*);
+  // void      onHit     (Breakout*) override;
+  void operator()(const ProxyIX<ONHIT>, Breakout*) override;
 };
 
 #endif // BRICK_H

@@ -8,7 +8,12 @@ template <class...> struct Pack;
 
 
 // A virtual method.
-template <unsigned, class> struct VIRT;
+template <unsigned N, class R>
+struct VIRT
+{
+  virtual R operator() (const ProxyIX<N>) = 0;
+};
+
 template <unsigned N, class R, class...S>
 struct VIRT<N, R(S...)>
 {

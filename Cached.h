@@ -15,61 +15,39 @@ namespace Cache
     C <T> elems;
     C <T> queue;
 
-    void insert (T x)
+    inline void insert (T x)
     {
       queue.push_back (x);
     }
 
-    void skip (T x)
+    inline T * skip (T x)
     {
       elems.push_back (x);
+      return &elems.back();
     }
 
-    void flush ()
+    inline void flush ()
     {
       std::move (queue.begin(), queue.end(), std::back_inserter (elems));
       queue.clear ();
     }
 
-    void filter (std::function<bool(T)> f)
+    inline void filter (std::function<bool(T)> f)
     {
       elems.erase (std::remove_if(elems.begin(), elems.end(), f), elems.end());
     }
 
-    void clear ()
+    inline void clear ()
     {
       queue.clear ();
       elems.clear ();
     }
   };
 
-
-  // Wrap <W,C,  a,b,c> => C <W<a>, W<b>, W<c>>
-
-  template <template <class...> class, template <class...> class, class...>
-  struct Wrapper;
-
-  template <template <class...> class W, template <class...> class C, class A>
-  struct Wrapper<W, C, A>
-  {
-    using T = A;
-  };
-
-  template <template <class...> class W, template <class...> class C, class...P, class A, class ... B>
-  struct Wrapper<W, C, C<P...>, A, B...>
-  {
-    using T = typename Wrapper<W, C, C<P..., W<A>>, B...>::T;
-  };
-
-  template <template <class...> class W, template <class...> class C, class ... Xs>
-  using Wrap = typename Wrapper<W, C, C<>, Xs...>::T;
-
-
   template <template <class...> class C, class...Xs>
   struct CMany
   {
-    template <class X> using One = COne<C,X>;
-    Wrap<One, std::tuple, Xs...> vs;
+    std::tuple<COne<C, Xs>...> vs;
 
     template <unsigned Ix, class X>
     inline void constexpr insert (X x)
@@ -84,15 +62,15 @@ namespace Cache
     }
 
     template <unsigned Ix, class X>
-    inline void constexpr skip (X x)
+    inline X * skip (X x)
     {
-      std::get<Ix>(vs).skip (x);
+      return std::get<Ix>(vs).skip (x);
     }
 
     template <class X>
-    inline void constexpr skip (X x)
+    inline X * skip (X x)
     {
-      std::get<X>(vs).skip (x);
+      return std::get<X>(vs).skip (x);
     }
 
     inline void constexpr flush ()

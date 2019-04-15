@@ -3,12 +3,14 @@
 #ifndef COLSCENE_H
 #define COLSCENE_H
 
+#include <list>
 #include <vector>
 #include <type_traits>
 
 #include "GameObject.h"
 #include "Cached.h"
 #include "QuadTree.h"
+#include "Virt.h"
 
 
 enum ColResult
@@ -17,11 +19,20 @@ enum ColResult
   Remove        = 2,
 };
 
+constexpr unsigned ONHIT = 4;
+
+template <class...S>
+using HasOnHit = VIRT<ONHIT, void(S...)>;
+
 // A game object that supports collision
 template <class...S>
-struct ColObj : public GameObject<ColResult,S...>, public Collidable<ColObj<S...>>
+struct ColObj : public GameObject<ColResult,S...>, public Collidable<ColObj<S...>>, public HasOnHit<S...>
 {
-  virtual void onHit (S...) {}
+  void operator()(const ProxyIX<ONHIT>, S...) {}
+
+  inline void onHit (S...s) {
+    (*this)(ProxyIX<ONHIT>{}, s...);
+  }
 };
 
 
@@ -54,6 +65,8 @@ private:
   static constexpr int      qtLvl     = 4;
   static constexpr unsigned LayerSize = 2;
 
+  bool inTick = false;
+
 
 protected:
   ColScene (InitArgs args)
@@ -74,6 +87,7 @@ protected:
 
   void tickChildren (const TickArgs<St> args)
   {
+    inTick = true;
     objs.flush  ();
     objs.filter ([&args, &qt=qt](auto c) constexpr {
       using C = decltype(c);
@@ -102,13 +116,27 @@ protected:
       }
       return false;
     });
+    inTick = false;
   }
 
 
 public:
 
-  template <unsigned L=1> void insert (Obj  * obj) { std::get <0 + L*LayerSize> (objs.vs) . insert (obj); }
-  template <unsigned L=1> void insert (CObj * obj) { std::get <1 + L*LayerSize> (objs.vs) . insert (obj); qt.insert(obj); }
+  template <unsigned L> void insert (Obj * obj) {
+    if (inTick)
+      std::get <0 + L*LayerSize> (objs.vs) . insert (obj);
+    else
+      std::get <0 + L*LayerSize> (objs.vs) . skip (obj);
+  }
+
+  template <unsigned L> void insert (CObj * obj) {
+    if (inTick)
+      std::get <1 + L*LayerSize> (objs.vs) . insert (obj);
+    else
+      std::get <1 + L*LayerSize> (objs.vs) . skip (obj);
+
+    qt.insert(obj);
+  }
 
   inline V4  getBounds () const { return qt.getBounds(); }
   inline int getWidth  () const { return getBounds().w; }
@@ -122,5 +150,7 @@ public:
     return qtbuf;
   }
 };
+
+
 
 #endif // ifndef COLSCENE_H
