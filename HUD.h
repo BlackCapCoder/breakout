@@ -19,6 +19,7 @@ private:
   SDL_Texture * texture = nullptr;
 
   mutable char str[256];
+  double oldHash = 0;
 
 private:
   void renderString (SDL_Renderer &, char *, double x, double y);

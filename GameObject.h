@@ -23,13 +23,17 @@ private:
 
 public:
   LogicArgs<S...>
-    ( double               dt // Milliseconds since last tick
+    ( double               dt    // Milliseconds since last tick
     , const InputManager & im
-    , S...                 args
+    , bool               & dirty // Set to true if you need a redraw
+    , S...                 args  // Custom state
     )
-    : _dt { dt }
-    , wad { im, args... }
+    : _dt   { dt }
+    , dirty { dirty }
+    , wad   { im, args... }
   {}
+
+  bool & dirty;
 
   inline constexpr auto   dt () const { return _dt; }
   inline constexpr auto & im () const { return std::get<0>(wad); }
@@ -56,9 +60,11 @@ struct TickArgs : public LogicArgs<S...>, public RenderArgs
     , S...s
     , SDL_Renderer & rend
     , bool & dirty
-    ) : LogicArgs<S...> { dt, im, s... }
+    ) : LogicArgs<S...> { dt, im, dirty, s... }
       , RenderArgs      { rend, dirty }
   {}
+
+  using RenderArgs::dirty;
 
   inline constexpr const RenderArgs & r () const
   {

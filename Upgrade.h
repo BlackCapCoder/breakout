@@ -64,6 +64,7 @@ public:
   {
     p.y += args.dt() * speed;
     Paddle * pad = &args.st()->paddle;
+    args.dirty = true;
 
     if (pad->bounds.intersects(getBounds())) {
       switch (type) {
@@ -117,6 +118,7 @@ public:
 
   void operator()(const ProxyIX<RENDER>, const RenderArgs args) override
   {
+    args.dirty = true;
     SDL_RenderCopy (&args.rend, img, nullptr, getBounds().get());
   }
 };

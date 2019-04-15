@@ -3,14 +3,18 @@
 #ifndef COLSCENE_H
 #define COLSCENE_H
 
+#include <iostream>
 #include <list>
 #include <vector>
 #include <type_traits>
+#include <functional>
+#include <utility>
 
 #include "GameObject.h"
 #include "Cached.h"
 #include "QuadTree.h"
 #include "Virt.h"
+#include "temp.h"
 
 
 enum ColResult
@@ -36,36 +40,82 @@ struct ColObj : public GameObject<ColResult,S...>, public Collidable<ColObj<S...
 };
 
 
+
+
+
 // A scene that supports collision
-template <unsigned layers, class St>
+template <unsigned layers, class St, bool multipass = true>
 class ColScene : public Scene
 {
 private:
 
-  // This class can hold two different kinds of objects
+  // A game object may or may not support collision
   using Obj  = GameObject <bool, St>;
   using CObj = ColObj     <St>;
 
-  // And supports storing them on different layers. The lower
+  // Wrap them in a common interface
+  struct GADT
+    : std::function<bool(QuadTree<CObj> &, const TickArgs<St>, const bool fst)>
+  {
+    template <class T>
+    constexpr GADT (T * o)
+      : std::function<bool(QuadTree<CObj> &, const TickArgs<St>, const bool fst)>
+      { [&obj=*o] (QuadTree<CObj> & qt, const TickArgs<St> args, const bool fst) constexpr -> bool
+          {
+            if (!multipass || fst) {
+              if constexpr (std::is_base_of<HasLogic<bool, St>, T>::value) {
+                if (logic(obj, args.l())) {
+                  args.dirty = true;
+                  return true;
+                }
+              } else if constexpr (std::is_base_of<CObj, T>::value) {
+                const ColResult r = logic(obj, args.l());
+                if (r & Remove) {
+                  args.dirty = true;
+                  qt.remove(&obj);
+                  return true;
+                }
+                if (r & BoundsChanged) {
+                  args.dirty = true;
+                  V4 & bo = obj.getBounds();
+                  qt.update(&obj);
+                }
+              }
+            }
+
+            if (!multipass || !fst) {
+              if constexpr (std::is_base_of<HasRender, T>::value) {
+                render(obj, args.r());
+              }
+            }
+
+            return false;
+          }
+      }
+    {}
+  };
+
+
+  // We support storing objects on different layers. The lower
   // an object's layer is, the sooner it will receive the logic/render tick.
 
-  // And by the way, I might add objects in the middle of ticks and I don't
-  // want those to be rendered!
+  // Also, we might add objects in the middle of a tick and we don't
+  // want those to be rendered, so we keep a queue.
   CachedN
     < std::vector
     , layers
-    // , Obj,   CObj
-    , Obj*,  CObj*
+    , GADT
     > objs;
+
+  bool inTick = false;
+
 
   QuadTree<CObj>        qt;
   std::vector<CObj*> qtbuf;
 
   static constexpr int      qtCap     = 200;
   static constexpr int      qtLvl     = 4;
-  static constexpr unsigned LayerSize = 2;
-
-  bool inTick = false;
+  static constexpr unsigned LayerSize = 1;
 
 
 protected:
@@ -78,64 +128,37 @@ protected:
   template <class T>
   inline void updateQuadtree (T obj) { qt.update (obj); }
 
-  inline
-  void clear ()
+  inline void clear ()
   {
     objs.clear ();
     qt.clear   ();
   }
 
-  void tickChildren (const TickArgs<St> args)
+  inline void tickChildren (const TickArgs<St> args, const bool fst = true)
   {
-    inTick = true;
-    objs.flush  ();
-    objs.filter ([&args, &qt=qt](auto c) constexpr {
-      using C = decltype(c);
-      if constexpr (std::is_same<C, Obj>::value || std::is_same<C, Obj&>::value) {
-        if (logic(c, args.l())) return true;
-        else render(c, args.r());
-      } else if constexpr (std::is_same<C, Obj*>::value) {
-        if (logic(*c, args.l())) return true;
-        else render(*c, args.r());
-      } else if constexpr (std::is_same<C, CObj>::value || std::is_same<C, CObj&>::value) {
-        ColResult r = logic(c, args.l());
-        if (r & Remove) {
-          qt.remove(&c);
-          return true;
-        }
-        if (r & BoundsChanged) qt.update(&c);
-        render(c, args.r());
-      } else if constexpr (std::is_same<C, CObj*>::value) {
-        ColResult r = logic(*c, args.l());
-        if (r & Remove) {
-          qt.remove(c);
-          return true;
-        }
-        if (r & BoundsChanged) qt.update(c);
-        render(*c, args.r());
-      }
-      return false;
-    });
-    inTick = false;
+    if (!multipass || fst)
+    {
+      inTick = true;
+      objs.flush  ();
+      objs.filter ([&args, &qt=qt] (GADT g) constexpr { return g (qt, args, true); });
+      inTick = false;
+    }
+    if constexpr (multipass) if (!fst) {
+      objs.filter ([&args, &qt=qt] (GADT g) constexpr { return g (qt, args, false); });
+    }
   }
 
 
 public:
 
-  template <unsigned L> void insert (Obj * obj) {
+  template <unsigned L, class T> void insert (T * obj) {
     if (inTick)
-      std::get <0 + L*LayerSize> (objs.vs) . insert (obj);
+      std::get <0 + L*LayerSize> (objs.vs) . insert (GADT{obj});
     else
-      std::get <0 + L*LayerSize> (objs.vs) . skip (obj);
-  }
+      std::get <0 + L*LayerSize> (objs.vs) . skip (GADT{obj});
 
-  template <unsigned L> void insert (CObj * obj) {
-    if (inTick)
-      std::get <1 + L*LayerSize> (objs.vs) . insert (obj);
-    else
-      std::get <1 + L*LayerSize> (objs.vs) . skip (obj);
-
-    qt.insert(obj);
+    if constexpr (std::is_base_of<CObj, T>::value)
+      qt.insert(obj);
   }
 
   inline V4  getBounds () const { return qt.getBounds(); }

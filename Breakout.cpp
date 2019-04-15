@@ -69,6 +69,7 @@ SceneR Breakout::operator () (const ProxyIX<TICK>, const TickArgsS args) noexcep
 
     disablePong ();
     loadLevel (currentLevel);
+    args.dirty = true;
 
     return true;
   }
@@ -82,11 +83,15 @@ SceneR Breakout::operator () (const ProxyIX<TICK>, const TickArgsS args) noexcep
   if (numBricks <= 0) {
     onWin ();
   } else {
-    SDL_SetRenderDrawColor (&args.rend, 0, 0, 0, 255);
-    SDL_RenderClear        (&args.rend);
-    Parent::tickChildren
-      ({args.dt(), args.im(), this, args.rend, args.dirty});
-    args.dirty = true;
+    if (numBalls > 0) args.dirty = true;
+
+    Parent::tickChildren ({args.dt(), args.im(), this, args.rend, args.dirty}, true);
+
+    if (args.dirty) {
+      SDL_SetRenderDrawColor (&args.rend, 0, 0, 0, 255);
+      SDL_RenderClear        (&args.rend);
+      Parent::tickChildren ({args.dt(), args.im(), this, args.rend, args.dirty}, false);
+    }
   }
 
   if (args.im().isDown(PowerMagnet) && magnetCharge > 0) {

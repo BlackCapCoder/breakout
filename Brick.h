@@ -15,6 +15,7 @@ private:
   const float b;
   const float a;
   bool  removed;
+  bool  dirty = true;
 
 public:
   Brick ( const float x_coord

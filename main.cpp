@@ -31,7 +31,7 @@ int main (void)
     , resolution*16/9  // Window width
     , resolution       // Window height
     , kbs{}            // Input manager
-    , true             // Lazy redraw
+    , true             // Lazy redraw; saves flops, but is technically not supported by SDL
     };
 
   g.loop <ZipperS <MainMenu, Breakout, Highscore>> ();

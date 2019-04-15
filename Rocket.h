@@ -69,6 +69,7 @@ public:
     }
 
     p.y = _y;
+    args.dirty = true;
 
     return !args.st()->getBounds().intersects(getBounds());
   }

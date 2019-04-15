@@ -7,7 +7,8 @@ template <unsigned> struct ProxyIX{};
 template <class...> struct Pack;
 
 
-// A virtual method.
+// Why have I isolated virtual methods to a single struct?
+// Because I am still anticipating a workaround
 template <unsigned N, class R>
 struct VIRT
 {

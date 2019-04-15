@@ -153,6 +153,7 @@ public:
       if (QuadTree *child = getChild(obj->getBounds()))
         return child->insert(obj);
     }
+
     return insert(obj);
   }
 

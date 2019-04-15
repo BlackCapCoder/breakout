@@ -27,6 +27,16 @@ void HUD::operator()(const ProxyIX<RENDER>, const RenderArgs args)
 
 bool HUD::operator()(const ProxyIX<LOGIC>, const LogicArgs<Breakout*> args)
 {
+  double hash = 0
+    + args.st()->spareBalls
+    + args.st()->numRockets
+    + args.st()->magnetCharge/1000
+    + args.st()->points;
+
+  if (hash == oldHash) return false;
+  oldHash = hash;
+  args.dirty = true;
+
   std::sprintf
     ( str
     , "Balls: %u  Rockets: %u  Magnet: %.1fs  Points: %u"

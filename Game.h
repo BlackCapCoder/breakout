@@ -95,10 +95,11 @@ public:
       im.tick ();
       quit = s (ProxyIX<TICK>{}, targs) || im.isDown (Quit);
 
-      if (dirty || !lazyRedraw) {
+      if (dirty) {
         SDL_RenderPresent (&rend);
-        dirty = false;
+        dirty = !lazyRedraw;
       } else
+        // SDL_Delay(1000/60 - delta);
         std::this_thread::sleep_for (Dur {1000/60 - delta});
 
       lastTick = tick;

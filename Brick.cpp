@@ -35,6 +35,7 @@ V4 & Brick::getBounds ()
 ColResult Brick::operator()(const ProxyIX<LOGIC>, const LogicArgs<Breakout*> args)
 {
   if (removed) {
+    dirty = true;
     args.st()->numBricks--;
     return Remove;
   }

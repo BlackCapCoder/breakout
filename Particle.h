@@ -46,6 +46,7 @@ public:
     x += std::cos(angle) * v * args.dt();
     y += std::sin(angle) * v * args.dt();
 
+    args.dirty |= ttl <= 0;
     return ttl <= 0;
   }
 

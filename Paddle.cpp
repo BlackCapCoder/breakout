@@ -18,7 +18,7 @@ void Paddle::operator()(const ProxyIX<RENDER>, const RenderArgs args)
 
 ColResult Paddle::operator()(const ProxyIX<LOGIC>, const LogicArgs<Breakout*> args)
 {
-  float o = bounds.x;
+  double o = bounds.x;
   const double speed = 1.7;
 
   if (args.im().isDown(MoveLeft )) bounds.x -= args.dt() * speed;
