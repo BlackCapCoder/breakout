@@ -50,9 +50,9 @@ public:
   {
   }
 
-  SceneR tick (const TickArgsS args) override
+  SceneR operator () (const ProxyIX<TICK>, const TickArgsS args) noexcept override
   {
-    if (logic (args.l)) return true;
+    if (logic (args.l())) return true;
 
     if (redraw) {
       init (args.rend);

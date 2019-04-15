@@ -27,8 +27,8 @@ public:
   Ball (double x = 500, double y = 500, double vx = 0.4, double vy = 0.4)
     : x{x}, y{y}, vx{vx}, vy{vy} {};
 
-  void render (const RenderArgs) override;
-  bool logic  (const LogicArgs<Breakout*>) override;
+  void operator()(const ProxyIX<RENDER>, const RenderArgs) override;
+  bool operator()(const ProxyIX<LOGIC>,  const LogicArgs<Breakout*>) override;
 };
 
 #endif // BALL_H

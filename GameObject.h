@@ -6,6 +6,7 @@
 
 #include "InputManager.h"
 #include "ResourceManager.h"
+#include "Virt.h"
 
 
 template <class ... S>
@@ -34,7 +35,7 @@ public:
   inline constexpr auto & im () const { return std::get<0>(wad); }
   inline constexpr auto   st () const { return std::get<1>(wad); }
 
-  inline constexpr void setDt (double dt) { _dt = dt; }
+  inline constexpr void setDt (const double dt) { _dt = dt; }
 
   template <unsigned Ix>
   inline constexpr auto get () const { return std::get<Ix-1>(wad); }
@@ -47,42 +48,54 @@ struct RenderArgs
 };
 
 template <class ... S>
-struct TickArgs
+struct TickArgs : public LogicArgs<S...>, public RenderArgs
 {
-  const LogicArgs<S...> & l;
-  SDL_Renderer & rend;
-  bool         & dirty;
+  TickArgs <S...>
+    ( double dt
+    , const InputManager & im
+    , S...s
+    , SDL_Renderer & rend
+    , bool & dirty
+    ) : LogicArgs<S...> { dt, im, s... }
+      , RenderArgs      { rend, dirty }
+  {}
 
-  inline constexpr auto   dt () const { return l.dt (); }
-  inline constexpr auto & im () const { return l.im (); }
-  inline constexpr auto   st () const { return l.st (); }
-
-  inline constexpr const RenderArgs r () const
+  inline constexpr const RenderArgs & r () const
   {
-    return RenderArgs { rend, dirty };
-    // return reinterpret_cast<const RenderArgs&>(*(this + sizeof (LogicArgs<S...> &)));
+    return (*this);
+  }
+
+  inline constexpr const LogicArgs<S...> & l () const
+  {
+    return (*this);
   }
 };
 
-template <class R, class ... S>
-struct GameObject
+
+constexpr unsigned RENDER = 0;
+constexpr unsigned LOGIC  = 1;
+
+template <class R, class...S>
+using HasLogic  = VIRT<LOGIC, R(LogicArgs<S...>)>;
+using HasRender = VIRT<RENDER, void(RenderArgs)>;
+
+template <class R, class...S>
+struct GameObject : HasRender, HasLogic<R, S...> {};
+
+
+inline void render (HasRender & r, const RenderArgs args)
 {
-  virtual void render (const RenderArgs) {}
+  r (ProxyIX<RENDER>{}, args);
+}
 
-  virtual R logic (const LogicArgs<S...>)
-  {
-    return R {};
-  }
+template <class R, class...S>
+inline R logic (HasLogic<R, S...> & l, const LogicArgs<S...> args)
+{
+  return l (ProxyIX<LOGIC>{}, args);
+}
 
-  // Combined logic/render tick
-  virtual R tick (const TickArgs<S...> args)
-  {
-    R ret = logic (args.l);
-    render (args.r());
-    return ret;
-  }
-};
 
+// ------------ Scene
 
 struct InitArgs
 {
@@ -93,9 +106,19 @@ struct InitArgs
 };
 
 using SceneR     = bool;
-using Scene      = GameObject<SceneR>;
 using LogicArgsS = LogicArgs<>;
 using TickArgsS  = TickArgs<>;
+
+constexpr unsigned TICK = 2;
+
+using Scene = VIRT <TICK, SceneR (TickArgsS)>;
+
+
+#include "Zipper.h"
+
+template <class...Ss>
+using ZipperS = Zipper<Pack<Scene>, Ss...>;
+
 
 
 #endif // GAMEOBJECT_H

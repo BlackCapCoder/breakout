@@ -36,7 +36,7 @@ public:
     , ttlOrig{ttl}
     {};
 
-  bool logic (const LogicArgs<S...> args) override
+  bool operator()(const ProxyIX<LOGIC>, const LogicArgs<Breakout*> args) override
   {
     ttl   -= args.dt();
     angle += spin * args.dt();
@@ -49,7 +49,7 @@ public:
     return ttl <= 0;
   }
 
-  void render (const RenderArgs args) override
+  void operator()(const ProxyIX<RENDER>, const RenderArgs args) override
   {
     const float k = 1 - std::pow ((ttlOrig - ttl) / ttlOrig, 0.3);
     SDL_SetRenderDrawColor (&args.rend, r-64*k, k*64, k*255, 0);

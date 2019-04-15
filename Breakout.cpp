@@ -51,7 +51,7 @@ void Breakout::onWin ()
   loadLevel (currentLevel = 1);
 }
 
-SceneR Breakout::tick (const TickArgsS args)
+SceneR Breakout::operator () (const ProxyIX<TICK>, const TickArgsS args) noexcept
 {
   if (gameLost) {
     gameLost      = false;
@@ -85,7 +85,7 @@ SceneR Breakout::tick (const TickArgsS args)
     SDL_SetRenderDrawColor (&args.rend, 0, 0, 0, 255);
     SDL_RenderClear        (&args.rend);
     Parent::tickChildren
-      ({{args.dt(), args.im(), this}, args.rend, args.dirty});
+      ({args.dt(), args.im(), this, args.rend, args.dirty});
     args.dirty = true;
   }
 

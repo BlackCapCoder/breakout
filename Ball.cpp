@@ -11,7 +11,8 @@ V4 Ball::getBounds () const
   return V4 {x-radius, y-radius, radius*2, radius*2};
 }
 
-void Ball::render (const RenderArgs args)
+
+void Ball::operator()(const ProxyIX<RENDER>, const RenderArgs args)
 {
   for (int i = 1; i < pts.size(); i++) {
     if (isMeteor)
@@ -25,7 +26,7 @@ void Ball::render (const RenderArgs args)
 }
 
 
-bool Ball::logic (const LogicArgs<Breakout*> args)
+bool Ball::operator()(const ProxyIX<LOGIC>, const LogicArgs<Breakout*> args)
 {
   if (args.st()->hasMagnet() && args.im().isDown(PowerMagnet)) {
     V4 p = args.st()->paddle.getBounds();

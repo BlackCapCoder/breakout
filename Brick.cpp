@@ -21,7 +21,7 @@ Brick::Brick
     , removed{false}
 {}
 
-void Brick::render (const RenderArgs args)
+void Brick::operator()(const ProxyIX<RENDER>, const RenderArgs args)
 {
   SDL_SetRenderDrawColor (&args.rend, r, g, b, a);
   SDL_RenderFillRect     (&args.rend, rect.get());
@@ -32,7 +32,7 @@ V4 & Brick::getBounds ()
   return rect;
 }
 
-ColResult Brick::logic (const LogicArgs<Breakout*> args)
+ColResult Brick::operator()(const ProxyIX<LOGIC>, const LogicArgs<Breakout*> args)
 {
   if (removed) {
     args.st()->numBricks--;

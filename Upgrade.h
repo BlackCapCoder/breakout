@@ -59,7 +59,7 @@ public:
     , img { rm.getImage (imagePath(type)) }
   {}
 
-  bool logic (const LogicArgs<Breakout*> args) override
+  bool operator()(const ProxyIX<LOGIC>, const LogicArgs<Breakout*> args) override
   {
     p.y += args.dt() * speed;
     Paddle * pad = &args.st()->paddle;
@@ -114,7 +114,7 @@ public:
     return V4 { p.x-size/2, p.y-size/2, size, size };
   }
 
-  void render (const RenderArgs args) override
+  void operator()(const ProxyIX<RENDER>, const RenderArgs args) override
   {
     SDL_RenderCopy (&args.rend, img, nullptr, getBounds().get());
   }

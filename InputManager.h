@@ -17,6 +17,7 @@ enum Input
 , NUM_INPUTS
 };
 
+template <unsigned...> struct Keybinds{};
 
 
 class InputManager
@@ -30,10 +31,10 @@ private:
   std::bitset<256 << (sizeof(KeyT) - 1)> keyDown;
 
 public:
-  template <typename... Args>
-  InputManager (const Args... args)
-    : numKeybinds { sizeof...(args) }
-    , keybinds    { new KeyT [numKeybinds] {(KeyT) args...} }
+  template <unsigned...kbs>
+  InputManager (const Keybinds<kbs...>)
+    : numKeybinds { sizeof...(kbs) }
+    , keybinds    { new KeyT [numKeybinds] {(KeyT) kbs...} }
   {
   }
 
@@ -89,7 +90,7 @@ public:
   }
 
   template <typename... Args>
-  inline bool isDown (Input i, Args... args) const
+  inline bool isDown (const Input i, const Args... args) const
   {
     return active[i] > 0 || isDown (args...);
   }
@@ -100,7 +101,7 @@ public:
   }
 
   template <typename... Args>
-  inline bool isDownFirst (Input i, Args... args) const
+  inline bool isDownFirst (const Input i, const Args... args) const
   {
     return active[i] == 255 || isDownFirst (args...);
   }

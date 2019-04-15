@@ -19,13 +19,13 @@ void HUD::renderString (SDL_Renderer & r, char * str, double x, double y)
   SDL_DestroyTexture(texture);
 }
 
-void HUD::render (const RenderArgs args)
+void HUD::operator()(const ProxyIX<RENDER>, const RenderArgs args)
 {
   double pad = 10;
   renderString (args.rend, str, pad, rect.h - fontSize - pad);
 }
 
-bool HUD::logic (const LogicArgs<Breakout*> args)
+bool HUD::operator()(const ProxyIX<LOGIC>, const LogicArgs<Breakout*> args)
 {
   std::sprintf
     ( str

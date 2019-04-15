@@ -93,7 +93,7 @@ private:
 public:
   Breakout (InitArgs);
 
-  SceneR tick (const TickArgsS) override;
+  SceneR operator () (const ProxyIX<TICK>, const TickArgsS args) noexcept override;
 
   void   onBallLost     (const Ball &);
   double getLevelSpeed  () const; // Determines the speed of the balls

@@ -64,7 +64,7 @@ public:
     }
   }
 
-  SceneR tick (const TickArgsS args) override
+  SceneR operator () (const ProxyIX<TICK>, const TickArgsS args) noexcept override
   {
     if (redraw) {
       render (args.rend);

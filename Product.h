@@ -1,43 +1,40 @@
 #ifndef PRODUCT_H
 #define PRODUCT_H
 
-template <class T> struct Proxy;
 
-template <typename A, typename ... As>
-struct Product
+template <class A>
+struct ProdElem
 {
-  A cur;
-  Product <As...> rest;
+protected:
+  A elem;
 
   template <class R>
-  inline constexpr R & get (unsigned ix, Proxy<R> * const p) noexcept
-  {
-    if (ix == 0) return reinterpret_cast<R&>(cur);
-    return rest.get (ix-1, p);
-  }
+  inline constexpr R & getRef () { return reinterpret_cast<R&>(elem); }
 
   template <class ... Params>
-  Product<A, As...> (const Params... ps)
-    : cur  {A{ps...}}
-    , rest {Product<As...>{ps...}}
-    {}
+  constexpr ProdElem<A> (const Params... ps)
+    : elem {{ps...}}
+  {}
 };
 
-template <typename A>
-struct Product<A>
+
+// Product<As...> is isomorphic to std::tuple<As...>, but supports
+// runtime indexing
+template <class...As>
+struct Product : ProdElem<As>...
 {
-  A cur;
+  template <class ... Params>
+  constexpr Product<As...> (const Params... ps)
+    : ProdElem<As>{ps...}...
+  {}
 
   template <typename R>
-  inline constexpr R & get (unsigned, Proxy<R>* const) noexcept
+  inline constexpr R & get (const unsigned i) noexcept
   {
-    return reinterpret_cast<R&>(cur);
+    R * ptrs[sizeof...(As)] = { &ProdElem<As>::template getRef<R>() ... };
+    return *ptrs[i];
   }
-
-  template <class ... Params>
-  Product<A> (const Params... ps)
-    : cur {A{ps...}}
-    {}
 };
+
 
 #endif // ifndef PRODUCT_H

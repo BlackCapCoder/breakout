@@ -26,8 +26,8 @@ private:
 public:
   HUD (const InitArgs, const int fontSize);
 
-  void render (const RenderArgs) override;
-  bool logic  (const LogicArgs<Breakout*>) override;
+  void operator()(const ProxyIX<RENDER>, const RenderArgs) override;
+  bool operator()(const ProxyIX<LOGIC>,  const LogicArgs<Breakout*>) override;
 };
 
 

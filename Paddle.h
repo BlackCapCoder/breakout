@@ -35,8 +35,8 @@ public:
 
   V4 & getBounds () override { return bounds; }
 
-  void render (const RenderArgs) override;
-  ColResult logic (const LogicArgs<Breakout*>) override;
+  void operator()(const ProxyIX<RENDER>, const RenderArgs) override;
+  ColResult operator()(const ProxyIX<LOGIC>,  const LogicArgs<Breakout*>) override;
 
   void reset (const int sw, const int sh);
 

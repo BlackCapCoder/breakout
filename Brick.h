@@ -27,9 +27,10 @@ public:
         , const float a
         );
 
-  void      render    (const RenderArgs) override;
+  void operator()(const ProxyIX<RENDER>, const RenderArgs) override;
+  ColResult operator()(const ProxyIX<LOGIC>,  const LogicArgs<Breakout*>) override;
+
   V4 &      getBounds () override;
-  ColResult logic     (const LogicArgs<Breakout*>) override;
   void      onHit     (Breakout*);
 };
 

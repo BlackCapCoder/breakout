@@ -4,13 +4,11 @@
 #define COLSCENE_H
 
 #include <vector>
-#include <list>
 #include <type_traits>
 
 #include "GameObject.h"
 #include "Cached.h"
 #include "QuadTree.h"
-#include "Either.h"
 
 
 enum ColResult
@@ -25,6 +23,7 @@ struct ColObj : public GameObject<ColResult,S...>, public Collidable<ColObj<S...
 {
   virtual void onHit (S...) {}
 };
+
 
 // A scene that supports collision
 template <unsigned layers, class St>
@@ -42,7 +41,7 @@ private:
   // And by the way, I might add objects in the middle of ticks and I don't
   // want those to be rendered!
   CachedN
-    < std::list
+    < std::vector
     , layers
     // , Obj,   CObj
     , Obj*,  CObj*
@@ -79,27 +78,27 @@ protected:
     objs.filter ([&args, &qt=qt](auto c) constexpr {
       using C = decltype(c);
       if constexpr (std::is_same<C, Obj>::value || std::is_same<C, Obj&>::value) {
-        if (c.logic (args.l)) return true;
-        else c.render (args.r());
+        if (logic(c, args.l())) return true;
+        else render(c, args.r());
       } else if constexpr (std::is_same<C, Obj*>::value) {
-        if (c->logic (args.l)) return true;
-        else c->render (args.r());
+        if (logic(*c, args.l())) return true;
+        else render(*c, args.r());
       } else if constexpr (std::is_same<C, CObj>::value || std::is_same<C, CObj&>::value) {
-        ColResult r = c.logic (args.l);
+        ColResult r = logic(c, args.l());
         if (r & Remove) {
           qt.remove(&c);
           return true;
         }
         if (r & BoundsChanged) qt.update(&c);
-        c.render(args.r());
+        render(c, args.r());
       } else if constexpr (std::is_same<C, CObj*>::value) {
-        ColResult r = c->logic (args.l);
+        ColResult r = logic(*c, args.l());
         if (r & Remove) {
           qt.remove(c);
           return true;
         }
         if (r & BoundsChanged) qt.update(c);
-        c->render(args.r());
+        render(*c, args.r());
       }
       return false;
     });

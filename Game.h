@@ -22,22 +22,23 @@ private:
   const int         w;
   const int         h;
   const bool lazyRedraw;
-  InputManager    & im;
+  InputManager      im;
   SDL_Window      & wndw;
   SDL_Renderer    & rend;
   ResourceManager rm;
 
 public:
+  template <unsigned...kbs>
   Game
     ( const char *   title
     , const int      w
     , const int      h
-    , InputManager & im
+    , const Keybinds<kbs...>
     , const bool     lazy
     )
     : w  { w  }
     , h  { h  }
-    , im { im }
+    , im { Keybinds<kbs...>{} }
     , lazyRedraw { lazy }
     , wndw { *SDL_CreateWindow
         ( title
@@ -78,8 +79,7 @@ public:
   void loop ()
   {
     bool dirty = false;
-    LogicArgsS      largs {0, im};
-    const TickArgsS targs {largs, rend, dirty};
+    TickArgsS targs {0, im, rend, dirty};
 
     bool quit     = false;
     auto lastTick = std::chrono::system_clock::now ();
@@ -90,10 +90,10 @@ public:
     do {
       const auto tick  = std::chrono::system_clock::now ();
       const auto delta = Dur{tick - lastTick}.count();
-      largs.setDt (delta);
+      targs.setDt (delta);
 
       im.tick ();
-      quit = s.tick (targs) || im.isDown (Quit);
+      quit = s (ProxyIX<TICK>{}, targs) || im.isDown (Quit);
 
       if (dirty || !lazyRedraw) {
         SDL_RenderPresent (&rend);

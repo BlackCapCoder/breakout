@@ -5,7 +5,7 @@
 #include "Rocket.h"
 
 
-void Paddle::render (const RenderArgs args)
+void Paddle::operator()(const ProxyIX<RENDER>, const RenderArgs args)
 {
   SDL_SetRenderDrawColor (&args.rend, 255, 0, 0, 255);
   SDL_RenderFillRect (&args.rend, bounds.get());
@@ -16,7 +16,7 @@ void Paddle::render (const RenderArgs args)
 }
 
 
-ColResult Paddle::logic (const LogicArgs<Breakout*> args)
+ColResult Paddle::operator()(const ProxyIX<LOGIC>, const LogicArgs<Breakout*> args)
 {
   float o = bounds.x;
   const double speed = 1.7;
