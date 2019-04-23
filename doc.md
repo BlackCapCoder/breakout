@@ -57,7 +57,7 @@ A `GameObject` that supports collision.
 
 ### ColScene
 
-`ColScene` is a `Scene` and also a homogeneous container of GameObjects. It will keep track of any
+`ColScene` is a `Scene` and also a heterogeneous container of GameObjects. It will keep track of any
 `ColObj`ects inserted into it in a `QuadTree`, and exposes a method for querying this.
 
 
