@@ -1,4 +1,43 @@
-# Overview
+# Workflow
+
+We have worked on separate things over git. We kept a list of shit that needed to
+be done on our github page, and would pick something off it to work on.
+We have also been discussing implementation details over irc, and irl.
+
+
+We have had two major code conventions: write performant and imperative code. Our
+reasoning is that in the wild, there is only one reason for choosing C++ and that
+is performance.
+
+
+We have intentionally overdone this. If we could avoid a pointer by writing 200 lines
+of template programming we did the template programming.
+
+
+For mostly the same reason we choose to do imperative programming, rather than the psuedo
+functional style you can do in c++. The implication is that c++ is a low level language:
+regardless of your code style your code is going to have a lot of low level details, and
+the compiler cannot optimize away that.
+
+
+For instance, consider the functor laws:
+```
+map id = id
+map f . map g = map (f . g)
+```
+
+The first law says that looping through all the elements in a list and doing nothing is the same as doing nothing.
+
+
+The second law says that looping through all the elements in a list and doing `f`, then looping through them and doing `g`
+is the same as doing both `f` and `g` in a single pass.
+
+
+gcc does not enforce either of these laws for its `for_each` function, even for pure code, but it is able to do both
+optimizations for the equivalent for loop.
+
+
+# Implementation Overview
 
 
 ### Game
