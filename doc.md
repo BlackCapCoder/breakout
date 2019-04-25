@@ -1,7 +1,7 @@
 # Workflow
 
-We have worked on separate things over git. We kept a list of shit that needed to
-be done on our github page, and would pick something off it to work on.
+We have worked on separate things over git. We kept a list of things that needed to
+be done on our github page, and would pick something off of it to work on.
 We have also been discussing implementation details over irc, and irl.
 
 
@@ -71,7 +71,7 @@ Our reasoning is that quadtrees really ought to be library data structure highly
 
 ### Game
 
-`Game` is the main class. It initializes all the SDL bullshit and has a single method `loop`. `loop`
+`Game` is the main class. It initializes all the SDL boilerplate code and has a single method `loop`. `loop`
 takes a single `Scene` and ticks it repeatedly.
 
 
