@@ -37,6 +37,18 @@ gcc does not enforce either of these laws for its `for_each` function, even for 
 optimizations for the equivalent for loop.
 
 
+# Gotchas
+
+We have used `new` for some objects to be added to the `ColScene`, without ever freeing them. We could solve this with
+smart pointers, but we ought to store the objects in the `ColScene` rather than just pointers to them. We never got
+around to this.
+
+
+We didn't implement the QuadTree ourselves (we did adapt it somewhat, though!).
+There is a link to where we got it from at the very top of the file.
+Our reasoning is that quadtrees really ought to be library data structure highly tuned by someone else.
+
+
 # Implementation Overview
 
 
