@@ -37,6 +37,23 @@ gcc does not enforce either of these laws for its `for_each` function, even for 
 optimizations for the equivalent for loop.
 
 
+One solution to this is defunctionalization- to promote functions to the type level. Then we could hand optimize
+them with rewrite rules and get guaranteed inlining. This is pretty extreme though.
+
+
+
+### Why OOP
+
+What are the alternatives?
+
+
+1) Procedural code. This doesn't really scale well for games.
+
+2) Functional reactive programming. This would be both slow and awkward in c++. We could make it less
+   awkward with concepts, but they were disallowed. We could make it fast with defunctionalization,
+   but it would neither be maintainable nor idiomatic.
+
+
 # Gotchas
 
 We have used `new` for some objects to be added to the `ColScene`, without ever freeing them. We could solve this with
