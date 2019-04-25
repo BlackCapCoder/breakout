@@ -38,8 +38,26 @@ optimizations for the equivalent for loop.
 
 
 One solution to this is defunctionalization- to promote functions to the type level. Then we could hand optimize
-them with rewrite rules and get guaranteed inlining. This is pretty extreme though.
+them with rewrite rules and get guaranteed inlining. For instance:
 
+```c++
+template <int N>
+struct Add {
+  int operator () (int x) { return x + N; }
+};
+
+// function composition
+template <template <class...> class f, template <class...> class g> struct Dot;
+
+template <int X, int Y>
+struct Simplify<Dot<Add<X>, Add<Y>>> {
+  using R = Add<X+Y>;
+};
+```
+
+This is pretty extreme though- we are essentially writing our own compiler on the
+type level. Rewrite rules are turing-complete, so there is no limit to how far
+we could stretch this.
 
 
 ### Why OOP
