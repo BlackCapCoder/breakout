@@ -1,8 +1,12 @@
 # How to build
 
+Summon your favorite terminal and punch in
+
 ```bash
 make run
 ```
+
+Followed by a litteral newline, or alternatively `<C-j>`. If you find this process difficult you can contact our support-line at `#monadsafterdark` at freenode!
 
 # Default keys
 
