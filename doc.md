@@ -14,6 +14,11 @@ Thats hardly a problem as `vimtutor` is an excellent kickstarter.
 
 Here is a list of the keys:
 
+             ^
+             k              Hint:  The h key is at the left and moves left.
+       < h       l >               The l key is at the right and moves right.
+             j                     The j key looks like a down arrow.
+             v
 
     h      => MoveLeft
     l      => MoveRight
