@@ -1,4 +1,4 @@
-# make run
+<h1>make run</h1>
 
 to build and run the game
 
