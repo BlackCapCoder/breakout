@@ -1,3 +1,9 @@
+# How to build
+
+```
+make run
+```
+
 # Workflow
 
 We have worked on separate things over git. We kept a list of things that needed to
