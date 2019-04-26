@@ -1,7 +1,8 @@
-<h1 style="font-size: 100px">make run</h1>
+# How to build
 
-to build and run the game
-
+```bash
+make run
+```
 
 # Default keys
 
