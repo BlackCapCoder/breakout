@@ -1,8 +1,7 @@
-# How to build
+# make run
 
-```
-make run
-```
+to build and run the game
+
 
 # Default keys
 
