@@ -4,6 +4,29 @@
 make run
 ```
 
+# Default keys
+
+After hours and hours in search for the optimal keys for playing the game,
+we stuck with the vim keys. They are convenient, reduces strain `=` lets you play more.
+
+**"But I'm not a vim user"** - I can hear you say. <br>
+Thats hardly a problem as `vimtutor` is an excellent kickstarter.
+
+Here is a list of the keys:
+
+
+    h      => MoveLeft
+    l      => MoveRight
+    j      => MoveDown
+    k      => MoveUp
+    SPACE  => ReleaseBall
+    f      => FireRocket
+    d      => PowerMagnet
+    ESCAPE => Quit
+
+Moreover, the keys can be edited in `main.cpp`
+
+
 # Workflow
 
 We have worked on separate things over git. We kept a list of things that needed to
