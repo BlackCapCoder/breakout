@@ -1,4 +1,4 @@
-<h1>make run</h1>
+<h1 style="font-size: 100px">make run</h1>
 
 to build and run the game
 
