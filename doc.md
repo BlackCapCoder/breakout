@@ -6,7 +6,7 @@ Summon your favorite terminal and punch in
 λ make run   # 🚌
 ```
 
-Followed by a litteral newline, or alternatively `<C-j>`. If you find this process difficult you can contact our support-line at `#monadsafterdark` at freenode! If we're unavailable, leave a message with `knut_____` (5 underscores).
+Followed by a litteral newline, or alternatively `<C-j>`. If you find this process difficult you can contact our support-line at `#monadsafterdark` at freenode! If we're unavailable, leave a message with knut_____ (5 underscores).
 
 # Default keys
 
