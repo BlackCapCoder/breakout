@@ -23,7 +23,7 @@ Here is a list of the keys:
     d      => PowerMagnet
     ESCAPE => Quit
 
-Moreover, the keys can be edited in `main.cpp`
+Moreover, the keys can be edited in `main.cpp` (arrow keys are not supported- they were too expensive)
 
 
 # Workflow
