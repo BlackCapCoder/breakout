@@ -11,7 +11,7 @@ Followed by a litteral newline, or alternatively `<C-j>`. If you find this proce
 # Default keys
 
 After hours and hours in search for the optimal keys for playing the game,
-we stuck with the vim keys. They are convenient, reduces strain `=` lets you play more.
+we stuck with the [vim](https://www.vim.org/) keys. They are convenient, reduces strain `=` lets you play more.
 
 **"But I'm not a vim user"** - I can hear you say. <br>
 Thats hardly a problem as `vimtutor` is an excellent kickstarter.
@@ -44,7 +44,7 @@ We have also been discussing implementation details over irc, and irl.
 
 
 We have had two major code conventions: write performant and imperative code. Our
-reasoning is that in the wild, there is only one reason for choosing C++ and that
+reasoning is that in the wild, there is only one reason for choosing [C++](https://en.wikipedia.org/wiki/C%2B%2B) and that
 is performance.
 
 
@@ -53,7 +53,7 @@ of template programming we did the template programming.
 
 
 For mostly the same reason we choose to do imperative programming, rather than the psuedo
-functional style you can do in c++. The implication is that c++ is a low level language:
+functional style you can do in [C++](https://en.wikipedia.org/wiki/C%2B%2B). The implication is that [C++](https://en.wikipedia.org/wiki/C%2B%2B) is a low level language:
 regardless of your code style your code is going to have a lot of low level details, and
 the compiler cannot optimize away that.
 
