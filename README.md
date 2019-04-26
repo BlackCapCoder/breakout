@@ -1,3 +1,5 @@
+If you're looking for the documentation, it's in [doc.md](doc.md)
+
 # TODO/Ideas
 
 - [x] Clean the code. Replace pointers with references and add const
