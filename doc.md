@@ -59,7 +59,7 @@ the compiler cannot optimize away that.
 
 
 For instance, consider the functor laws:
-```
+```haskell
 map id = id
 map f . map g = map (f . g)
 ```
